@@ -7,3 +7,5 @@ Here is how it works:
 - We will use Spotify API to gather information from the two users
 - We will make a preference list of: genres, artists, song, theme, Language...
 - Lastly, there will be a button that mixes all the melodies together with Machine Learning!
+# Important for every group member:
+- Whenever you add a new library into the code, make sure you write it in the requirements.txt file!! (Add the library and push it into the repository)
