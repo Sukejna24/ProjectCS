@@ -87,6 +87,7 @@ def sp_clean_user_top_tracks(tracks, clean= True):
             del tracks[trackInd]["artists"][artInd]["external_urls"]
             del tracks[trackInd]["artists"][artInd]["href"]
             del tracks[trackInd]["artists"][artInd]["id"]
+            getArtistInfo(artists, tracks[trackInd]["artists"][artistInd]["uri"],clean)
             artInd +=1
         trackInd +=1      
     return tracks, artists
@@ -95,23 +96,23 @@ def get_playlists():
     if not sp_oauth.validate_token(cache_handler.get_cached_token()):
         auth_url = sp_oauth.get_authorize_url()
         return redirect(auth_url)
-    toptracks = sp.current_user_top_tracks()
-    toptracks_str = json.dumps(toptracks, indent=2).replace("\n", "<br>\n").replace(" ", "&nbsp;")
+    #toptracks = sp.current_user_top_tracks()
+    #toptracks_str = json.dumps(toptracks, indent=2).replace("\n", "<br>\n").replace(" ", "&nbsp;")
 
     playlists = sp.current_user_playlists()
     playlists_info=[]
     for pl in playlists['items']:
-        plinfo, artistsInfo = get_playlist(pl['id'])
+        plinfo, artistsInfo = get_playlist(pl['id'], True)
         playlists_info.append((pl['name'], pl['external_urls']['spotify'], plinfo, artistsInfo))
     playlist_str = json.dumps(playlists_info, indent=2).replace("\n", "<br>\n").replace(" ", "&nbsp;")
 
-    return playlist_str + "<br><br><br>\r\n\r\n\r\nTOPTRACKS:\r\n<br>" + toptracks_str
-def get_playlist(pl_id):
+    return playlist_str + "<br><br><br>\r\n\r\n\r\nTOPTRACKS:\r\n<br>" # + toptracks_str
+def get_playlist(pl_id, clean=True):
     playlist_html = "pl_id:" + pl_id + "\r\n"
     pl = sp.playlist(pl_id, fields="name,id,items(track)")
-    tracks,artists = get_all_tracks_from_playlist(pl_id)
+    tracks,artists = get_all_tracks_from_playlist(pl_id, clean)
     return tracks, artists
-def get_all_tracks_from_playlist(playlist_id):
+def get_all_tracks_from_playlist(playlist_id, clean=True):
     tracks_response = sp.playlist_tracks(playlist_id)
     tracks = tracks_response["items"]
     while tracks_response["next"]:
