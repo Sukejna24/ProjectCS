@@ -8,7 +8,7 @@ def main():
     st.header("Wähle deine Musikpräferenzen")
 
     # Auswahlmöglichkeiten für Genres
-    genres = ['Pop', 'Rock', 'Hip-Hop', 'Jazz', 'Classical']
+    genres = ['Pop', 'Rock', "Music", 'Hip-Hop', 'Jazz', 'Classical']
     selected_genres = st.multiselect("Wähle deine Lieblingsgenres:", genres)
 
     # Auswahlmöglichkeiten für Künstler
