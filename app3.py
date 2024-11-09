@@ -3,8 +3,7 @@ from Login import sp_clean_user_top_tracks, get_playlist, get_all_tracks_from_pl
 
 def main():
 
-    Login.home()
-
+    
     st.title("Melody Match")
     st.write("Willkommen bei - Melody Match! Wähle deine Musikpräferenzen.")
 
