@@ -1,6 +1,6 @@
 import os
 
-import flask
+#import flask
 import json
 from flask import Flask, request, redirect, session, url_for
 
@@ -87,7 +87,8 @@ def sp_clean_user_top_tracks(tracks, clean= True):
             del tracks[trackInd]["artists"][artInd]["external_urls"]
             del tracks[trackInd]["artists"][artInd]["href"]
             del tracks[trackInd]["artists"][artInd]["id"]
-            getArtistInfo(artists, tracks[trackInd]["artists"][artistInd]["uri"],clean)
+            # changed artistInd to artInd since artistInd is not defined
+            getArtistInfo(artists, tracks[trackInd]["artists"][artInd]["uri"],clean)
             artInd +=1
         trackInd +=1      
     return tracks, artists
