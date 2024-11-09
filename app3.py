@@ -1,6 +1,10 @@
 import streamlit as st
+import Login
 
 def main():
+
+    Login.home()
+
     st.title("Melody Match")
     st.write("Willkommen bei - Melody Match! Wähle deine Musikpräferenzen.")
 
