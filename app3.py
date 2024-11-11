@@ -4,7 +4,7 @@ import streamlit as st
 def main():
 
     
-    st.title("Melody Match")
+    st.title("Melody Match...")
     st.write("Willkommen bei - Melody Match! Wähle deine Musikpräferenzen.")
 
     # Musikpräferenzen
