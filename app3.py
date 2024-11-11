@@ -26,7 +26,7 @@ def main():
         # Beispielausgabe, die du später anpassen kannst
         st.write("Empfohlene Songs für dich könnten sein: ...")
 
-    st.slider("tempo", min_value = 0.0, max_value=1.0, value = 0.5, step = 0.1, )
+    st.slider("tempo", min_value = 0.0, max_value=1.0, value = 0.5, step = 0.1)
 
 if __name__ == "__main__":
     main()
