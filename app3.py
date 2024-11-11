@@ -27,6 +27,29 @@ def main():
         st.write("Empfohlene Songs für dich könnten sein: ...")
 
     st.slider("tempo", min_value = 0.0, max_value=1.0, value = 0.5, step = 0.1)
+    Lieblingssong = st.text_input("Dein Song:")
+
+
+    # Liste der Künstler
+    artists = ["Taylor Swift", "Drake", "Beyoncé", "Adele", "The Weeknd", "Billie Eilish", "Ed Sheeran"]
+
+    # Variable für ausgewählte Künstler
+    selected_artists = []
+
+    # Hinweis auf die maximale Auswahl
+    st.write("Wähle bis zu 2 Lieblingskünstler:")
+
+    # Schleife durch die Künstlerliste und Checkboxen erstellen
+    for artist in artists:
+        if st.checkbox(artist, key=artist):
+            selected_artists.append(artist)
+
+    # Falls die maximale Anzahl erreicht ist, keine weiteren Checkboxen zulassen
+        if len(selected_artists) >= 2:
+         st.warning("Maximal 2 Künstler auswählbar.")
+         break
+
+    st.write("Ausgewählte Künstler:", selected_artists)
 
 if __name__ == "__main__":
     main()
