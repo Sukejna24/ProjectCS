@@ -4,15 +4,15 @@ import streamlit as st
 def main():
 
     
-    st.title("Melody Match...")
-    st.write("Willkommen bei - Melody Match! Wähle deine Musikpräferenzen.")
+    st.title("Spotify Melody Match")
+    st.write("Willkommen bei - Melody Match! Wähle zwei Playlists aus.")
 
     # Musikpräferenzen
-    st.header("Wähle deine Musikpräferenzen")
+    st.header("Wähle 2 deiner Lieblingsplaylists in Spotify")
 
     # Auswahlmöglichkeiten für Genres
-    genres = ['Pop', 'Rock', "Music", 'Hip-Hop', 'Jazz', 'Classical']
-    selected_genres = st.multiselect("Wähle deine Lieblingsgenres:", genres)
+    playlists = ['Pop', 'Rock', "Music", 'Hip-Hop', 'Jazz', 'Classical']
+    selected_playlists = st.multiselect("Wähle deine Playlists:", playlists)
 
     # Auswahlmöglichkeiten für Künstler
     artists = ['Taylor Swift', 'The Weeknd', 'Ed Sheeran', 'Beyoncé', 'Adele']
@@ -28,3 +28,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
