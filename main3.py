@@ -1,69 +1,24 @@
-import os
-
-import flask
 import json
-from flask import Flask, request, redirect, session, url_for
-
-from spotipy import Spotify
+import spotipy
 from spotipy.oauth2 import SpotifyOAuth
-from spotipy.cache_handler import FlaskSessionCacheHandler
-first = True
-app = Flask(__name__)
-app.config['SECRET_KEY'] = os.urandom(64)
 
-client_id = '8d7cb1e90e734ddfa3f10120ecc5ecd6'
-client_secret = '793a2b51873f4ccfa917efff8130f980'
-redirect_uri = 'http://localhost:5000/callback'
-scope = 'playlist-read-private,user-top-read'
-
-cache_handler = FlaskSessionCacheHandler(session)
-sp_oauth = SpotifyOAuth(
-    client_id=client_id,
-    client_secret=client_secret,
-    redirect_uri=redirect_uri,
-    scope=scope,
-    cache_handler=cache_handler,
-    show_dialog=True
-)
-sp = Spotify(auth_manager=sp_oauth)
-
-@app.route('/') # root web app in flask
-def home():
-    if not sp_oauth.validate_token(cache_handler.get_cached_token()):
-        auth_url = sp_oauth.get_authorize_url()
-        return redirect(auth_url)
-    return redirect(url_for('get_cutt'))
-
-@app.route('/callback')
-def callback():
-    sp_oauth.get_access_token(request.args['code'])
-    #return redirect(url_for('get_current_user_top_tracks'))
-    return redirect(url_for('get_playlists'))
-
-@app.route('/get_cutt')
 def get_current_user_top_tracks():
-    if not sp_oauth.validate_token(cache_handler.get_cached_token()):
-        auth_url = sp_oauth.get_authorize_url()
-        return redirect(auth_url)
-    toptracks_response = sp.current_user_top_tracks(time_range="short_term")
-    toptracks = toptracks_response["items"]
+    toptracks_response = sp.current_user_top_tracks(time_range="short_term"); print('.', end='')
+    toptracks_info = toptracks_response["items"]
     #print(json.dumps(toptracks, indent=2))
     while toptracks_response["next"]:
-        toptracks_response = sp.next(toptracks_response)
-        toptracks.extend(toptracks_response["items"])
-    toptracks, artists = sp_clean_user_top_tracks(toptracks, True)
-    toptracks_str = json.dumps(toptracks, indent=2).replace("\n", "<br>\n").replace(" ", "&nbsp;")
-    return toptracks_str
+        toptracks_response = sp.next(toptracks_response); print('.', end='')
+        toptracks_info.extend(toptracks_response["items"])
+    toptracks_info, artists = sp_clean_user_top_tracks(toptracks_info, True)
+    return toptracks_info, artists
+    #toptracks_str = json.dumps(toptracks, indent=2).replace("\n", "<br>\n").replace(" ", "&nbsp;")
+    #return toptracks_str
 def sp_clean_user_top_tracks(tracks, clean= True):
-    global first
     artists={}
     trackInd = 0
     for tr in tracks:
-        if first:
-            #print ("tr:", json.dumps(tr,indent=2))
-            first=False
         if clean:
-            del tracks[trackInd]["available_markets"] 
+            del tracks[trackInd]["available_markets"]
             del tracks[trackInd]["external_ids"]
             del tracks[trackInd]["external_urls"]
             del tracks[trackInd]["href"]
@@ -75,48 +30,43 @@ def sp_clean_user_top_tracks(tracks, clean= True):
             del tracks[trackInd]["album"]["href"] # del tr["album"]["href"]
             del tracks[trackInd]["album"]["uri"] # del tr["album"]["uri"]
             del tracks[trackInd]["album"]["type"] # del tr["album"]["type"]
-            del tracks[trackInd]["album"]["id"] # del tr["album"]["id"]   
-        artInd = 0 
+            del tracks[trackInd]["album"]["id"] # del tr["album"]["id"]
+        artInd = 0
         for artist in tr["album"]["artists"]:
             del tracks[trackInd]["album"]["artists"][artInd]["external_urls"]
             del tracks[trackInd]["album"]["artists"][artInd]["href"]
             del tracks[trackInd]["album"]["artists"][artInd]["id"]
             artInd +=1
-        artInd = 0 
+        artInd = 0
         for artist in tr["artists"]:
             del tracks[trackInd]["artists"][artInd]["external_urls"]
             del tracks[trackInd]["artists"][artInd]["href"]
             del tracks[trackInd]["artists"][artInd]["id"]
-            getArtistInfo(artists, tracks[trackInd]["artists"][artistInd]["uri"],clean)
+            getArtistInfo(artists, tracks[trackInd]["artists"][artInd]["uri"],clean)
             artInd +=1
-        trackInd +=1      
+        trackInd +=1
     return tracks, artists
-@app.route('/get_playlists')
 def get_playlists():
-    if not sp_oauth.validate_token(cache_handler.get_cached_token()):
-        auth_url = sp_oauth.get_authorize_url()
-        return redirect(auth_url)
-    #toptracks = sp.current_user_top_tracks()
-    #toptracks_str = json.dumps(toptracks, indent=2).replace("\n", "<br>\n").replace(" ", "&nbsp;")
-
-    playlists = sp.current_user_playlists()
+    playlists = sp.current_user_playlists(); print('.', end='')
     playlists_info=[]
     for pl in playlists['items']:
-        plinfo, artistsInfo = get_playlist(pl['id'], True)
-        playlists_info.append((pl['name'], pl['external_urls']['spotify'], plinfo, artistsInfo))
-    playlist_str = json.dumps(playlists_info, indent=2).replace("\n", "<br>\n").replace(" ", "&nbsp;")
+        plinfo, artists_info = get_playlist(pl['id'], True)
+        playlists_info.append((pl['name'], pl['external_urls']['spotify'], plinfo, artists_info))
+    return playlists_info, artists_info
+    # playlist_str = json.dumps(playlists_info, indent=2).replace("\n", "<br>\n").replace(" ", "&nbsp;")
+    # artistsInfo_str = json.dumps(artists_info, indent=2).replace("\n", "<br>\n").replace(" ", "&nbsp;")
+    # return playlist_str + "<br><br><br>\r\n\r\n\r\nTOPTRACKS:\r\n<br>"+artistsInfo_str+"\r\n<br>" # + toptracks_str
 
-    return playlist_str + "<br><br><br>\r\n\r\n\r\nTOPTRACKS:\r\n<br>" # + toptracks_str
 def get_playlist(pl_id, clean=True):
     playlist_html = "pl_id:" + pl_id + "\r\n"
-    pl = sp.playlist(pl_id, fields="name,id,items(track)")
+    pl = sp.playlist(pl_id, fields="name,id,items(track)"); print('.', end='')
     tracks,artists = get_all_tracks_from_playlist(pl_id, clean)
     return tracks, artists
 def get_all_tracks_from_playlist(playlist_id, clean=True):
-    tracks_response = sp.playlist_tracks(playlist_id)
+    tracks_response = sp.playlist_tracks(playlist_id); print('.', end='')
     tracks = tracks_response["items"]
     while tracks_response["next"]:
-        tracks_response = sp.next(tracks_response)
+        tracks_response = sp.next(tracks_response); print('.', end='')
         tracks.extend(tracks_response["items"])
     tracks, artists = sp_clean_tracks(tracks)
     return tracks, artists
@@ -128,7 +78,7 @@ def sp_clean_tracks(tracks,clean=True):
     for track in tracks:
         tr = track["track"]
         # print("track:", track, "\r\n\r\n\r\n")
-        if clean: 
+        if clean:
             del tracks[trackInd]["added_by"]["external_urls"]  # del tr["added_by"]
             del tracks[trackInd]["added_by"]["id"]
             del tracks[trackInd]["track"]["preview_url"]  # del tr["preview_url"]
@@ -169,14 +119,14 @@ def sp_clean_tracks(tracks,clean=True):
 def getArtistInfo(artists, artist_uri, clean=True):
     if artist_uri not in artists:
         artists[artist_uri]=spArtistInfo(artist_uri,clean)
-def spArtistInfo(artist_id, clean=True): #artist: {'followers': {'total': nb}, 
-                                         #         'genres': [], 
-                                         #         'href':'https://api.spotify.com/v1/artists/id', 
-                                         #         'name': '', 
-                                         #         'popularity': nb, 
-                                         #         'type': 'artist', 
+def spArtistInfo(artist_id, clean=True): #artist: {'followers': {'total': nb},
+                                         #         'genres': [],
+                                         #         'href':'https://api.spotify.com/v1/artists/id',
+                                         #         'name': '',
+                                         #         'popularity': nb,
+                                         #         'type': 'artist',
                                          #         'uri': 'spotify:artist:id'}
-    artist = sp.artist(artist_id)
+    artist = sp.artist(artist_id); print('.', end='')
     if clean:
         del artist["external_urls"]
         del artist["followers"]["href"]
@@ -184,10 +134,25 @@ def spArtistInfo(artist_id, clean=True): #artist: {'followers': {'total': nb},
         del artist["images"]
     #print("xartist:",artist)
     return artist
-@app.route('/logout')
-def logout():
-    session.clear()
-    return redirect(url_for('home'))
 
-if __name__ == "__main__":
-    app.run(debug=True)
+SCOPE = 'user-library-read,playlist-read-private,user-top-read'
+sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id="8d7cb1e90e734ddfa3f10120ecc5ecd6",
+                                               client_secret="793a2b51873f4ccfa917efff8130f980",
+                                               redirect_uri="http://localhost:8501/",
+                                               scope=SCOPE))
+print("Progress:", sep='',end='')
+playlists_info, artists_info1=get_playlists()
+toptracks_info, artists_info2=get_current_user_top_tracks()
+artists_info1.update(artists_info2)
+
+playlist_str = json.dumps(playlists_info, indent=2)
+toptracks_str = json.dumps(toptracks_info, indent=2)
+artistsInfo_str = json.dumps(artists_info1, indent=2)
+
+print("Playlists:")
+print(playlist_str)
+print("\r\n\r\n\r\nTop Tracks:")
+print(toptracks_str)
+print("\r\n\r\n\r\nArtists:")
+print(artistsInfo_str)
+
