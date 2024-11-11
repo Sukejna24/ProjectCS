@@ -3,7 +3,21 @@ import streamlit as st
 
 def main():
 
-    
+    # Seitenleiste mit Text und anderen Elementen
+    st.sidebar.write("Dies ist die Seitenleiste")
+    st.sidebar.write("Hier kannst du zusätzliche Informationen anzeigen oder Filter auswählen.")
+
+    # Beispiel für einen Slider in der Seitenleiste
+    value = st.sidebar.slider("Wähle eine Zahl", 0, 100, 50)
+
+    # Beispiel für eine Auswahlbox in der Seitenleiste
+    option = st.sidebar.selectbox("Wähle eine Option", ["Option 1", "Option 2", "Option 3"])
+
+    # Hauptbereich
+    st.write("Hauptbereich")
+    st.write(f"Ausgewählte Zahl: {value}")
+    st.write(f"Ausgewählte Option: {option}")
+
     st.title("Spotify Melody Match")
     st.write("Willkommen bei - Melody Match! Finde die Playlist für dich und deine Freunde")
 
@@ -43,7 +57,7 @@ def main():
 
     st.slider("tempo", min_value = 0.0, max_value=1.0, value = 0.5, step = 0.1)
     Lieblingssong = st.text_input("Dein Song:")
-    st.sidebar.write("This is a sidebar")
+    
 if __name__ == "__main__":
     main()
     
