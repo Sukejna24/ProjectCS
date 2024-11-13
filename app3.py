@@ -3,6 +3,11 @@ import streamlit as st
 
 def main():
 
+    
+    backgroundColor="#025e17"
+    secondaryBackgroundColor="#0c0101"
+    textColor="#efe7e7"
+
     # Seitenleiste mit Text und anderen Elementen
     st.sidebar.write("Dies ist die Seitenleiste")
     st.sidebar.write("Hier kannst du zusätzliche Informationen anzeigen oder Filter auswählen.")
