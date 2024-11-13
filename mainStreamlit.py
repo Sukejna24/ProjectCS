@@ -275,13 +275,15 @@ if st.session_state["signed_in"]:
     if debug: print("\r\nPlaylists started!")
     st.text("Jetzt werden Playlists, Top Tracks und alle Künstler zu diesen geladen. Etwas Geduld ...")
     st.subheader("Playlists:")
-    playlists_info, artists_info1=get_playlists()
+    #important keep get_playlists
+    playlists_info, artists_info1=get_playlists() 
     playlist_str = json.dumps(playlists_info, indent=2)
     st.code(playlist_str, language="json", line_numbers=True)
 
 
     if debug: print("\r\nTop Tracks started!")
     st.subheader("\r\nTop Tracks:")
+    #important keep get_current_user_top_tracks
     toptracks_info, artists_info2=get_current_user_top_tracks()
     toptracks_str = json.dumps(toptracks_info, indent=2)
     st.code(toptracks_str, language="json", line_numbers=True)
