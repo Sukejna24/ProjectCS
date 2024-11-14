@@ -3,17 +3,9 @@ import streamlit as st
 
 def main():
 
-    # Erstelle zwei gleich breite Spalten
-    col1, col2 = st.columns(2)
-
     # Seitenleiste mit Text und anderen Elementen
-    with col1:
-        st.sidebar.header("Do you like the application?")
-        st.sidebar.write("Please rate your experience with us")
-
-    with col2:
-        # Bild-URL
-        st.image("https://assets.turbologo.com/blog/en/2021/07/20045641/Spotify_logo_symbol.png", width=90)
+    st.sidebar.header("Do you like the application?")
+    st.sidebar.write("Please rate your experience with us")
     
     # Setze die Sterne als Buttons
     ### Benutzer kann auf einen der Buttons klicken, um eine Bewertung abzugeben
@@ -28,11 +20,19 @@ def main():
 
     # Beispiel für eine Auswahlbox in der Seitenleiste
     option = st.sidebar.selectbox("Wähle eine Option", ["Option 1", "Option 2", "Option 3"])
+   
+    # Erstelle zwei gleich breite Spalten
+    col1, col2 = st.columns(2)
 
     #Hauptbereich
-    st.title("Spotify Melody Match")
-    st.write("Welcome to Melody Match! Find the perfect playlist for you and your friends.")
+    with col1:
+        st.title("Spotify Melody Match")
+        st.write("Welcome to Melody Match! Find the perfect playlist for you and your friends.")
 
+    with col2:
+        # Bild-URL
+        st.image("https://assets.turbologo.com/blog/en/2021/07/20045641/Spotify_logo_symbol.png", width=90)
+    
     # Musikpräferenzen
     st.header("Find your Match!")
 
