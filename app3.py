@@ -63,20 +63,19 @@ def main():
             }
         </style>
     """, unsafe_allow_html=True)
-
-    # Den Container mit CSS-Klasse stylen, ohne HTML-Tags in Streamlit zu mischen
-    st.markdown('<div class="custom-container">', unsafe_allow_html=True)
     
+    # Container und Widgets ohne HTML-Tags mischen
+    st.markdown('<div class="custom-container">', unsafe_allow_html=True)
+
     # Widgets innerhalb des Containers anzeigen
     st.header("Choose the attributes of your desired Playlist")
     st.slider("Tempo", min_value=0.0, max_value=1.0, value=0.4, step=0.2)
     st.slider("Valence", min_value=0.0, max_value=1.0, value=0.4, step=0.2)
     st.slider("Energy", min_value=0.0, max_value=1.0, value=0.4, step=0.2)
     st.slider("Danceability", min_value=0.0, max_value=1.0, value=0.4, step=0.2)
-    
-    # Den Container schließen (damit der Rahmen endet)
-    st.markdown('</div>', unsafe_allow_html=True)
 
+    # Container schließen
+    st.markdown('</div>', unsafe_allow_html=True)
 
     if st.button("Search Playlists"):
         Lieblingssong = st.text_input("Dein Song:")
