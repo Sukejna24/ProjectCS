@@ -49,7 +49,7 @@ def main():
         st.write("Recommended songs for you could be: ...")
     
     # Bild-URL
-    image_url = "https://example.com/path_to_your_image.jpg"
+    image_url = "https://assets.turbologo.com/blog/en/2021/07/20045641/Spotify_logo_symbol.png"
 
     # HTML und CSS, um das Bild als Button darzustellen
     html_code = f"""
