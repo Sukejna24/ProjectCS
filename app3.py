@@ -3,11 +3,18 @@ import streamlit as st
 
 def main():
 
+    # Erstelle zwei gleich breite Spalten
+    col1, col2 = st.columns(2)
 
     # Seitenleiste mit Text und anderen Elementen
-    st.sidebar.header("Do you like the application?")
-    st.sidebar.write("Please rate your experience with us")
+    with col1:
+        st.sidebar.header("Do you like the application?")
+        st.sidebar.write("Please rate your experience with us")
 
+    with col2:
+        # Bild-URL
+        st.image("https://assets.turbologo.com/blog/en/2021/07/20045641/Spotify_logo_symbol.png", width=90)
+    
     # Setze die Sterne als Buttons
     ### Benutzer kann auf einen der Buttons klicken, um eine Bewertung abzugeben
     stars = ["⭐", "⭐⭐", "⭐⭐⭐", "⭐⭐⭐⭐", "⭐⭐⭐⭐⭐"]
@@ -51,9 +58,6 @@ def main():
         # Hier kommt die Logik für das Zusammenmischen der Songs
         st.write("Mixing up your preferences...")  # Placeholder für Machine Learning Logik
          # Beispielausgabe, die du später anpassen kannst
-    
-    # Bild-URL
-    st.image("https://assets.turbologo.com/blog/en/2021/07/20045641/Spotify_logo_symbol.png", width=90)
 
     #Falls kein möglicher Match
     st.write("If there was no potential match found, click below.")
