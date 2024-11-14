@@ -48,9 +48,10 @@ def main():
         
     # Button für den Mix mit Machine Learning
     if st.button("Mix Up"):
+        st.write("Mixing up your preferences...")
         # Ladebalken mit st.progress erstellen
         progress_bar = st.progress(0)
-    
+
         # Beispielhafte Ladeaktion, die 100 Schritte dauert
         for percent_complete in range(100):
             time.sleep(0.05)  # Wartezeit simuliert das Laden
