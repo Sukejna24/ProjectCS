@@ -62,9 +62,16 @@ def main():
     #Falls kein möglicher Match
     st.write("If there was no potential match found, click below.")
 
+    # Zustand für den Expander initialisieren
+    if "expander_opened" not in st.session_state:
+        st.session_state.expander_opened = True  # Beim ersten Laden offen
+
+    # Funktion zum Speichern des Expander-Zustands
+    def toggle_expander():
+        st.session_state.expander_opened = not st.session_state.expander_opened
 
     # Widgets innerhalb des Containers anzeigen
-    with st.expander("Choose the attributes of your desired Playlist"):
+    with st.expander("Choose the attributes of your desired Playlist", expanded=st.session_state.expander_opened):
         st.header("Choose the attributes of your desired Playlist")
         st.slider("Tempo", min_value=0.0, max_value=1.0, value=0.4, step=0.2)
         st.slider("Valence", min_value=0.0, max_value=1.0, value=0.4, step=0.2)
