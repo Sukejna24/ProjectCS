@@ -44,7 +44,6 @@ def main():
         st.write("Mixing up your preferences...")  # Placeholder für Machine Learning Logik
          # Beispielausgabe, die du später anpassen kannst
         st.write("Recommended songs for you could be: ...")
-    import streamlit as st
 
     # URL des Bildes
     image_url = "https://assets.turbologo.com/blog/en/2021/07/20045641/Spotify_logo_symbol.png"
