@@ -51,6 +51,16 @@ def main():
     # Zeige die ausgewählten Künstler
     if selected_artists:
         st.write(f"You selected: {', '.join(selected_artists)}")
+        
+ # Zeige die Playlists nebeneinander
+        col1, col2 = st.columns(2)
+     with col1:
+            st.subheader(selected_playlists[0])  # Titel der ersten Playlist
+            st.write("Details or tracks of the playlist go here...")  # Placeholder-Inhalt
+
+        with col2:
+            st.subheader(selected_playlists[1])  # Titel der zweiten Playlist
+            st.write("Details or tracks of the playlist go here...")  # Placeholder-Inhal
 
     # Button für den Mix mit Machine Learning
     if st.button("Mix Up"):
