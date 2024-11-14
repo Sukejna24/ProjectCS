@@ -5,8 +5,17 @@ def main():
 
 
     # Seitenleiste mit Text und anderen Elementen
-    st.sidebar.header("Dies ist die Seitenleiste")
-    st.sidebar.write("Hier kannst du zusätzliche Informationen anzeigen oder Filter auswählen.")
+    st.sidebar.header("Do you like the application?")
+    st.sidebar.write("Please rate your experience with us")
+
+    # Setze die Sterne als Buttons
+    stars = ["⭐", "⭐⭐", "⭐⭐⭐", "⭐⭐⭐⭐", "⭐⭐⭐⭐⭐"]
+    
+    # Benutzer kann auf einen der Buttons klicken, um eine Bewertung abzugeben
+    rating = st.radio("Rate this app", options=stars, index=2)  # Standardwert auf "⭐⭐⭐" setzen
+
+    # Ausgabe der gewählten Bewertung
+    st.write(f"Du hast {rating} vergeben.")
 
     # Beispiel für einen Slider in der Seitenleiste
     value = st.sidebar.slider("Wähle eine Zahl", 0, 100, 50)
