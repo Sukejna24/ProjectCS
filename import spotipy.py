@@ -2,9 +2,9 @@ import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 
 # Spotify API-Anmeldeinformationen
-CLIENT_ID = 'dein_spotify_client_id'
-CLIENT_SECRET = 'dein_spotify_client_secret'
-REDIRECT_URI = 'http://localhost:8888/callback'
+CLIENT_ID = '503970174ce54084923698fe550336f4'
+CLIENT_SECRET = '5b5397398bf84dd2a8e06b808c280e71'
+REDIRECT_URI = 'https://projectcs-kfdnyesodcfqp5dnwrihwp.streamlit.app/'
 
 # Funktion zur Authentifizierung und Erstellung eines Spotify-Objekts
 def authenticate_spotify():
