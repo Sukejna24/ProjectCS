@@ -46,7 +46,7 @@ def main():
         st.write("Recommended songs for you could be: ...")
     
     # Bild-URL
-    st.image("https://assets.turbologo.com/blog/en/2021/07/20045641/Spotify_logo_symbol.png", width=57)
+    st.image("https://assets.turbologo.com/blog/en/2021/07/20045641/Spotify_logo_symbol.png", width=90)
 
     #Falls kein möglicher Match
     st.write("No potential match found.")
