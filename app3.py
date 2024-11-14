@@ -41,7 +41,14 @@ def main():
     # Wenn mehr als 2 Künstler ausgewählt werden, zeige eine Warnung
     if len(selected_artists) > 2:
         st.warning("A maximum of 2 artists can be selected.")
-
+    
+    if len(selected_options) > 0:
+        # Wenn mindestens eine Option ausgewählt wurde, wird der Button aktiviert
+        mix_button = st.button("Mix up")
+    else:
+        # Wenn keine Auswahl getroffen wurde, wird der Button deaktiviert
+        mix_button = st.button("Mix up", disabled=True)
+    
     # Zeige die ausgewählten Künstler
     if selected_artists:
         st.write(f"You selected: {', '.join(selected_artists)}")
