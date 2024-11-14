@@ -1,7 +1,4 @@
 import streamlit as st
-from PIL import Image
-import requests
-from io import BytesIO
 
 
 def main():
@@ -49,37 +46,7 @@ def main():
         st.write("Recommended songs for you could be: ...")
     
     # Bild-URL
-    image_url = "https://assets.turbologo.com/blog/en/2021/07/20045641/Spotify_logo_symbol.png"
-
-    # Bild von der URL laden
-    response = requests.get(image_url)
-    image = Image.open(BytesIO(response.content))
-
-    # Zeige das Bild und mache es "klickbar" über eine Auswahl
-    selection = st.selectbox("Wähle eine Option", ("", "Klick auf das Bild"))
-
-    # Wenn der Benutzer die Option wählt, wird eine Aktion ausgeführt
-    if selection == "Klick auf das Bild":
-        st.image(image, caption="Bild wurde angeklickt!", use_column_width=True)
-        st.write("Das Bild wurde geklickt!")
-
-    # Bild-URL
-    image_url = "https://assets.turbologo.com/blog/en/2021/07/20045641/Spotify_logo_symbol.png"
-
-    # HTML und CSS, um das Bild als Button darzustellen
-    html_code = f"""
-        <a href="#" onclick="window.parent.postMessage({{'type': 'image_click'}}, '*')">
-         <img src="{image_url}" width="300"/>
-        </a>
-    """
-
-    # Zeige das Bild als interaktiven Button
-    st.markdown(html_code, unsafe_allow_html=True)
-
-    # Wenn das Bild geklickt wird, wird eine Aktion ausgeführt
-    # Dies funktioniert durch eine benutzerdefinierte Funktionalität in Streamlit (nach Bedarf angepasst)
-    if st.session_state.get('image_click', False):
-        st.write("Das Bild wurde geklickt!")
+    st.image("https://assets.turbologo.com/blog/en/2021/07/20045641/Spotify_logo_symbol.png", use_column_width=50)
 
     #Falls kein möglicher Match
     st.write("No potential match found.")
