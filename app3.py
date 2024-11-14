@@ -21,7 +21,7 @@ def main():
 
     with col2:
         # Bild-URL
-        st.image("https://assets.turbologo.com/blog/en/2021/07/20045641/Spotify_logo_symbol.png", width=120)
+        st.image("https://heise.cloudimg.io/v7/_www-heise-de_/imgs/18/2/3/3/6/7/4/2/spotify-1360002_1920-4bbacbcc4c3c6a37.jpeg?force_format=avif%2Cwebp%2Cjpeg&org_if_sml=1&q=30&width=1920", width=150)
     
     st.title("Spotify Melody Match")
 
