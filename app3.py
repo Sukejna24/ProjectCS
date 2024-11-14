@@ -57,6 +57,13 @@ def main():
         # Hier kommt die Logik für das Zusammenmischen der Songs
         st.write("Mixing up your preferences...")  # Placeholder für Machine Learning Logik
          # Beispielausgabe, die du später anpassen kannst
+    import time
+
+if st.button("Mix Up"):
+    with st.spinner("Mixing your playlists..."):
+        time.sleep(2)  # Simuliert Ladezeit
+    st.success("Mix completed!")
+
 
     #Falls kein möglicher Match
     st.write("If there was no potential match found, click below.")
