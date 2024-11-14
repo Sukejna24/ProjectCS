@@ -12,7 +12,7 @@ def main():
     stars = ["⭐", "⭐⭐", "⭐⭐⭐", "⭐⭐⭐⭐", "⭐⭐⭐⭐⭐"]
     
     # Benutzer kann auf einen der Buttons klicken, um eine Bewertung abzugeben
-    rating = st.radio("Rate this app", options=stars, index=2)  # Standardwert auf "⭐⭐⭐" setzen
+    rating = st.sidebar.radio("Rate this app", options=stars, index=2)  # Standardwert auf "⭐⭐⭐" setzen
 
     # Ausgabe der gewählten Bewertung
     st.write(f"Du hast {rating} vergeben.")
