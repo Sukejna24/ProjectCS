@@ -64,11 +64,12 @@ def main():
 
     # Zustand für den Expander initialisieren
     if "expander_opened" not in st.session_state:
-        st.session_state.expander_opened = True  # Beim ersten Laden offen
+        st.session_state.expander_opened = False  # Beim ersten Laden offen
 
-    # Funktion zum Speichern des Expander-Zustands
-    def toggle_expander():
-        st.session_state.expander_opened = not st.session_state.expander_opened
+    # Funktion zum Öffnen des Expanders, falls noch nicht offen
+    def open_expander():
+        if not st.session_state.expander_opened:
+            st.session_state.expander_opened = True
 
     # Widgets innerhalb des Containers anzeigen
     with st.expander("Choose the attributes of your desired Playlist", expanded=st.session_state.expander_opened):
