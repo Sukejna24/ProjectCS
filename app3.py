@@ -3,10 +3,6 @@ import streamlit as st
 
 def main():
 
-    
-    backgroundColor="#025e17"
-    secondaryBackgroundColor="#0c0101"
-    textColor="#efe7e7"
 
     # Seitenleiste mit Text und anderen Elementen
     st.sidebar.write("Dies ist die Seitenleiste")
@@ -18,29 +14,25 @@ def main():
     # Beispiel für eine Auswahlbox in der Seitenleiste
     option = st.sidebar.selectbox("Wähle eine Option", ["Option 1", "Option 2", "Option 3"])
 
-    # Hauptbereich
-    st.write("Hauptbereich")
-    st.write(f"Ausgewählte Zahl: {value}")
-    st.write(f"Ausgewählte Option: {option}")
-
+    #Hauptbereich
     st.title("Spotify Melody Match")
-    st.write("Willkommen bei - Melody Match! Finde die Playlist für dich und deine Freunde")
+    st.write("Welcome to Melody Match! Find the perfect playlist for you and your friends.")
 
     # Musikpräferenzen
-    st.header("Finde deinen Match!")
+    st.header("Find your Match!")
 
-    # Auswahlmöglichkeiten für Genres
-    playlists = ['Pop', 'Rock', "Music", 'Hip-Hop', 'Jazz', 'Classical']
-    selected_playlists = st.multiselect("Wähle deine Playlists:", playlists)
+    # Auswahl zwischen multiselect oder checkbox
+    playlists = ["Playlist 1", "Playlist 2", "Playlist 3", "Playlist 4", "Playlist 5"]
+    selected_playlists = st.multiselect("Choose 2 playlists:", playlists)
 
      # Liste der Künstler
-    artists = ["Taylor Swift", "Drake", "Beyoncé", "Adele", "The Weeknd", "Billie Eilish", "Ed Sheeran"]
+    artists = ["Playlist 1", "Playlist 2", "Playlist 3", "Playlist 4", "Playlist 5"]
 
     # Variable für ausgewählte Künstler
     selected_artists = []
 
     # Hinweis auf die maximale Auswahl
-    st.write("Wähle zwei Playlists aus:")
+    st.write("Choose 2 playlists:")
 
     # Schleife durch die Künstlerliste und Checkboxen erstellen
     for artist in artists:
@@ -49,7 +41,7 @@ def main():
 
     # Falls die maximale Anzahl erreicht ist, keine weiteren Checkboxen zulassen
         if len(selected_artists) >= 2:
-         st.warning("Maximal 2 Künstler auswählbar.")
+         st.warning("A maximum of 2 artists can be selected.")
          break
 
     # Button für den Mix mit Machine Learning
@@ -58,11 +50,18 @@ def main():
         st.write("Mixing up your preferences...")  # Placeholder für Machine Learning Logik
 
         # Beispielausgabe, die du später anpassen kannst
-        st.write("Empfohlene Songs für dich könnten sein: ...")
+        st.write("Recommended songs for you could be: ...")
 
+    #Falls kein möglicher Match
+    st.write("No potential match found.")
+    st.write("Choose the attributes of your desired Playlist")
     st.slider("tempo", min_value = 0.0, max_value=1.0, value = 0.5, step = 0.1)
-    Lieblingssong = st.text_input("Dein Song:")
-    
+    st.slider("Valence", min_value = 0.0, max_value=1.0, value = 0.5, step = 0.1)
+    st.slider("Energy", min_value = 0.0, max_value=1.0, value = 0.5, step = 0.1)
+    st.slider("Danceability", min_value = 0.0, max_value=1.0, value = 0.5, step = 0.1)
+    if st.button("Search Playlists"):
+        Lieblingssong = st.text_input("Dein Song:")
+
 if __name__ == "__main__":
     main()
     
