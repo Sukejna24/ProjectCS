@@ -9,16 +9,15 @@ def main():
     st.sidebar.write("Please rate your experience with us")
 
     # Setze die Sterne als Buttons
+    ### Benutzer kann auf einen der Buttons klicken, um eine Bewertung abzugeben
     stars = ["⭐", "⭐⭐", "⭐⭐⭐", "⭐⭐⭐⭐", "⭐⭐⭐⭐⭐"]
-    
-    # Benutzer kann auf einen der Buttons klicken, um eine Bewertung abzugeben
-    rating = st.sidebar.radio("Rate this app", options=stars, index=2)  # Standardwert auf "⭐⭐⭐" setzen
+    rating = st.sidebar.radio("", options=stars, index=2)  # Standardwert auf "⭐⭐⭐" setzen
 
     # Ausgabe der gewählten Bewertung
-    st.write(f"Du hast {rating} vergeben.")
+    st.sidebar.write(f"Du hast {rating} vergeben.")
 
     # Beispiel für einen Slider in der Seitenleiste
-    value = st.sidebar.slider("Wähle eine Zahl", 0, 100, 50)
+    value = st.sidebar.slider("Rate this app", min_value=1, max_value=5, value=3, step=1)
 
     # Beispiel für eine Auswahlbox in der Seitenleiste
     option = st.sidebar.selectbox("Wähle eine Option", ["Option 1", "Option 2", "Option 3"])
