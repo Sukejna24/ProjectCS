@@ -28,7 +28,7 @@ def main():
     with col2:
         # Bild-URL
         st.image("https://assets.turbologo.com/blog/en/2021/07/20045641/Spotify_logo_symbol.png", width=120)
-        st.title("Titel in der Mitte")
+        st.title("Spotify Melody Match")
     
     # Musikpräferenzen
     st.write("Welcome to Melody Match! Find the perfect playlist for you and your friends.")
