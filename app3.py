@@ -42,7 +42,7 @@ def main():
     if len(selected_artists) > 2:
         st.warning("A maximum of 2 artists can be selected.")
     
-    if len(selected_options) > 0:
+    if len(selected_artists) > 0:
         # Wenn mindestens eine Option ausgewählt wurde, wird der Button aktiviert
         mix_button = st.button("Mix up")
     else:
