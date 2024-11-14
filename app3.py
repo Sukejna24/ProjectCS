@@ -45,16 +45,6 @@ def main():
          # Beispielausgabe, die du später anpassen kannst
         st.write("Recommended songs for you could be: ...")
 
-    # Bild von der lokalen Festplatte einfügen
-    import streamlit as st
-
-    # Bild von einer URL einfügen
-    import streamlit as st
-
-    # Bild von einer URL einfügen
-    st.image("https://icon2.cleanpng.com/20190608/ahf/kisspng-logo-spotify-portable-network-graphics-streaming-m-alternative-investments-ruttenberg-gordon-invest-1713887887712.webp", caption="Bild aus einer URL", use_column_width=True)
-
-
     #Falls kein möglicher Match
     st.write("No potential match found.")
     st.write("Choose the attributes of your desired Playlist")
