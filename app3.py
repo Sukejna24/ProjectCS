@@ -49,14 +49,14 @@ def main():
     st.image("https://assets.turbologo.com/blog/en/2021/07/20045641/Spotify_logo_symbol.png", width=90)
 
     #Falls kein möglicher Match
-    with st.container:
+    with st.container():
         st.header("No potential match found.")
         st.write("Choose the attributes of your desired Playlist")
         st.slider("tempo", min_value = 0.0, max_value=1.0, value = 0.4, step = 0.2)
         st.slider("Valence", min_value = 0.0, max_value=1.0, value = 0.4, step = 0.2)
         st.slider("Energy", min_value = 0.0, max_value=1.0, value = 0.4, step = 0.2)
         st.slider("Danceability", min_value = 0.0, max_value=1.0, value = 0.4, step = 0.2)
-        
+
     if st.button("Search Playlists"):
         Lieblingssong = st.text_input("Dein Song:")
 
