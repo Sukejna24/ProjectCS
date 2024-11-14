@@ -44,8 +44,15 @@ def main():
         st.write("Mixing up your preferences...")  # Placeholder für Machine Learning Logik
          # Beispielausgabe, die du später anpassen kannst
         st.write("Recommended songs for you could be: ...")
+    import streamlit as st
 
-    st.image("https://assets.turbologo.com/blog/en/2021/07/20045641/Spotify_logo_symbol.png", use_column_width=300)
+    # URL des Bildes
+    image_url = "https://assets.turbologo.com/blog/en/2021/07/20045641/Spotify_logo_symbol.png"
+
+    # Zeige das Bild als "Button"
+    if st.button("Mix up!"):
+        st.image(image_url, caption="Dies ist ein Bild von der URL", use_column_width=100)
+        st.write("Das Bild wurde angezeigt!")
 
     #Falls kein möglicher Match
     st.write("No potential match found.")
