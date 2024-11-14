@@ -40,7 +40,7 @@ def main():
 
     # Wenn mehr als 2 Künstler ausgewählt werden, zeige eine Warnung
     if len(selected_artists) > 2:
-        st.warning("A maximum of 2 artists can be selected.")
+        st.warning("A maximum of 2 Playlists can be selected.")
     
     if len(selected_artists) > 0:
         mix_button = st.button("Mix up")  # Der Button wird hier einmalig definiert
