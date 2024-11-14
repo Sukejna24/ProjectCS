@@ -1,4 +1,5 @@
 import streamlit as st
+import time
 
 
 def main():
@@ -15,13 +16,6 @@ def main():
     # Ausgabe der gewählten Bewertung
     st.sidebar.write(f"Du hast {rating} vergeben.")
 
-    # Beispiel für einen Slider in der Seitenleiste
-    value = st.sidebar.slider("Rate this app", min_value=1, max_value=5, value=3, step=1)
-
-    # Beispiel für eine Auswahlbox in der Seitenleiste
-    option = st.sidebar.selectbox("Wähle eine Option", ["Option 1", "Option 2", "Option 3"])
-   
-
     # Erstelle drei Spalten, wobei die äußeren als Ränder dienen
     col1, col2, col3 = st.columns([1, 3, 1])
 
@@ -30,7 +24,7 @@ def main():
         st.image("https://assets.turbologo.com/blog/en/2021/07/20045641/Spotify_logo_symbol.png", width=120)
     
     st.title("Spotify Melody Match")
-    
+
     # Musikpräferenzen
     st.write("Welcome to Melody Match! Find the perfect playlist for you and your friends.")
     st.header("Find your Match!")
@@ -54,7 +48,16 @@ def main():
         
     # Button für den Mix mit Machine Learning
     if st.button("Mix Up"):
-        # Hier kommt die Logik für das Zusammenmischen der Songs
+        # Ladebalken mit st.progress erstellen
+        progress_bar = st.progress(0)
+    
+        # Beispielhafte Ladeaktion, die 100 Schritte dauert
+        for percent_complete in range(100):
+            time.sleep(0.05)  # Wartezeit simuliert das Laden
+            progress_bar.progress(percent_complete + 1)  # Ladebalken erhöhen
+
+        st.success("Loading complete!")  # Erfolgsmeldung nach Abschluss
+
         st.write("Mixing up your preferences...")  # Placeholder für Machine Learning Logik
          # Beispielausgabe, die du später anpassen kannst
 
