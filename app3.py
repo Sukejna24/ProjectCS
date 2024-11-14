@@ -68,3 +68,4 @@ def main():
         Lieblingssong = st.text_input("Dein Song:")
 
 if __name__ == "__main__":
+    main()
