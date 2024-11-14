@@ -29,9 +29,6 @@ def main():
     st.write("Welcome to Melody Match! Find the perfect playlist for you and your friends.")
     st.header("Find your Match!")
 
-    col4, col5 = st.columns(2)
-
-    with col4:
     # Hinweis auf die maximale Auswahl
         st.write("Choose 2 playlists:")
 
