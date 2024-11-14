@@ -48,7 +48,7 @@ def main():
         
     # Button für den Mix mit Machine Learning
     if st.button("Mix Up"):
-        st.write("Mixing up your preferences...")
+        st.write("Mixing up your preferences...") # Placeholder für Machine Learning Logik
         # Ladebalken mit st.progress erstellen
         progress_bar = st.progress(0)
 
@@ -58,10 +58,6 @@ def main():
             progress_bar.progress(percent_complete + 1)  # Ladebalken erhöhen
 
         st.success("Loading complete!")  # Erfolgsmeldung nach Abschluss
-
-        st.write("Mixing up your preferences...")  # Placeholder für Machine Learning Logik
-         # Beispielausgabe, die du später anpassen kannst
-
 
     #Falls kein möglicher Match
     st.write("If there was no potential match found, click below.")
