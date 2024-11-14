@@ -48,7 +48,14 @@ def main():
         st.write("Recommended songs for you could be: ...")
 
     # Bild von der lokalen Festplatte einfügen
-    st.image(r"C:\Users\jessy\OneDrive\Fotos\Documentos\Uni HSG\Bachelor\6. Semester\CS\CS Projekt\Bild Spotify.jpeg", caption="Dies ist ein Bild", use_column_width=True)
+    import streamlit as st
+
+    # Bild von einer URL einfügen
+    import streamlit as st
+
+    # Bild von einer URL einfügen
+    st.image("https://icon2.cleanpng.com/20190608/ahf/kisspng-logo-spotify-portable-network-graphics-streaming-m-alternative-investments-ruttenberg-gordon-invest-1713887887712.webp", caption="Bild aus einer URL", use_column_width=True)
+
 
     #Falls kein möglicher Match
     st.write("No potential match found.")
@@ -61,5 +68,3 @@ def main():
         Lieblingssong = st.text_input("Dein Song:")
 
 if __name__ == "__main__":
-    main()
-    
