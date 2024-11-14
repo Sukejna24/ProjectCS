@@ -43,7 +43,6 @@ def main():
         # Hier kommt die Logik für das Zusammenmischen der Songs
         st.write("Mixing up your preferences...")  # Placeholder für Machine Learning Logik
          # Beispielausgabe, die du später anpassen kannst
-        st.write("Recommended songs for you could be: ...")
     
     # Bild-URL
     st.image("https://assets.turbologo.com/blog/en/2021/07/20045641/Spotify_logo_symbol.png", width=90)
@@ -61,7 +60,6 @@ def main():
         st.slider("Danceability", min_value=0.0, max_value=1.0, value=0.4, step=0.2)
 
     if st.button("Search Playlists"):
-        Lieblingssong = st.text_input("Dein Song:")
-
+        st.write("Recommended songs for you could be: ...")
 if __name__ == "__main__":
     main()
