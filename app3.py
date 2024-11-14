@@ -28,7 +28,7 @@ def main():
     artists = ["Playlist 1", "Playlist 2", "Playlist 3", "Playlist 4", "Playlist 5"]
 
     # Multiselect mit einer maximalen Auswahl von 2 Playlists
-    selected_artists = st.multiselect("Select artists", artists, max_selections=2)  # Maximale Anzahl von auswählbaren Künstlern
+    selected_artists = st.multiselect(artists, max_selections=2)  # Maximale Anzahl von auswählbaren Künstlern
 
     # Wenn mehr als 2 Künstler ausgewählt werden, zeige eine Warnung
     if len(selected_artists) > 2:
@@ -64,14 +64,19 @@ def main():
         </style>
     """, unsafe_allow_html=True)
 
-    # Container erstellen und mit CSS stylen
+    # Den Container mit CSS-Klasse stylen, ohne HTML-Tags in Streamlit zu mischen
     st.markdown('<div class="custom-container">', unsafe_allow_html=True)
+    
+    # Widgets innerhalb des Containers anzeigen
     st.header("Choose the attributes of your desired Playlist")
-    st.slider("tempo", min_value = 0.0, max_value=1.0, value = 0.4, step = 0.2)
-    st.slider("Valence", min_value = 0.0, max_value=1.0, value = 0.4, step = 0.2)
-    st.slider("Energy", min_value = 0.0, max_value=1.0, value = 0.4, step = 0.2)
-    st.slider("Danceability", min_value = 0.0, max_value=1.0, value = 0.4, step = 0.2)
+    st.slider("Tempo", min_value=0.0, max_value=1.0, value=0.4, step=0.2)
+    st.slider("Valence", min_value=0.0, max_value=1.0, value=0.4, step=0.2)
+    st.slider("Energy", min_value=0.0, max_value=1.0, value=0.4, step=0.2)
+    st.slider("Danceability", min_value=0.0, max_value=1.0, value=0.4, step=0.2)
+    
+    # Den Container schließen (damit der Rahmen endet)
     st.markdown('</div>', unsafe_allow_html=True)
+
 
     if st.button("Search Playlists"):
         Lieblingssong = st.text_input("Dein Song:")
