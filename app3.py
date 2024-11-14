@@ -43,10 +43,11 @@ def main():
         st.warning("A maximum of 2 artists can be selected.")
     
     if len(selected_artists) > 0:
-        # Wenn mindestens eine Option ausgewählt wurde, wird der Button aktiviert
-        mix_button = st.button("Mix up")
-        if st.button("Mix Up"):
-            st.write("Mixing up your preferences...") # Placeholder für Machine Learning Logik
+        mix_button = st.button("Mix up")  # Der Button wird hier einmalig definiert
+        
+        if mix_button:
+            st.write("Mixing up your preferences...")  # Placeholder für Machine Learning Logik
+            
             # Ladebalken mit st.progress erstellen
             progress_bar = st.progress(0)
 
@@ -54,10 +55,10 @@ def main():
             for percent_complete in range(100):
                 time.sleep(0.05)  # Wartezeit simuliert das Laden
                 progress_bar.progress(percent_complete + 1)  # Ladebalken erhöhen
-                st.success("Loading complete!")  # Erfolgsmeldung nach Abschluss
+            st.success("Loading complete!")  # Erfolgsmeldung nach Abschluss
     else:
         # Wenn keine Auswahl getroffen wurde, wird der Button deaktiviert
-        mix_button = st.button("Mix up", disabled=True)
+        st.button("Mix up", disabled=True)
     
         
 
