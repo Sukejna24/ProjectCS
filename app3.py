@@ -1,4 +1,7 @@
 import streamlit as st
+from PIL import Image
+import requests
+from io import BytesIO
 
 
 def main():
@@ -44,14 +47,17 @@ def main():
         st.write("Mixing up your preferences...")  # Placeholder für Machine Learning Logik
          # Beispielausgabe, die du später anpassen kannst
         st.write("Recommended songs for you could be: ...")
-
-    # URL des Bildes
+        
     image_url = "https://assets.turbologo.com/blog/en/2021/07/20045641/Spotify_logo_symbol.png"
 
-    # Zeige das Bild als "Button"
-    if st.button("Mix up!"):
-        st.image(image_url, caption="Dies ist ein Bild von der URL", use_column_width=100)
-        st.write("Das Bild wurde angezeigt!")
+    # Bild von der URL laden
+    response = requests.get(image_url)
+    image = Image.open(BytesIO(response.content))
+
+    # Button mit Bild als Text
+    if st.button("Klicke auf das Bild"):
+        st.image(image, caption="Bild wurde geklickt!", use_column_width=True)
+        st.write("Aktion wurde ausgeführt!")
 
     #Falls kein möglicher Match
     st.write("No potential match found.")
