@@ -28,7 +28,7 @@ def main():
     artists = ["Playlist 1", "Playlist 2", "Playlist 3", "Playlist 4", "Playlist 5"]
 
     # Multiselect mit einer maximalen Auswahl von 2 Playlists
-    selected_artists = st.multiselect("select", artists, max_selections=2)  # Maximale Anzahl von auswählbaren Künstlern
+    selected_artists = st.multiselect("", artists, max_selections=2)  # Maximale Anzahl von auswählbaren Künstlern
 
     # Wenn mehr als 2 Künstler ausgewählt werden, zeige eine Warnung
     if len(selected_artists) > 2:
