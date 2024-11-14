@@ -51,6 +51,21 @@ def main():
     # Bild-URL
     image_url = "https://assets.turbologo.com/blog/en/2021/07/20045641/Spotify_logo_symbol.png"
 
+    # Bild von der URL laden
+    response = requests.get(image_url)
+    image = Image.open(BytesIO(response.content))
+
+    # Zeige das Bild und mache es "klickbar" über eine Auswahl
+    selection = st.selectbox("Wähle eine Option", ("", "Klick auf das Bild"))
+
+    # Wenn der Benutzer die Option wählt, wird eine Aktion ausgeführt
+    if selection == "Klick auf das Bild":
+        st.image(image, caption="Bild wurde angeklickt!", use_column_width=True)
+        st.write("Das Bild wurde geklickt!")
+
+    # Bild-URL
+    image_url = "https://assets.turbologo.com/blog/en/2021/07/20045641/Spotify_logo_symbol.png"
+
     # HTML und CSS, um das Bild als Button darzustellen
     html_code = f"""
         <a href="#" onclick="window.parent.postMessage({{'type': 'image_click'}}, '*')">
