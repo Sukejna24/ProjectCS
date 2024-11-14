@@ -49,7 +49,7 @@ def main():
     st.image("https://assets.turbologo.com/blog/en/2021/07/20045641/Spotify_logo_symbol.png", width=90)
 
     #Falls kein möglicher Match
-    st.write("No potential match found.")
+    st.write("If there was no potential match found, click below.")
 
 
     # Widgets innerhalb des Containers anzeigen
