@@ -25,24 +25,23 @@ def main():
     playlists = ["Playlist 1", "Playlist 2", "Playlist 3", "Playlist 4", "Playlist 5"]
     selected_playlists = st.multiselect("Choose 2 playlists:", playlists)
 
-     # Liste der Künstler
-    artists = ["Playlist 1", "Playlist 2", "Playlist 3", "Playlist 4", "Playlist 5"]
-
-    # Variable für ausgewählte Künstler
-    selected_artists = []
-
     # Hinweis auf die maximale Auswahl
     st.write("Choose 2 playlists:")
 
     # Schleife durch die Künstlerliste und Checkboxen erstellen
-    for artist in artists:
-        if st.checkbox(artist, key=artist):
-            selected_artists.append(artist)
 
-    # Falls die maximale Anzahl erreicht ist, keine weiteren Checkboxen zulassen
-        if len(selected_artists) >= 2:
-         st.warning("A maximum of 2 artists can be selected.")
-         break
+    artists = ["Playlist 1", "Playlist 2", "Playlist 3", "Playlist 4", "Playlist 5"]
+
+    # Multiselect mit einer maximalen Auswahl von 2 Künstlern
+    selected_artists = st.multiselect("Select artists", artists, max_selections=2)  # Maximale Anzahl von auswählbaren Künstlern
+
+    # Wenn mehr als 2 Künstler ausgewählt werden, zeige eine Warnung
+    if len(selected_artists) > 2:
+        st.warning("A maximum of 2 artists can be selected.")
+
+    # Zeige die ausgewählten Künstler
+    if selected_artists:
+        st.write(f"You selected: {', '.join(selected_artists)}")
 
     # Button für den Mix mit Machine Learning
     if st.button("Mix Up"):
