@@ -45,6 +45,8 @@ def main():
          # Beispielausgabe, die du später anpassen kannst
         st.write("Recommended songs for you could be: ...")
 
+    st.image("https://icon2.cleanpng.com/20190608/ahf/kisspng-logo-spotify-portable-network-graphics-streaming-m-alternative-investments-ruttenberg-gordon-invest-1713887887712.webp", caption="Dies ist ein Bild", use_column_width=True)
+
     #Falls kein möglicher Match
     st.write("No potential match found.")
     st.write("Choose the attributes of your desired Playlist")
