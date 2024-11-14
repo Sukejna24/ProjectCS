@@ -48,7 +48,7 @@ def main():
         st.write("Recommended songs for you could be: ...")
 
     # Bild von der lokalen Festplatte einfügen
-    st.image("C:\Users\jessy\OneDrive\Fotos\Documentos\Uni HSG\Bachelor\6. Semester\CS\CS Projekt\Bild Spotify.jpeg", caption="Dies ist ein Bild", use_column_width=True)
+    st.image(r"C:\Users\jessy\OneDrive\Fotos\Documentos\Uni HSG\Bachelor\6. Semester\CS\CS Projekt\Bild Spotify.jpeg", caption="Dies ist ein Bild", use_column_width=True)
 
     #Falls kein möglicher Match
     st.write("No potential match found.")
