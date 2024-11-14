@@ -3,8 +3,6 @@ import streamlit as st
 
 def main():
 
-    #Design anpassen
-    st.set_page_config(page_title="My Streamlit App", page_icon=":guardsman:", layout="wide", initial_sidebar_state="expanded")
 
     # Seitenleiste mit Text und anderen Elementen
     st.sidebar.header("Dies ist die Seitenleiste")
