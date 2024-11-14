@@ -47,17 +47,24 @@ def main():
         st.write("Mixing up your preferences...")  # Placeholder für Machine Learning Logik
          # Beispielausgabe, die du später anpassen kannst
         st.write("Recommended songs for you could be: ...")
-        
-    image_url = "https://assets.turbologo.com/blog/en/2021/07/20045641/Spotify_logo_symbol.png"
+    
+    # Bild-URL
+    image_url = "https://example.com/path_to_your_image.jpg"
 
-    # Bild von der URL laden
-    response = requests.get(image_url)
-    image = Image.open(BytesIO(response.content))
+    # HTML und CSS, um das Bild als Button darzustellen
+    html_code = f"""
+        <a href="#" onclick="window.parent.postMessage({{'type': 'image_click'}}, '*')">
+         <img src="{image_url}" width="300"/>
+        </a>
+    """
 
-    # Button mit Bild als Text
-    if st.button("Klicke auf das Bild"):
-        st.image(image, caption="Bild wurde geklickt!", use_column_width=True)
-        st.write("Aktion wurde ausgeführt!")
+    # Zeige das Bild als interaktiven Button
+    st.markdown(html_code, unsafe_allow_html=True)
+
+    # Wenn das Bild geklickt wird, wird eine Aktion ausgeführt
+    # Dies funktioniert durch eine benutzerdefinierte Funktionalität in Streamlit (nach Bedarf angepasst)
+    if st.session_state.get('image_click', False):
+        st.write("Das Bild wurde geklickt!")
 
     #Falls kein möglicher Match
     st.write("No potential match found.")
