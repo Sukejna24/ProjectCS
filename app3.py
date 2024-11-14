@@ -51,31 +51,14 @@ def main():
     #Falls kein möglicher Match
     st.write("No potential match found.")
 
-    # CSS für den Container erstellen
-    st.markdown("""
-        <style>
-            .custom-container {
-                border: 2px solid #4CAF50;  /* Grüner Rahmen */
-                padding: 20px;
-                margin: 20px;
-                border-radius: 10px;
-                background-color: #f0f0f0;  /* Helles Grau als Hintergrund */
-            }
-        </style>
-    """, unsafe_allow_html=True)
-    
-    # Container und Widgets ohne HTML-Tags mischen
-    st.markdown('<div class="custom-container">', unsafe_allow_html=True)
 
     # Widgets innerhalb des Containers anzeigen
-    st.header("Choose the attributes of your desired Playlist")
-    st.slider("Tempo", min_value=0.0, max_value=1.0, value=0.4, step=0.2)
-    st.slider("Valence", min_value=0.0, max_value=1.0, value=0.4, step=0.2)
-    st.slider("Energy", min_value=0.0, max_value=1.0, value=0.4, step=0.2)
-    st.slider("Danceability", min_value=0.0, max_value=1.0, value=0.4, step=0.2)
-
-    # Container schließen
-    st.markdown('</div>', unsafe_allow_html=True)
+    with st.expander("Choose the attributes of your desired Playlist"):
+        st.header("Choose the attributes of your desired Playlist")
+        st.slider("Tempo", min_value=0.0, max_value=1.0, value=0.4, step=0.2)
+        st.slider("Valence", min_value=0.0, max_value=1.0, value=0.4, step=0.2)
+        st.slider("Energy", min_value=0.0, max_value=1.0, value=0.4, step=0.2)
+        st.slider("Danceability", min_value=0.0, max_value=1.0, value=0.4, step=0.2)
 
     if st.button("Search Playlists"):
         Lieblingssong = st.text_input("Dein Song:")
