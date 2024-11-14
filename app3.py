@@ -21,16 +21,14 @@ def main():
     # Beispiel für eine Auswahlbox in der Seitenleiste
     option = st.sidebar.selectbox("Wähle eine Option", ["Option 1", "Option 2", "Option 3"])
    
-    # Erstelle zwei gleich breite Spalten
-    col1, col2 = st.columns(2)
 
-    #Hauptbereich
-    with col1:
-        st.title("Spotify Melody Match")
+    # Erstelle drei Spalten, wobei die äußeren als Ränder dienen
+    col1, col2, col3 = st.columns([1, 3, 1])
 
     with col2:
         # Bild-URL
         st.image("https://assets.turbologo.com/blog/en/2021/07/20045641/Spotify_logo_symbol.png", width=120)
+        st.title("Titel in der Mitte")
     
     # Musikpräferenzen
     st.write("Welcome to Melody Match! Find the perfect playlist for you and your friends.")
