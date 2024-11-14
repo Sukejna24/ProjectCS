@@ -1,2 +1,5 @@
 streamlit
 flask
+PIL
+request
+io
