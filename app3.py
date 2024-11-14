@@ -27,13 +27,13 @@ def main():
     #Hauptbereich
     with col1:
         st.title("Spotify Melody Match")
-        st.write("Welcome to Melody Match! Find the perfect playlist for you and your friends.")
 
     with col2:
         # Bild-URL
-        st.image("https://assets.turbologo.com/blog/en/2021/07/20045641/Spotify_logo_symbol.png", width=90)
+        st.image("https://assets.turbologo.com/blog/en/2021/07/20045641/Spotify_logo_symbol.png", width=120)
     
     # Musikpräferenzen
+    st.write("Welcome to Melody Match! Find the perfect playlist for you and your friends.")
     st.header("Find your Match!")
 
     # Hinweis auf die maximale Auswahl
