@@ -65,14 +65,13 @@ def main():
     """, unsafe_allow_html=True)
 
     # Container erstellen und mit CSS stylen
-    with st.container():
-        st.markdown('<div class="custom-container">', unsafe_allow_html=True)
-        st.header("Choose the attributes of your desired Playlist")
-        st.slider("tempo", min_value = 0.0, max_value=1.0, value = 0.4, step = 0.2)
-        st.slider("Valence", min_value = 0.0, max_value=1.0, value = 0.4, step = 0.2)
-        st.slider("Energy", min_value = 0.0, max_value=1.0, value = 0.4, step = 0.2)
-        st.slider("Danceability", min_value = 0.0, max_value=1.0, value = 0.4, step = 0.2)
-        st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('<div class="custom-container">', unsafe_allow_html=True)
+    st.header("Choose the attributes of your desired Playlist")
+    st.slider("tempo", min_value = 0.0, max_value=1.0, value = 0.4, step = 0.2)
+    st.slider("Valence", min_value = 0.0, max_value=1.0, value = 0.4, step = 0.2)
+    st.slider("Energy", min_value = 0.0, max_value=1.0, value = 0.4, step = 0.2)
+    st.slider("Danceability", min_value = 0.0, max_value=1.0, value = 0.4, step = 0.2)
+    st.markdown('</div>', unsafe_allow_html=True)
 
     if st.button("Search Playlists"):
         Lieblingssong = st.text_input("Dein Song:")
