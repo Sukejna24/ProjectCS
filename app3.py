@@ -16,6 +16,12 @@ def main():
     # Ausgabe der gewählten Bewertung
     st.sidebar.write(f"Du hast {rating} vergeben.")
 
+    [theme]
+    primaryColor = "#1DB954"
+    backgroundColor = "#191414"
+    secondaryBackgroundColor = "#282828"
+    textColor = "#FFFFFF"
+
     # Erstelle drei Spalten, wobei die äußeren als Ränder dienen
     col1, col2, col3 = st.columns([1, 3, 1])
 
