@@ -1,2 +1,7 @@
 streamlit
 flask
+json
+spotipy
+streamlit
+mysql
+time
