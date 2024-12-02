@@ -2,42 +2,6 @@ import streamlit as st
 import time
 
 def main():
-    # Benutzerdefiniertes CSS hinzufügen, angepasst an Spotify-Farben
-    st.markdown("""
-    <style>
-        /* Hintergrundfarbe der gesamten App auf Spotify-Dunkelgrün ändern */
-        .stApp {
-            background-color: #121212;} /* Spotify Dark */
-        
-        /* Farbe und Layout der Seitenleiste anpassen */
-        .sidebar .sidebar-content {
-            background-color: #191414; /* Dunkles Grau, fast schwarz, passend zur Sidebar */
-            color: white;}
-
-        /* Schriftfarbe für alle Textkomponenten anpassen */
-        .stMarkdown, .stTitle, .stHeader, .stSubheader, .stText, .stTextInput, .stTextArea, .stCheckbox, .stRadio, .stButton, .stSelectbox, .stMultiselect {
-            color: white; /* Weiße Schrift für alle Text-Elemente */
-        }
-        
-        /* Stil der Button-Elemente ändern */
-        .stButton > button {
-            background-color: #1db954; /* Spotify Grüner Button */
-            color: white;
-            font-size: 16px;
-            padding: 10px;
-            border-radius: 5px;
-            border: none;} /* Kein Rand für den Button */
-        
-        /* Hover-Effekt für Buttons */
-        .stButton > button:hover {
-            background-color: #1ed760;} /* Ein helleres Grün für den Hover-Effekt */
-        
-        /* Stil von Eingabefeldern und Slidern anpassen */
-        .stSlider .st-bb {
-            color: #1db954; /* Spotify Grün für Slider-Ticks */}
-    </style>
-    """, unsafe_allow_html=True)
-
 
     # Seitenleiste mit Text und anderen Elementen
     st.sidebar.header("Do you like the application?")
