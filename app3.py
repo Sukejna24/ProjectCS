@@ -2,42 +2,42 @@ import streamlit as st
 import time
 
 def main():
-     # Benutzerdefiniertes CSS hinzufügen
+    # Benutzerdefiniertes CSS hinzufügen, angepasst an Spotify-Farben
     st.markdown("""
     <style>
-        /* Hintergrundfarbe der gesamten App ändern */
+        /* Hintergrundfarbe der gesamten App auf Spotify-Dunkelgrün ändern */
         .stApp {
-            background-color: #121212;}
-
+            background-color: #121212;} /* Spotify Dark */
+        
         /* Farbe und Layout der Seitenleiste anpassen */
         .sidebar .sidebar-content {
-            background-color: #191414;
+            background-color: #191414; /* Dunkles Grau, fast schwarz, passend zur Sidebar */
             color: white;}
 
-        /* Schriftgröße und Stil von Überschriften ändern */
+        /* Schriftfarbe und Layout von Überschriften ändern */
         .stTitle {
             font-size: 36px;
             font-weight: bold;
             color: white;} /* Weiße Schrift für Titel */
-
+        
         /* Stil der Button-Elemente ändern */
         .stButton > button {
-            background-color: #4CAF50; /* Grüner Button */
+            background-color: #1db954; /* Spotify Grüner Button */
             color: white;
             font-size: 16px;
             padding: 10px;
-            border-radius: 5px;}
-
+            border-radius: 5px;
+            border: none;} /* Kein Rand für den Button */
+        
         /* Hover-Effekt für Buttons */
         .stButton > button:hover {
-            background-color: #45a049;}
-
+            background-color: #1ed760;} /* Ein helleres Grün für den Hover-Effekt */
+        
         /* Stil von Eingabefeldern und Slidern anpassen */
         .stSlider .st-bb {
-            color: #ff6347; /* Farbe des Slider-Ticks */}
-
+            color: #1db954; /* Spotify Grün für Slider-Ticks */}
     </style>
-""", unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
 
     # Seitenleiste mit Text und anderen Elementen
