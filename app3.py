@@ -28,7 +28,7 @@ def main():
 
     with col2:
         # Bild-URL
-        st.image("https://heise.cloudimg.io/v7/_www-heise-de_/imgs/18/2/3/3/6/7/4/2/spotify-1360002_1920-4bbacbcc4c3c6a37.jpeg?force_format=avif%2Cwebp%2Cjpeg&org_if_sml=1&q=30&width=1920", width=150)
+        st.image("https://cdn.imgbin.com/21/15/16/imgbin-spotify-logo-streaming-media-music-others-pNaFPrUM5KtFtEBChU2jUxhQ9.jpg", width=150)
     
     st.title("Spotify Melody Match")
 
