@@ -14,9 +14,9 @@ def main():
             background-color: #191414; /* Dunkles Grau, fast schwarz, passend zur Sidebar */
             color: white;}
 
-        /* Schriftfarbe und Layout von Überschriften ändern */
-        .stTitle, .stHeader, .stSubheader, .stText {
-            color: white; /* Weiße Schrift für Titel und Text */
+        /* Schriftfarbe für alle Textkomponenten anpassen */
+        .stMarkdown, .stTitle, .stHeader, .stSubheader, .stText, .stTextInput, .stTextArea, .stCheckbox, .stRadio, .stButton, .stSelectbox, .stMultiselect {
+            color: white; /* Weiße Schrift für alle Text-Elemente */
         }
         
         /* Stil der Button-Elemente ändern */
