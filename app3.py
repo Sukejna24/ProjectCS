@@ -1,6 +1,41 @@
 import streamlit as st
 import time
 
+# Benutzerdefiniertes CSS hinzufügen
+st.markdown("""
+    <style>
+        /* Hintergrundfarbe der gesamten App ändern */
+        .stApp {
+            background-color: #f0f2f6;}
+
+        /* Farbe und Layout der Seitenleiste anpassen */
+        .sidebar .sidebar-content {
+            background-color: #333;
+            color: white;}
+
+        /* Schriftgröße und Stil von Überschriften ändern */
+        .stTitle {
+            font-size: 36px;
+            font-weight: bold;}
+
+        /* Stil der Button-Elemente ändern */
+        .stButton > button {
+            background-color: #4CAF50; /* Grüner Button */
+            color: white;
+            font-size: 16px;
+            padding: 10px;
+            border-radius: 5px;}
+
+        /* Hover-Effekt für Buttons */
+        .stButton > button:hover {
+            background-color: #45a049;}
+
+        /* Stil von Eingabefeldern und Slidern anpassen */
+        .stSlider .st-bb {
+            color: #ff6347; /* Farbe des Slider-Ticks */}
+
+    </style>
+""", unsafe_allow_html=True)
 
 def main():
 
