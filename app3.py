@@ -2,7 +2,14 @@ import streamlit as st
 import time
 
 def main():
-
+    st.markdown(""" <style> .stApp { background-color: #121212;}
+    .sidebar .sidebar-content {background-color: #191414; color: white;}
+    .stMarkdown, .stTitle, .stHeader, .stSsubheader, .stText, .stTextinput, .stTextarea, .stCheckbox, .stRadio, .stButton, .stSelectbox, .stMultiselect { color: white;}
+    .stButton > button {background-color: #1db954; color: white; font size: 16px; padding: 10px; border-radius: 5px; border: none;}
+    .stButton > button:hover { background color: #1ed760;}
+    .stSlider .st-bb {color: #1db954}
+    </style> """, unsafe_allow_html=True)
+    
     # Seitenleiste mit Text und anderen Elementen
     st.sidebar.header("Do you like the application?")
     st.sidebar.write("Please rate your experience with us")
