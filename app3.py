@@ -15,10 +15,9 @@ def main():
             color: white;}
 
         /* Schriftfarbe und Layout von Überschriften ändern */
-        .stTitle {
-            font-size: 36px;
-            font-weight: bold;
-            color: white;} /* Weiße Schrift für Titel */
+        .stTitle, .stHeader, .stSubheader, .stText {
+            color: white; /* Weiße Schrift für Titel und Text */
+        }
         
         /* Stil der Button-Elemente ändern */
         .stButton > button {
