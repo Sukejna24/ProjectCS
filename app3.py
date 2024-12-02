@@ -1,7 +1,9 @@
 import streamlit as st
 import time
 
-# Benutzerdefiniertes CSS hinzufügen
+def main():
+
+    # Benutzerdefiniertes CSS hinzufügen
 st.markdown("""
     <style>
         /* Hintergrundfarbe der gesamten App ändern */
@@ -37,7 +39,6 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-def main():
 
     # Seitenleiste mit Text und anderen Elementen
     st.sidebar.header("Do you like the application?")
