@@ -4,7 +4,7 @@ import time
 def main():
     st.markdown(""" <style> .stApp { background-color: #121212;}
     .sidebar .sidebar-content {background-color: #191414; color: white;}
-    .sidebar .sidebar-header h1, .sidebar .sidebarheader h2, .sidebar .sidebarheader h3 {color: black !important;}
+    .sidebar .sidebar-header h1, .sidebar .sidebar-header h2, .sidebar .sidebar-header h3 {color: black !important;}
     .stMarkdown, .stTitle, .stHeader, .stSsubheader, .stText, .stTextinput, .stTextarea, .stCheckbox, .stRadio, .stButton, .stSelectbox, .stMultiselect { color: white;}
     .stButton > button {background-color: #1db954; color: white; font size: 16px; padding: 10px; border-radius: 5px; border: none;}
     .stButton > button:hover { background color: #1ed760;}
