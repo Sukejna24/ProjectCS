@@ -11,7 +11,7 @@ def main():
 
         /* Farbe und Layout der Seitenleiste anpassen */
         .sidebar .sidebar-content {
-            background-color: #333;
+            background-color: #191414;
             color: white;}
 
         /* Schriftgröße und Stil von Überschriften ändern */
