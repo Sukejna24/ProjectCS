@@ -3,7 +3,7 @@ import time
 
 def main():
      # Benutzerdefiniertes CSS hinzufügen
-st.markdown("""
+    st.markdown("""
     <style>
         /* Hintergrundfarbe der gesamten App ändern */
         .stApp {
