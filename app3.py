@@ -2,8 +2,7 @@ import streamlit as st
 import time
 
 def main():
-
-    # Benutzerdefiniertes CSS hinzufügen
+     # Benutzerdefiniertes CSS hinzufügen
 st.markdown("""
     <style>
         /* Hintergrundfarbe der gesamten App ändern */
