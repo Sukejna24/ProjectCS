@@ -9,6 +9,7 @@ def main():
     .stButton > button {background-color: #1db954; color: white; font size: 16px; padding: 10px; border-radius: 5px; border: none;}
     .stButton > button:hover { background color: #1ed760;}
     .stSlider .st-bb {color: #1db954}
+    .stMultiselect select { background-color: #1ed760; color: white; border: none; border-radius: 5px; padding: 8px;}
     </style> """, unsafe_allow_html=True)
     
     # Seitenleiste mit Text und anderen Elementen
