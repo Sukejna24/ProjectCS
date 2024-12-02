@@ -12,6 +12,7 @@ def main():
     .stCode { background-color: #1ed760; color: white;} 
     .stMultiselect select { background-color: #1ed760; color: white; border: none; border-radius: 5px; padding: 8px;}
     .stMultiselect div.stSelectbox {background-color: #1ed760; border-radius: 5px;}
+    .stMultiSelect [data-baseweb="tag"] {background-color: #1ed760;}
     </style> """, unsafe_allow_html=True)
     
     # Seitenleiste mit Text und anderen Elementen
