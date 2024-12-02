@@ -17,7 +17,8 @@ def main():
         /* Schriftgröße und Stil von Überschriften ändern */
         .stTitle {
             font-size: 36px;
-            font-weight: bold;}
+            font-weight: bold;
+            color: white;} /* Weiße Schrift für Titel */
 
         /* Stil der Button-Elemente ändern */
         .stButton > button {
