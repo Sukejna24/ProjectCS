@@ -7,7 +7,7 @@ def main():
     <style>
         /* Hintergrundfarbe der gesamten App ändern */
         .stApp {
-            background-color: #f0f2f6;}
+            background-color: #121212;}
 
         /* Farbe und Layout der Seitenleiste anpassen */
         .sidebar .sidebar-content {
