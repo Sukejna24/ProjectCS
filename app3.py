@@ -156,7 +156,7 @@ def main():
     # Widgets innerhalb des Containers anzeigen
     with st.expander("Choose the attributes of your desired Playlist", expanded=st.session_state.expander_opened):
         st.header("Choose the attributes of your desired Playlist")
-        tempo_range = st.slider("Tempo", min_value=0.0 max_value=300.00, value=(0.0, 300.00), step=50)
+        tempo_range = st.slider("Tempo", min_value=0.0, max_value=300.00, value=(0.0, 300.00), step=50)
         valence_range = st.slider("Valence", min_value=0.0, max_value=1.0, value=(0.0, 1.0), step=0.1)
         energy_range = st.slider("Energy", min_value=0.0, max_value=1.0, value=(0.0, 1.0), step=0.1)
         danceability_range = st.slider("Danceability", min_value=0.0, max_value=1.0, value=(0.0, 1.0), step=0.1)
