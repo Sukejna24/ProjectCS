@@ -111,7 +111,10 @@ def main():
     st.write(f"Details zum Song: {selected_song}")
     st.write(song_info)
 
-    
+    #Visualisierung zur Tanzbarkeit des Songs
+    if 'danceability' in song_info.columns:
+        st.line_chart(song_info['danceability'])
+
     # Seitenleiste mit Text und anderen Elementen
     st.sidebar.header("Do you like the application?")
     st.sidebar.write("Please rate your experience with us")
