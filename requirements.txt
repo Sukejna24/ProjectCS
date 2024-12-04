@@ -3,5 +3,4 @@ flask
 spotipy
 streamlit
 PyMySQl
-bcrypt
 pandas
