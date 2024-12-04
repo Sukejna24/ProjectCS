@@ -1,8 +1,77 @@
 import streamlit as st
 import time
+import sqlite3
+import bcrypt
+
 
 def main():
 
+    # Datenbank einrichten
+    conn = sqlite3.connect('users.db')
+    c = conn.cursor()
+    c.execute('''CREATE TABLE IF NOT EXISTS users (username TEXT, password TEXT)''')
+    conn.commit()
+
+    # Hash-Funktion für Passwörter
+    def hash_password(password):
+        return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+
+    def check_password(password, hashed):
+        return bcrypt.checkpw(password.encode('utf-8'), hashed)
+
+    # Registrierung
+    def register_user(username, password):
+        hashed_password = hash_password(password)
+        c.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, hashed_password))
+        conn.commit()
+
+    # Überprüfen, ob Benutzer existiert
+    def user_exists(username):
+        c.execute("SELECT * FROM users WHERE username = ?", (username,))
+        return c.fetchone()
+
+    # Login überprüfen
+    def login_user(username, password):
+        c.execute("SELECT * FROM users WHERE username = ?", (username,))
+        user = c.fetchone()
+        if user and check_password(password, user[1]):
+            return True
+        return False
+
+    #   Streamlit-Anwendung
+    st.title("Login & Registrierung")
+
+    # Session-Handling
+    if 'logged_in' not in st.session_state:
+        st.session_state.logged_in = False
+    if 'username' not in st.session_state:
+        st.session_state.username = ""
+
+    # Login oder Registrierung anzeigen
+    if not st.session_state.logged_in:
+        option = st.selectbox("Aktion wählen", ["Login", "Registrieren"])
+    
+        username = st.text_input("Benutzername")
+        password = st.text_input("Passwort", type="password")
+
+        if option == "Registrieren":
+            if st.button("Registrieren"):
+                if user_exists(username):
+                    st.warning("Benutzername existiert bereits!")
+                else:
+                    register_user(username, password)
+                    st.success("Registrierung erfolgreich! Bitte einloggen.")
+        elif option == "Login":
+            if st.button("Login"):
+                if login_user(username, password):
+                    st.session_state.logged_in = True
+                    st.session_state.username = username
+                    st.success(f"Willkommen, {username}!")
+                else:
+                    st.error("Falscher Benutzername oder Passwort.")
+    else:
+        st.success(f"Eingeloggt als: {st.session_state.username}")
+        st.button("Logout", on_click=lambda: st.session_state.update({"logged_in": False, "username": ""}))
 
     
     # Seitenleiste mit Text und anderen Elementen
