@@ -4,3 +4,4 @@ spotipy
 streamlit
 PyMySQl
 bcrypt
+pandas
