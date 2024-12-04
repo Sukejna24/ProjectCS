@@ -20,16 +20,17 @@ def main():
     # Anzeige der ersten 5 Zeilen des Datensatzes
     st.write(df.head())
 
-    # Erstelle drei Spalten, wobei die äußeren als Ränder dienen
+    # Erstelle drei Spalten, wobei die äußeren als Ränder dienen um das Bild in der Mitte zu zentrieren
     col1, col2, col3 = st.columns([1, 3, 1])
 
+    #Einfügen des Spotify logos
     with col2:
         # Bild-URL
         st.image("https://upload.wikimedia.org/wikipedia/commons/7/71/Spotify.png", width=150)
     
     st.title("Spotify Melody Match")
 
-    # Datenbank einrichten
+    # Datenbank einrichten für den Login einrichten
     conn = sqlite3.connect('users.db')
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS users (username TEXT, password TEXT)''')
@@ -61,7 +62,7 @@ def main():
             return True
         return False
 
-    #   Streamlit-Anwendung
+    #Streamlit-Anwendung
     st.title("Login & Registrierung")
 
     # Session-Handling
@@ -95,6 +96,20 @@ def main():
     else:
         st.success(f"Eingeloggt als: {st.session_state.username}")
         st.button("Logout", on_click=lambda: st.session_state.update({"logged_in": False, "username": ""}))
+
+    
+        # Extrahiere Songnamen (angenommen, 'track_name' ist der Name der Song-Spalte)
+    song_names = df['track_name'].unique()
+
+    # Songauswahl mit Selectbox
+    selected_song = st.selectbox("Wähle einen Song aus", song_names)
+
+    # Informationen zum ausgewählten Song filtern
+    song_info = df[df['track_name'] == selected_song]
+
+    # Songdetails anzeigen
+    st.write(f"Details zum Song: {selected_song}")
+    st.write(song_info)
 
     
     # Seitenleiste mit Text und anderen Elementen
