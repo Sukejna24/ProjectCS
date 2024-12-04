@@ -1,14 +1,17 @@
 import streamlit as st
 import time
 import sqlite3
-import bcrypt
 import pandas as pd
+import bcrypt
+import kagglehub
+
+
+# Dataset herunterladen
+path = kagglehub.dataset_download("joebeachcapital/30000-spotify-songs")
+print("Pfad zu den heruntergeladenen Dateien:", path)
+
 
 def main():
-
-    data = pd.read_csv("spotify_songs.csv")
-
-
 
     # Erstelle drei Spalten, wobei die äußeren als Ränder dienen
     col1, col2, col3 = st.columns([1, 3, 1])
