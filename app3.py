@@ -155,25 +155,26 @@ def main():
 
     # Widgets innerhalb des Containers anzeigen
     with st.expander("Choose the attributes of your desired Playlist", expanded=st.session_state.expander_opened):
-            st.header("Choose the attributes of your desired Playlist")
-        tempo =st.slider("tempo", min_value=0.0, max_value=1.0, value=0.4, step=0.2)
-        valence = st.slider("valence", min_value=0.0, max_value=1.0, value=0.4, step=0.2)
-        energy = st.slider("energy", min_value=0.0, max_value=1.0, value=0.4, step=0.2)
-        danceability = st.slider("danceability", min_value=0.0, max_value=1.0, value=0.4, step=0.2)
-
+        st.header("Choose the attributes of your desired Playlist")
+        tempo_range = st.slider("Tempo", min_value=0.0, max_value=1.0, value=(0.0, 1.0), step=0.1)
+        valence_range = st.slider("Valence", min_value=0.0, max_value=1.0, value=(0.0, 1.0), step=0.1)
+        energy_range = st.slider("Energy", min_value=0.0, max_value=1.0, value=(0.0, 1.0), step=0.1)
+        danceability_range = st.slider("Danceability", min_value=0.0, max_value=1.0, value=(0.0, 1.0), step=0.1)
 
     # Filtere Songs basierend auf Benutzerpräferenzen
     filtered_songs = df[
-        (df['tempo'] >= tempo[0]) & (df['tempo'] <= tempo[1]) &
-        (df['valence'] >= valence[0]) & (df['valence'] <= valence[1]) &
-        (df['energy'] >= energy[0]) & (df['energy'] <= energy[1]) &
-        (df['danceability'] >= danceability[0]) & (df['danceability'] <= danceability[1])
+        (df['tempo'] >= tempo_range[0]) & (df['tempo'] <= tempo_range[1]) &
+        (df['valence'] >= valence_range[0]) & (df['valence'] <= valence_range[1]) &
+        (df['energy'] >= energy_range[0]) & (df['energy'] <= energy_range[1]) &
+        (df['danceability'] >= danceability_range[0]) & (df['danceability'] <= danceability_range[1])
     ]
 
-    # Ergebnisse anzeigen
-    st.write("### Songs that match your preferences")
+# Ergebnisse anzeigen
+st.write("### Songs that match your preferences")
+if not filtered_songs.empty:
     st.write(filtered_songs[['track_name', 'track_artist', 'tempo', 'valence', 'energy', 'danceability']])
-
+else:
+    st.write("No songs match your preferences.")
     if st.button("Search Playlists"):
         st.write("Recommended songs for you could be: ...")
 
