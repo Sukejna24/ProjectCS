@@ -180,7 +180,7 @@ def main():
             if selected_playlist_id in playlists.groups:
                 selected_playlist = playlists.get_group(selected_playlist_id)
                 st.write(f"Songs in Playlist ID {selected_playlist_id}:")
-                st.write(selected_playlist[['song_name', 'artist', 'duration']])
+                st.write(selected_playlist[['track_name', 'track_artist', 'duration_ms']])
             else:
                 st.error(f"Playlist mit ID {selected_playlist_id} existiert nicht.")
     else:
