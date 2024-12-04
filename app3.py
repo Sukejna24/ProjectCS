@@ -18,16 +18,6 @@ st.write(df.head())
 
 def main():
 
-    # Dataset herunterladen
-    path = kagglehub.dataset_download("joebeachcapital/30000-spotify-songs")
-
-    print("Pfad zu den heruntergeladenen Dateien:", path)
-    dataset_path = "C:\\Users\\jessy\\OneDrive\\spotify_songs.csv"
-
-    # Datensatz laden
-    df = pd.read_csv(dataset_path)
-
-    df.head()
 
     # Erstelle drei Spalten, wobei die äußeren als Ränder dienen
     col1, col2, col3 = st.columns([1, 3, 1])
