@@ -181,13 +181,13 @@ def main():
         st.write("Recommended songs for you could be: ...")
 
         # Ladebalken mit st.progress erstellen
-        progress_bar2 = st.progress(0)
+        progress_bar = st.progress(0)
 
-        # Beispielhafte Ladeaktion, die 100 Schritte dauert
         for percent_complete in range(100):
-            time.sleep(0.05)  # Wartezeit simuliert das Laden
-            progress_bar.progress(percent_complete + 1)  # Ladebalken erhöhen
-        st.success("Loading complete!")  # Erfolgsmeldung nach Abschluss
+            time.sleep(0.1)  # Simuliere Verarbeitung
+            progress_bar.progress(percent_complete + 1)
+
+        st.success("Process Complete!")
         
         # Extrahiere Songnamen (angenommen, 'track_name' ist der Name der Song-Spalte)
     song_names = df['track_name'].unique()
