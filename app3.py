@@ -11,6 +11,13 @@ path = kagglehub.dataset_download("joebeachcapital/30000-spotify-songs")
 print("Pfad zu den heruntergeladenen Dateien:", path)
 
 
+# Datensatz laden
+df = pd.read_csv(dataset_path)
+
+# Daten anzeigen, um sicherzustellen, dass sie korrekt geladen wurden
+st.write(df.head())
+
+
 def main():
 
     # Erstelle drei Spalten, wobei die äußeren als Ränder dienen
