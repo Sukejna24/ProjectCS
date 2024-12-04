@@ -161,6 +161,19 @@ def main():
         st.slider("Energy", min_value=0.0, max_value=1.0, value=0.4, step=0.2)
         st.slider("Danceability", min_value=0.0, max_value=1.0, value=0.4, step=0.2)
 
+
+    # Filtere Songs basierend auf Benutzerpräferenzen
+    filtered_songs = df[
+        (df['tempo'] >= tempo[0]) & (df['tempo'] <= tempo[1]) &
+        (df['valence'] >= valence[0]) & (df['valence'] <= valence[1]) &
+        (df['energy'] >= energy[0]) & (df['energy'] <= energy[1]) &
+        (df['danceability'] >= danceability[0]) & (df['danceability'] <= danceability[1])
+    ]
+
+    # Ergebnisse anzeigen
+    st.write("### Songs that match your preferences")
+    st.write(filtered_songs[['song_name', 'artist', 'tempo', 'valence', 'energy', 'danceability']])
+    
     if st.button("Search Playlists"):
         st.write("Recommended songs for you could be: ...")
 
