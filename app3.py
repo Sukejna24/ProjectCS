@@ -2,18 +2,57 @@ import streamlit as st
 import time
 
 def main():
-    st.markdown(""" <style> .stApp { background-color: #121212;}
-    .sidebar .sidebar-content {background-color: #121212; color: white;}
-    .sidebar .sidebar-header h1, .sidebar .sidebar-header h2, .sidebar .sidebar-header h3 {color: black !important;}
-    .stMarkdown, .stTitle, .stHeader, .stSsubheader, .stText, .stTextinput, .stTextarea, .stCheckbox, .stRadio, .stButton, .stSelectbox, .stMultiselect { color: white;}
-    .stButton > button {background-color: #1db954; color: white; font size: 16px; padding: 10px; border-radius: 5px; border: none;}
-    .stButton > button:hover { background color: #1ed760;}
-    .stSlider .st-bb {color: #1db954}
-    .stCode { background-color: #1ed760; color: white;} 
-    .stMultiselect select { background-color: #1ed760; color: white; border: none; border-radius: 5px; padding: 8px;}
-    .stMultiselect div.stSelectbox {background-color: #1ed760; border-radius: 5px;}
-    .stMultiSelect [data-baseweb="tag"] {background-color: #1ed760;}
-    </style> """, unsafe_allow_html=True)
+    st.markdown("""
+    <style>
+        .stApp { background-color: #121212; }
+
+        /* Sidebar */
+        .sidebar .sidebar-content { background-color: #121212; color: black; }
+        .sidebar .sidebar-header h1, 
+        .sidebar .sidebar-header h2, 
+        .sidebar .sidebar-header h3 { color: black !important; }
+
+        /* General text elements */
+        .stMarkdown, 
+        .stTitle, 
+        .stHeader, 
+        .stSubheader, 
+        .stText, 
+        .stTextinput, 
+        .stTextarea, 
+        .stCheckbox, 
+        .stRadio, 
+        .stSelectbox, 
+        .stMultiselect, 
+        .stSlider, 
+        .stCode { color: white !important; }
+
+        /* Buttons */
+        .stButton > button {
+            background-color: #1db954; 
+            color: white; 
+            font-size: 16px; 
+            padding: 10px; 
+            border-radius: 5px; 
+            border: none;
+        }
+        .stButton > button:hover { 
+            background-color: #1ed760;
+        }
+
+        /* Select elements */
+        .stSelectbox select, 
+        .stMultiselect select, 
+        .stMultiSelect [data-baseweb="tag"] {
+            background-color: #1ed760; 
+            color: white; 
+            border: none; 
+            border-radius: 5px; 
+            padding: 8px;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
     
     # Seitenleiste mit Text und anderen Elementen
     st.sidebar.header("Do you like the application?")
