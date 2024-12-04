@@ -7,7 +7,13 @@ import kagglehub
 
 
 
+url = "https://raw.githubusercontent.com/Sukejna24/ProjectCS/13fa67d4859f3823f8dada76f37cb27520f9bf06/spotify_songs.csv"
 
+# Lade die CSV-Datei direkt von GitHub
+df = pd.read_csv(url)
+
+# Anzeige der ersten 5 Zeilen des Datensatzes
+st.write(df.head())
 
 
 def main():
