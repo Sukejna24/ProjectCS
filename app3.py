@@ -154,7 +154,7 @@ def main():
 
 
     # Multiselect mit einer maximalen Auswahl von 2 Playlists
-    selected_playlist_id = st.selectbox("Choose at least one", playlist_ids, max_selections=2)  # Maximale Anzahl von auswählbaren Künstlern
+    selected_playlist_id = st.multiselect("Choose at least one", playlist_ids, max_selections=2)  # Maximale Anzahl von auswählbaren Künstlern
 
     # Wenn mehr als 2 Künstler ausgewählt werden, zeige eine Warnung
     if len(selected_playlist_id) > 2:
@@ -174,16 +174,19 @@ def main():
                 time.sleep(0.05)  # Wartezeit simuliert das Laden
                 progress_bar.progress(percent_complete + 1)  # Ladebalken erhöhen
             st.success("Loading complete!")  # Erfolgsmeldung nach Abschluss
+        # Zeige die Songs der ausgewählten Playlist an
+        for selected_playlist_id in selected_playlist_ids:
+            if selected_playlist_id in playlists.groups:
+                selected_playlist = playlists.get_group(selected_playlist_id)
+                st.write(f"Songs in Playlist ID {selected_playlist_id}:")
+                st.write(selected_playlist[['song_name', 'artist', 'duration']])
+            else:
+                st.error(f"Playlist mit ID {selected_playlist_id} existiert nicht.")
     else:
         # Wenn keine Auswahl getroffen wurde, wird der Button deaktiviert
         st.button("Mix up", disabled=True)
 
-    # Zeige die Songs der ausgewählten Playlist an
-    selected_playlist = playlists.get_group(selected_playlist_id)
-    st.write(f"Songs in Playlist ID {selected_playlist_id}:")
-    st.write(selected_playlist[['song_name', 'artist', 'duration']])
-        
-
+   
     #Falls kein möglicher Match
     st.write("If there was no potential match found, click below.")
 
