@@ -106,9 +106,12 @@ def main():
     # Hinweis auf die maximale Auswahl
     st.write("Choose 2 playlists:")
 
+    # Generiere benutzerfreundliche Playlist-Namen: Playlist Genre + ID
+    df['playlist_name'] = df.apply(
+        lambda row: f"Playlist {row['playlist_genre']} {row['playlist_subgenre']}", axis=1)
 
     # Multiselect mit einer maximalen Auswahl von 2 Playlists
-    selected_playlist_id = st.multiselect("Choose at least one", playlist_ids, max_selections=2)  # Maximale Anzahl von auswählbaren Künstlern
+    selected_playlist_id = st.multiselect("Choose at least one", options=df['playlist_name'].tolist(), max_selections=2)  # Maximale Anzahl von auswählbaren Künstlern
 
     # Wenn mehr als 2 Künstler ausgewählt werden, zeige eine Warnung
     if len(selected_playlist_id) > 2:
