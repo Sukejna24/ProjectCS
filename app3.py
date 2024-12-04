@@ -208,5 +208,5 @@ def main():
     # Ausgabe der gewählten Bewertung
     st.sidebar.write(f"Du hast {rating} vergeben.")
 
-
+if __name__ == "__main__":
     main()
