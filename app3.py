@@ -113,7 +113,7 @@ def main():
         st.line_chart(song_info['danceability'])
 
     #Weitere interaktive Features, z.B. für Bewertung oder Genre-Auswahl
-    genre = st.radio("Wähle ein Genre:", df['genre_playlist'].unique())
+    genre = st.radio("Wähle ein Genre:", df['playlist_genre'].unique())
     genre_data = df[df['playlist_genre'] == genre]
     
     st.write(f"### Songs im Genre: {genre}")
