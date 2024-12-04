@@ -156,10 +156,10 @@ def main():
     # Widgets innerhalb des Containers anzeigen
     with st.expander("Choose the attributes of your desired Playlist", expanded=st.session_state.expander_opened):
         st.header("Choose the attributes of your desired Playlist")
-        st.slider("Tempo", min_value=0.0, max_value=1.0, value=0.4, step=0.2)
-        st.slider("Valence", min_value=0.0, max_value=1.0, value=0.4, step=0.2)
-        st.slider("Energy", min_value=0.0, max_value=1.0, value=0.4, step=0.2)
-        st.slider("Danceability", min_value=0.0, max_value=1.0, value=0.4, step=0.2)
+        st.slider("tempo", min_value=0.0, max_value=1.0, value=0.4, step=0.2)
+        st.slider("valence", min_value=0.0, max_value=1.0, value=0.4, step=0.2)
+        st.slider("energy", min_value=0.0, max_value=1.0, value=0.4, step=0.2)
+        st.slider("danceability", min_value=0.0, max_value=1.0, value=0.4, step=0.2)
 
 
     # Filtere Songs basierend auf Benutzerpräferenzen
