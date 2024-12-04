@@ -4,3 +4,6 @@ spotipy
 streamlit
 PyMySQl
 pandas
+bcrypt
+kagglehub
+kaggle
