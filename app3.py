@@ -172,10 +172,10 @@ def main():
     # Ergebnisse anzeigen
     st.write("### Songs that match your preferences")
     if not filtered_songs.empty:
-    st.write(filtered_songs[['track_name', 'track_artist', 'tempo', 'valence', 'energy', 'danceability']])
+        st.write(filtered_songs[['track_name', 'track_artist', 'tempo', 'valence', 'energy', 'danceability']])
     else:
-    st.write("No songs match your preferences.")
-    
+        st.write("No songs match your preferences.")
+
     if st.button("Search Playlists"):
         st.write("Recommended songs for you could be: ...")
 
