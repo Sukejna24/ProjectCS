@@ -4,15 +4,17 @@ import time
 def main():
     st.markdown("""
     <style>
+        /* Hintergrundfarbe der gesamten App */
         .stApp { background-color: #121212; }
 
         /* Sidebar */
         .sidebar .sidebar-content { background-color: #121212; color: black; }
         .sidebar .sidebar-header h1, 
         .sidebar .sidebar-header h2, 
-        .sidebar .sidebar-header h3 { color: black !important; }
+        .sidebar .sidebar-header h3, 
+        .sidebar .stMarkdown { color: black !important; }
 
-        /* General text elements */
+        /* Schriftfarbe der Hauptinhalte */
         .stMarkdown, 
         .stTitle, 
         .stHeader, 
@@ -22,6 +24,7 @@ def main():
         .stTextarea, 
         .stCheckbox, 
         .stRadio, 
+        .stButton, 
         .stSelectbox, 
         .stMultiselect, 
         .stSlider, 
@@ -40,7 +43,10 @@ def main():
             background-color: #1ed760;
         }
 
-        /* Select elements */
+        /* Slider Anpassungen */
+        .stSlider > div { color: white !important; }
+
+        /* Multiselect und Dropdown */
         .stSelectbox select, 
         .stMultiselect select, 
         .stMultiSelect [data-baseweb="tag"] {
@@ -50,8 +56,12 @@ def main():
             border-radius: 5px; 
             padding: 8px;
         }
+
+        /* Ladebalken */
+        .stProgress > div > div { background-color: #1ed760 !important; }
     </style>
 """, unsafe_allow_html=True)
+
 
     
     # Seitenleiste mit Text und anderen Elementen
