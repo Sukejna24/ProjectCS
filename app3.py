@@ -106,12 +106,24 @@ def main():
     # Hinweis auf die maximale Auswahl
     st.write("Choose 2 playlists:")
 
-    # Generiere benutzerfreundliche Playlist-Namen: Playlist Genre + ID
-    df['playlist_name'] = df.apply(
-        lambda row: f"Playlist {row['playlist_genre']} {row['playlist_subgenre']}", axis=1)
+    # Funktion zum Auswählen von maximal 3-4 Playlists pro Genre
+    def get_sample_playlists(df, max_per_genre=4):
+        # Gruppiere nach Genre und wähle eine zufällige Stichprobe von max_per_genre Playlists pro Genre
+        sampled_playlists = df.groupby('playlist_genre').apply(lambda x: x.sample(n=min(max_per_genre, len(x)), random_state=1))
+        # Entferne die Gruppen-Indexierung nach der Auswahl
+        sampled_playlists = sampled_playlists.reset_index(drop=True)
+    
+        # Erstelle eine neue Spalte mit dem Playlist-Namen
+        sampled_playlists['playlist_name'] = sampled_playlists.apply(lambda row: f"Playlist {row['playlist_genre']} {row['playlist_id']}", axis=1)
+    
+        return sampled_playlists
+
+    # Reduziere den Datensatz auf max. 4 Playlists pro Genre
+    sampled_playlists = get_sample_playlists(df)
+
 
     # Multiselect mit einer maximalen Auswahl von 2 Playlists
-    selected_playlist_id = st.multiselect("Choose at least one", options=df['playlist_name'].tolist(), max_selections=2)  # Maximale Anzahl von auswählbaren Künstlern
+    selected_playlist_id = st.multiselect("Choose at least one", options=sampled_playlists['playlist_name'].tolist(), max_selections=2)  # Maximale Anzahl von auswählbaren Künstlern
 
     # Wenn mehr als 2 Künstler ausgewählt werden, zeige eine Warnung
     if len(selected_playlist_id) > 2:
