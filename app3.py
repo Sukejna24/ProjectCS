@@ -14,9 +14,6 @@ def main():
     #Lade die CSV-Datei direkt von GitHub
     df = pd.read_csv(url)
 
-    # Anzeige der ersten 5 Zeilen des Datensatzes
-    st.write(df.head())
-
     # Erstelle drei Spalten, wobei die äußeren als Ränder dienen um das Bild in der Mitte zu zentrieren
     col1, col2, col3 = st.columns([1, 3, 1])
 
@@ -60,7 +57,7 @@ def main():
         return False
 
     #Streamlit-Anwendung
-    st.title("Login & Registrierung")
+    st.sidebar("Login & Registrierung")
 
     # Session-Handling
     if 'logged_in' not in st.session_state:
@@ -70,20 +67,20 @@ def main():
 
     # Login oder Registrierung anzeigen
     if not st.session_state.logged_in:
-        option = st.selectbox("Aktion wählen", ["Login", "Registrieren"])
+        option = st.sidebar.selectbox("Aktion wählen", ["Login", "Registrieren"])
     
-        username = st.text_input("Benutzername")
-        password = st.text_input("Passwort", type="password")
+        username = st.sidebar.text_input("Benutzername")
+        password = st.sidebar.text_input("Passwort", type="password")
 
         if option == "Registrieren":
-            if st.button("Registrieren"):
+            if st.sidebar.button("Registrieren"):
                 if user_exists(username):
                     st.warning("Benutzername existiert bereits!")
                 else:
                     register_user(username, password)
                     st.success("Registrierung erfolgreich! Bitte einloggen.")
         elif option == "Login":
-            if st.button("Login"):
+            if st.sidebar.button("Login"):
                 if login_user(username, password):
                     st.session_state.logged_in = True
                     st.session_state.username = username
