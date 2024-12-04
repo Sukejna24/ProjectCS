@@ -6,7 +6,8 @@ import pandas as pd
 
 def main():
 
-    data = pd.read_csv("C:/Users/jessy/OneDrive/Fotos/Documentos/Uni HSG/Bachelor/6. Semester/CS/CS Projekt/spotify_songs.csv")
+    data = pd.read_csv("spotify_songs.csv")
+
 
 
     # Erstelle drei Spalten, wobei die äußeren als Ränder dienen
