@@ -171,6 +171,7 @@ def main():
 
     # Ergebnisse anzeigen
     st.write("### Songs that match your preferences")
+
     if not filtered_songs.empty:
         st.write(filtered_songs[['track_name', 'track_artist', 'tempo', 'valence', 'energy', 'danceability']])
     else:
@@ -179,6 +180,15 @@ def main():
     if st.button("Search Playlists"):
         st.write("Recommended songs for you could be: ...")
 
+        # Ladebalken mit st.progress erstellen
+        progress_bar2 = st.progress(0)
+
+        # Beispielhafte Ladeaktion, die 100 Schritte dauert
+        for percent_complete in range(100):
+            time.sleep(0.05)  # Wartezeit simuliert das Laden
+            progress_bar.progress(percent_complete + 1)  # Ladebalken erhöhen
+        st.success("Loading complete!")  # Erfolgsmeldung nach Abschluss
+        
         # Extrahiere Songnamen (angenommen, 'track_name' ist der Name der Song-Spalte)
     song_names = df['track_name'].unique()
 
