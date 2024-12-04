@@ -174,8 +174,9 @@ def main():
                 time.sleep(0.05)  # Wartezeit simuliert das Laden
                 progress_bar.progress(percent_complete + 1)  # Ladebalken erhöhen
             st.success("Loading complete!")  # Erfolgsmeldung nach Abschluss
+
         # Zeige die Songs der ausgewählten Playlist an
-        for selected_playlist_id in selected_playlist_ids:
+        for selected_playlist_id in selected_playlist_id:
             if selected_playlist_id in playlists.groups:
                 selected_playlist = playlists.get_group(selected_playlist_id)
                 st.write(f"Songs in Playlist ID {selected_playlist_id}:")
@@ -185,7 +186,6 @@ def main():
     else:
         # Wenn keine Auswahl getroffen wurde, wird der Button deaktiviert
         st.button("Mix up", disabled=True)
-
    
     #Falls kein möglicher Match
     st.write("If there was no potential match found, click below.")
