@@ -1,6 +1,67 @@
 import streamlit as st
 
 def main():
+
+        st.markdown("""
+    <style>
+        /* Hintergrundfarbe der gesamten App */
+        .stApp { background-color: #121212; }
+
+        /* Sidebar */
+        .sidebar .sidebar-content { background-color: #121212; color: black; }
+        .sidebar .sidebar-header h1, 
+        .sidebar .sidebar-header h2, 
+        .sidebar .sidebar-header h3, 
+        .sidebar .stMarkdown { color: black !important; }
+
+        /* Schriftfarbe der Hauptinhalte */
+        .stMarkdown, 
+        .stTitle, 
+        .stHeader, 
+        .stSubheader, 
+        .stText, 
+        .stTextinput, 
+        .stTextarea, 
+        .stCheckbox, 
+        .stRadio, 
+        .stButton, 
+        .stSelectbox, 
+        .stMultiselect, 
+        .stSlider, 
+        .stCode { color: white !important; }
+
+        /* Buttons */
+        .stButton > button {
+            background-color: #1db954; 
+            color: white; 
+            font-size: 16px; 
+            padding: 10px; 
+            border-radius: 5px; 
+            border: none;
+        }
+        .stButton > button:hover { 
+            background-color: #1ed760;
+        }
+
+        /* Slider Anpassungen */
+        .stSlider > div { color: white !important; }
+
+        /* Multiselect und Dropdown */
+        .stSelectbox select, 
+        .stMultiselect select, 
+        .stMultiSelect [data-baseweb="tag"] {
+            background-color: #1ed760; 
+            color: white; 
+            border: none; 
+            border-radius: 5px; 
+            padding: 8px;
+        }
+
+        /* Ladebalken */
+        .stProgress > div > div { background-color: #1ed760 !important; }
+    </style>
+""", unsafe_allow_html=True)
+        
     st.title("Melody Match")
     st.write("Willkommen bei Melody Match! Wähle deine Musikpräferenzen.")
 
