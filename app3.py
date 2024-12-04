@@ -4,10 +4,7 @@ import sqlite3
 import pandas as pd
 import bcrypt
 import kagglehub
-
-
-
-
+import plotly.express as px
 
 
 def main():
@@ -114,6 +111,21 @@ def main():
     #Visualisierung zur Tanzbarkeit des Songs
     if 'danceability' in song_info.columns:
         st.line_chart(song_info['danceability'])
+
+    #Weitere interaktive Features, z.B. für Bewertung oder Genre-Auswahl
+    genre = st.radio("Wähle ein Genre:", df['genre'].unique())
+    genre_data = df[df['genre'] == genre]
+    
+    st.write(f"### Songs im Genre: {genre}")
+    st.write(genre_data)
+
+    def plot_genre_distribution(df):
+        genre_counts = df['genre'].value_counts()
+        fig = px.bar(genre_counts, x=genre_counts.index, y=genre_counts.values, labels={'x': 'Genre', 'y': 'Anzahl Songs'})
+        st.plotly_chart(fig)
+
+    #In deinem main()-Code
+    plot_genre_distribution(df)
 
     # Seitenleiste mit Text und anderen Elementen
     st.sidebar.header("Do you like the application?")
