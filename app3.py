@@ -172,7 +172,7 @@ def main():
 
     # Ergebnisse anzeigen
     st.write("### Songs that match your preferences")
-    st.write(filtered_songs[['tempo', 'valence', 'energy', 'danceability']])
+    st.write(filtered_songs[['track_name', 'track_artist', 'tempo', 'valence', 'energy', 'danceability']])
 
     if st.button("Search Playlists"):
         st.write("Recommended songs for you could be: ...")
