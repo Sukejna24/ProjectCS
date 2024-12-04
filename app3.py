@@ -169,12 +169,13 @@ def main():
         (df['danceability'] >= danceability_range[0]) & (df['danceability'] <= danceability_range[1])
     ]
 
-# Ergebnisse anzeigen
-st.write("### Songs that match your preferences")
-if not filtered_songs.empty:
+    # Ergebnisse anzeigen
+    st.write("### Songs that match your preferences")
+    if not filtered_songs.empty:
     st.write(filtered_songs[['track_name', 'track_artist', 'tempo', 'valence', 'energy', 'danceability']])
-else:
+    else:
     st.write("No songs match your preferences.")
+    
     if st.button("Search Playlists"):
         st.write("Recommended songs for you could be: ...")
 
