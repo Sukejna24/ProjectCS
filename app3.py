@@ -113,14 +113,14 @@ def main():
         st.line_chart(song_info['danceability'])
 
     #Weitere interaktive Features, z.B. für Bewertung oder Genre-Auswahl
-    genre = st.radio("Wähle ein Genre:", df['genre'].unique())
-    genre_data = df[df['genre'] == genre]
+    genre = st.radio("Wähle ein Genre:", df['genre_playlist'].unique())
+    genre_data = df[df['playlist_genre'] == genre]
     
     st.write(f"### Songs im Genre: {genre}")
     st.write(genre_data)
 
     def plot_genre_distribution(df):
-        genre_counts = df['genre'].value_counts()
+        genre_counts = df['playlist_genre'].value_counts()
         fig = px.bar(genre_counts, x=genre_counts.index, y=genre_counts.values, labels={'x': 'Genre', 'y': 'Anzahl Songs'})
         st.plotly_chart(fig)
 
