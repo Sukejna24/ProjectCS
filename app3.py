@@ -6,6 +6,16 @@ import bcrypt
 
 def main():
 
+
+    # Erstelle drei Spalten, wobei die äußeren als Ränder dienen
+    col1, col2, col3 = st.columns([1, 3, 1])
+
+    with col2:
+        # Bild-URL
+        st.image("https://upload.wikimedia.org/wikipedia/commons/7/71/Spotify.png", width=150)
+    
+    st.title("Spotify Melody Match")
+
     # Datenbank einrichten
     conn = sqlite3.connect('users.db')
     c = conn.cursor()
@@ -86,14 +96,6 @@ def main():
     # Ausgabe der gewählten Bewertung
     st.sidebar.write(f"Du hast {rating} vergeben.")
 
-    # Erstelle drei Spalten, wobei die äußeren als Ränder dienen
-    col1, col2, col3 = st.columns([1, 3, 1])
-
-    with col2:
-        # Bild-URL
-        st.image("https://upload.wikimedia.org/wikipedia/commons/7/71/Spotify.png", width=150)
-    
-    st.title("Spotify Melody Match")
 
     # Musikpräferenzen
     st.write("Welcome to Melody Match! Find the perfect playlist for you and your friends.")
