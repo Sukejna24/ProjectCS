@@ -114,7 +114,7 @@ def main():
         sampled_playlists = sampled_playlists.reset_index(drop=True)
     
         # Erstelle eine neue Spalte mit dem Playlist-Namen
-        sampled_playlists['playlist_name'] = sampled_playlists.apply(lambda row: f"Playlist {row['playlist_genre']} {row['playlist_id']}", axis=1)
+        sampled_playlists['playlist_name'] = sampled_playlists.apply(lambda row: f"Playlist {row['playlist_genre']} {row['playlist_subgenre']}", axis=1)
     
         return sampled_playlists
 
