@@ -60,13 +60,14 @@ def main():
     with st.sidebar:
         st.header("Login & Registrierung")
 
-        # Session-Handling
-        if 'logged_in' not in st.session_state:
-            st.session_state.logged_in = False
-        if 'username' not in st.session_state:
-            st.session_state.username = ""
+    # Session-Handling
+    if 'logged_in' not in st.session_state:
+        st.session_state.logged_in = False
+    if 'username' not in st.session_state:
+        st.session_state.username = ""
 
         # Login oder Registrierung anzeigen
+    with st.sidebar:
         if not st.session_state.logged_in:
             option = st.selectbox("Aktion wählen", ["Login", "Registrieren"])
     
@@ -89,8 +90,8 @@ def main():
                     else:
                         st.error("Falscher Benutzername oder Passwort.")
         else:
-            st.success(f"Eingeloggt als: {st.session_state.username}")
-            st.button("Logout", on_click=lambda: st.session_state.update({"logged_in": False, "username": ""}))
+            st.sidebar.success(f"Eingeloggt als: {st.session_state.username}")
+            st.sidebar.button("Logout", on_click=lambda: st.session_state.update({"logged_in": False, "username": ""}))
 
     
         # Extrahiere Songnamen (angenommen, 'track_name' ist der Name der Song-Spalte)
