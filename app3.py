@@ -57,39 +57,40 @@ def main():
         return False
 
     #Streamlit-Anwendung
-    st.sidebar("Login & Registrierung")
+    with st.sidebar:
+        st.header("Login & Registrierung")
 
-    # Session-Handling
-    if 'logged_in' not in st.session_state:
-        st.session_state.logged_in = False
-    if 'username' not in st.session_state:
-        st.session_state.username = ""
+        # Session-Handling
+        if 'logged_in' not in st.session_state:
+            st.session_state.logged_in = False
+        if 'username' not in st.session_state:
+            st.session_state.username = ""
 
-    # Login oder Registrierung anzeigen
-    if not st.session_state.logged_in:
-        option = st.sidebar.selectbox("Aktion wählen", ["Login", "Registrieren"])
+        # Login oder Registrierung anzeigen
+        if not st.session_state.logged_in:
+            option = st.selectbox("Aktion wählen", ["Login", "Registrieren"])
     
-        username = st.sidebar.text_input("Benutzername")
-        password = st.sidebar.text_input("Passwort", type="password")
+            username = st.text_input("Benutzername")
+            password = st.text_input("Passwort", type="password")
 
-        if option == "Registrieren":
-            if st.sidebar.button("Registrieren"):
-                if user_exists(username):
-                    st.warning("Benutzername existiert bereits!")
-                else:
-                    register_user(username, password)
-                    st.success("Registrierung erfolgreich! Bitte einloggen.")
-        elif option == "Login":
-            if st.sidebar.button("Login"):
-                if login_user(username, password):
-                    st.session_state.logged_in = True
-                    st.session_state.username = username
-                    st.success(f"Willkommen, {username}!")
-                else:
-                    st.error("Falscher Benutzername oder Passwort.")
-    else:
-        st.success(f"Eingeloggt als: {st.session_state.username}")
-        st.button("Logout", on_click=lambda: st.session_state.update({"logged_in": False, "username": ""}))
+            if option == "Registrieren":
+                if st.button("Registrieren"):
+                    if user_exists(username):
+                        st.warning("Benutzername existiert bereits!")
+                    else:
+                        register_user(username, password)
+                        st.success("Registrierung erfolgreich! Bitte einloggen.")
+            elif option == "Login":
+                if st.button("Login"):
+                    if login_user(username, password):
+                        st.session_state.logged_in = True
+                        st.session_state.username = username
+                        st.success(f"Willkommen, {username}!")
+                    else:
+                        st.error("Falscher Benutzername oder Passwort.")
+        else:
+            st.success(f"Eingeloggt als: {st.session_state.username}")
+            st.button("Logout", on_click=lambda: st.session_state.update({"logged_in": False, "username": ""}))
 
     
         # Extrahiere Songnamen (angenommen, 'track_name' ist der Name der Song-Spalte)
