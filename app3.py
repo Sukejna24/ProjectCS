@@ -154,7 +154,7 @@ def main():
 
 
     # Multiselect mit einer maximalen Auswahl von 2 Playlists
-    selected_playlist_id = st.multiselect("Choose at least one", playlist_ids, max_selections=2)  # Maximale Anzahl von auswählbaren Künstlern
+    selected_playlist_id = st.selectbox("Choose at least one", playlist_ids, max_selections=2)  # Maximale Anzahl von auswählbaren Künstlern
 
     # Wenn mehr als 2 Künstler ausgewählt werden, zeige eine Warnung
     if len(selected_playlist_id) > 2:
