@@ -2,11 +2,14 @@ import streamlit as st
 import time
 import sqlite3
 import bcrypt
-
+import pandas as pd
 
 def main():
 
+    path= r"C:\Users\jessy\OneDrive\Fotos\Documentos\Uni HSG\Bachelor\6. Semester\CS\CS Projekt"
 
+    data = pd.read_csv("spotify_songs.csv")
+    
     # Erstelle drei Spalten, wobei die äußeren als Ränder dienen
     col1, col2, col3 = st.columns([1, 3, 1])
 
