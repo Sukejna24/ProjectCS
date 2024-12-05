@@ -19,7 +19,7 @@ def add_custom_css():
     ::-webkit-scrollbar{width: 8px;}
     ::-webkit-scrollbar{background-color: #b3b3b3;}
     </style>""", unsafe_allow_html=True)
-    
+add_custom_css()
 def main():
 
     url = "https://raw.githubusercontent.com/Sukejna24/ProjectCS/13fa67d4859f3823f8dada76f37cb27520f9bf06/spotify_songs.csv"
