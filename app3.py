@@ -181,7 +181,7 @@ def main():
     fig = go.Figure(go.Barpolar(r=[tempo_range[1], valence_range[1], energy_range[1], danceability_range[1]],
     theta=["Tempo", "Valence", "Energy", "Danceability"],
     width=[10, 10, 10, 10]))
-    fig.upade_layout(polar=dict(radialaxis=dict(visible=True)), showlegend=False)
+    fig.update_layout(polar=dict(radialaxis=dict(visible=True)), showlegend=False)
     st.plotly_chart(fig)
     
     # Filtere Songs basierend auf Benutzerpräferenzen
