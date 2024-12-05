@@ -107,7 +107,7 @@ def main():
 
     # Funktion zum Erstellen benutzerfreundlicher Namen
     def get_sample_playlists(df, max_per_genre=4):
-        # Gruppiere nach Genre und wähle max_per_genre Playlists pro Genre aus
+        # Gruppiere nach Genre 
         sampled_playlists = (
             df.groupby("playlist_genre")
             .apply(lambda x: x.sample(n=min(max_per_genre, len(x)), random_state=1))
@@ -132,7 +132,8 @@ def main():
         # Multi-Select für die Benutzer mit den neuen Namen
         selected_playlist_display_names = st.multiselect(
             "Choose playlists",
-            options=list(playlist_id_to_name.values())  # Benutzernamen anzeigen
+            options=list(playlist_id_to_name.values()),
+            format_func=lambda name: name   # Benutzernamen anzeigen
         )
         # Rückübersetzen von benutzerfreundlichen Namen in Playlist-IDs
         selected_playlist_ids = [
@@ -155,7 +156,7 @@ def main():
 
             #Zeige Songs der ausgewählten Playlists
             for playlist_id in selected_playlist_ids:
-                selected_playlist = sampled_playlists[sampled_playlists['playlist_id'] == playlist_id]
+                selected_playlist = df[df['playlist_id'] == playlist_id]
                 st.write(f"Songs in {playlist_id_to_name[playlist_id]}:")
                 st.write(selected_playlist[['track_name', 'track_artist', 'duration_ms']])
     else:
