@@ -9,7 +9,7 @@ import plotly.express as px
 #CSS für Hintergrund und Schriftfarbe
 def add_custom_css():
     st.markdown(""" <style>
-    .stApp{background-color: #121212; color: white;}
+    .stApp{background-color: #333333; color: white;}
     #sidebar anpassung
     .css-1d391kg{background-color: #181818;}
     #Überschriften in weiss 
