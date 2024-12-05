@@ -107,6 +107,7 @@ def main():
 
     # Funktion zum Auswählen von maximal 3-4 Playlists pro Genre
     def get_sample_playlists(df, max_per_genre=4):
+
         # Gruppiere nach Genre und wähle eine zufällige Stichprobe von max_per_genre Playlists pro Genre
         sampled_playlists = df.groupby('playlist_genre').apply(lambda x: x.sample(n=min(max_per_genre, len(x)), random_state=1))
         # Entferne die Gruppen-Indexierung nach der Auswahl
@@ -161,7 +162,7 @@ def main():
 
         # Zeige die Songs der ausgewählten Playlists an
         for selected_playlist_id in selected_playlist_ids:
-            if selected_playlist_id in playlists_df['playlist_id'].values:
+            if selected_playlist_id in df['playlist_id'].values:
                 selected_playlist = df[df['playlist_id'] == selected_playlist_id]
                 playlist_display_name = playlist_id_to_name[selected_playlist_id]
                 st.write(f"Songs in {playlist_display_name}:")
