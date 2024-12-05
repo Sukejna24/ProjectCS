@@ -19,8 +19,6 @@ def add_custom_css():
     ::-webkit-scrollbar{width: 8px;}
     ::-webkit-scrollbar{background-color: #b3b3b3;}
     </style>""", unsafe_allow_html=True)
-    #Anwendung des CSS
-    add_custom_css()
     
 def main():
 
