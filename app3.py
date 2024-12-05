@@ -107,71 +107,74 @@ def main():
 
     # Funktion zum Auswählen von maximal 3-4 Playlists pro Genre
     def get_sample_playlists(df, max_per_genre=4):
+        if 'playlist_genre' not in df.columns or 'track_name' not in df.columns:
+            st.error("Required columns 'playlist_genre' or 'track_name' are missing.")
+            return pd.DataFrame()  # Leerer DataFrame bei Fehler
 
         # Gruppiere nach Genre und wähle eine zufällige Stichprobe von max_per_genre Playlists pro Genre
-        sampled_playlists = df.groupby('playlist_genre').apply(lambda x: x.sample(n=min(max_per_genre, len(x)), random_state=1))
+        sampled_playlists = df.groupby('playlist_genre').apply(
+            lambda x: x.sample(n=min(max_per_genre, len(x)), random_state=1)
+        )
         # Entferne die Gruppen-Indexierung nach der Auswahl
         sampled_playlists = sampled_playlists.reset_index(drop=True)
-    
+
         # Erstelle eine neue Spalte mit einem benutzerfreundlichen Namen
         sampled_playlists['playlist_display_name'] = sampled_playlists.apply(
-            lambda row: f"{row['playlist_genre']} - Songs like '{row['track_name']}'", axis=1
+            lambda row: f"{row['playlist_genre']} - Songs like '{row['track_name']}' (ID: {row['playlist_id']})", axis=1
         )
-    
         return sampled_playlists
 
 
     # Reduziere den Datensatz auf max. 4 Playlists pro Genre
     sampled_playlists = get_sample_playlists(df)
 
-    # Playlist-ID zu Display-Name-Mapping erstellen
-    playlist_id_to_name = dict(zip(df['playlist_id'], df['playlist_display_name']))
+    # Überprüfe, ob sampled_playlists gültig ist
+    if not sampled_playlists.empty:
+        # Playlist-ID zu Display-Name-Mapping erstellen
+        playlist_id_to_name = dict(zip(sampled_playlists['playlist_id'], sampled_playlists['playlist_display_name']))
 
-    # Multi-Select für die Benutzer mit den neuen Namen
-    selected_playlist_display_names = st.multiselect(
-        "Choose playlists",
-        options=list(playlist_id_to_name.values()),
-        format_func=lambda x: playlist_id_to_name.get(x, x)  # Zeige benutzerfreundlichen Namen an
-    )
+        # Multi-Select für die Benutzer mit den neuen Namen
+        selected_playlist_display_names = st.multiselect(
+            "Choose playlists",
+            options=list(playlist_id_to_name.values())  # Benutzernamen anzeigen
+        )
 
-    # Warnung bei mehr als 2 Auswahlmöglichkeiten
-    if len(selected_playlist_display_names) > 2:
-        st.warning("A maximum of 2 Playlists can be selected.")
+        # Warnung bei mehr als 2 Auswahlmöglichkeiten
+        if len(selected_playlist_display_names) > 2:
+            st.warning("A maximum of 2 Playlists can be selected.")
 
-    if selected_playlist_display_names:
-        # Hole die Original-Playlist-IDs basierend auf den Display-Namen
-        selected_playlist_ids = [
-            playlist_id for playlist_id, display_name in playlist_id_to_name.items()
-            if display_name in selected_playlist_display_names
-        ]
+        if selected_playlist_display_names:
+            # Hole die Original-Playlist-IDs basierend auf den Display-Namen
+            selected_playlist_ids = [
+                playlist_id for playlist_id, display_name in playlist_id_to_name.items()
+                if display_name in selected_playlist_display_names
+            ]
 
-        # Mix-Up-Button hinzufügen
-        mix_button = st.button("Mix up")  # Der Button wird hier einmalig definiert
+            # Mix-Up-Button hinzufügen
+            mix_button = st.button("Mix up")
 
-        if mix_button:
-            st.write("Mixing up your preferences...")  # Placeholder für Machine Learning Logik
+            if mix_button:
+                st.write("Mixing up your preferences...")
 
-            # Ladebalken mit st.progress erstellen
-            progress_bar = st.progress(0)
+                # Ladebalken mit st.progress erstellen
+                progress_bar = st.progress(0)
+                for percent_complete in range(100):
+                    time.sleep(0.05)
+                    progress_bar.progress(percent_complete + 1)
+                st.success("Loading complete!")
 
-            # Beispielhafte Ladeaktion, die 100 Schritte dauert
-            for percent_complete in range(100):
-                time.sleep(0.05)  # Wartezeit simuliert das Laden
-                progress_bar.progress(percent_complete + 1)  # Ladebalken erhöhen
-            st.success("Loading complete!")  # Erfolgsmeldung nach Abschluss
+            # Zeige die Songs der ausgewählten Playlists an
+            for selected_playlist_id in selected_playlist_ids:
+                if selected_playlist_id in sampled_playlists['playlist_id'].values:
+                    selected_playlist = df[df['playlist_id'] == selected_playlist_id]
+                    playlist_display_name = playlist_id_to_name[selected_playlist_id]
+                    st.write(f"Songs in {playlist_display_name}:")
+                    st.write(selected_playlist[['track_name', 'track_artist', 'duration_ms']])
+                else:
+                    st.error(f"Playlist with ID {selected_playlist_id} does not exist.")
+        else:
+            st.button("Mix up", disabled=True)
 
-        # Zeige die Songs der ausgewählten Playlists an
-        for selected_playlist_id in selected_playlist_ids:
-            if selected_playlist_id in df['playlist_id'].values:
-                selected_playlist = df[df['playlist_id'] == selected_playlist_id]
-                playlist_display_name = playlist_id_to_name[selected_playlist_id]
-                st.write(f"Songs in {playlist_display_name}:")
-                st.write(selected_playlist[['track_name', 'track_artist', 'duration_ms']])
-            else:
-                st.error(f"Playlist mit ID {selected_playlist_id} existiert nicht.")
-    else:
-        # Wenn keine Auswahl getroffen wurde, wird der Button deaktiviert
-        st.button("Mix up", disabled=True)
    
     #Falls kein möglicher Match
     st.write("If there was no potential match found, click below.")
