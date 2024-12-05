@@ -113,7 +113,7 @@ def main():
 
         # Erstelle eine neue Spalte für benutzerfreundliche Namen
         sampled_playlists['playlist_display_name'] = sampled_playlists.apply(
-            lambda row: f"{row['playlist_genre']} - Songs from Artists like '{row['track_artist']}'", axis=1
+            lambda row: f"Playlist{row['playlist_genre']} - Songs from Artists like '{row['track_artist']}'", axis=1
         )
         return sampled_playlists
 
