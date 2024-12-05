@@ -106,13 +106,10 @@ def main():
     st.write("Choose 2 playlists:")
 
     # Funktion zum Erstellen benutzerfreundlicher Namen
-    def get_sample_playlists(df, max_per_genre=4):
+    def get_sample_playlists(df):
         # Gruppiere nach Genre 
-        sampled_playlists = (
-            df.groupby("playlist_genre")
-            .apply(lambda x: x.sample(n=min(max_per_genre, len(x)), random_state=1))
-            .reset_index(drop=True)
-        )
+        sampled_playlists = df.reset_index(drop=True)
+
 
         # Erstelle eine neue Spalte für benutzerfreundliche Namen
         sampled_playlists['playlist_display_name'] = sampled_playlists.apply(
