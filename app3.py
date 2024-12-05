@@ -114,7 +114,7 @@ def main():
     
         # Erstelle eine neue Spalte mit einem benutzerfreundlichen Namen
         sampled_playlists['playlist_name'] = sampled_playlists.apply(
-            lambda row: f"Songs from singers like: {row['track_artist']}", axis=1
+            lambda row: f"{row['playlist_genre']} - Songs like '{row['track_name']}'", axis=1
         )
     
         return sampled_playlists
@@ -123,20 +123,33 @@ def main():
     # Reduziere den Datensatz auf max. 4 Playlists pro Genre
     sampled_playlists = get_sample_playlists(df)
 
+    # Playlist-ID zu Display-Name-Mapping erstellen
+    playlist_id_to_name = dict(zip(playlists_df['playlist_id'], playlists_df['playlist_name']))
 
-    # Multiselect mit einer maximalen Auswahl von 2 Playlists
-    selected_playlist_id = st.multiselect("Choose at least one", options=sampled_playlists['playlist_name'].tolist(), max_selections=2)  # Maximale Anzahl von auswählbaren Künstlern
+    # Multi-Select für die Benutzer mit den neuen Namen
+    selected_playlist_display_names = st.multiselect(
+        "Choose playlists",
+        options=list(playlist_id_to_name.values()),
+        format_func=lambda x: playlist_id_to_name.get(x, x)  # Zeige benutzerfreundlichen Namen an
+    )
 
-    # Wenn mehr als 2 Künstler ausgewählt werden, zeige eine Warnung
-    if len(selected_playlist_id) > 2:
+    # Warnung bei mehr als 2 Auswahlmöglichkeiten
+    if len(selected_playlist_display_names) > 2:
         st.warning("A maximum of 2 Playlists can be selected.")
-    
-    if len(selected_playlist_id) > 0:
+
+    if selected_playlist_display_names:
+        # Hole die Original-Playlist-IDs basierend auf den Display-Namen
+        selected_playlist_ids = [
+            playlist_id for playlist_id, display_name in playlist_id_to_name.items()
+            if display_name in selected_playlist_display_names
+        ]
+
+        # Mix-Up-Button hinzufügen
         mix_button = st.button("Mix up")  # Der Button wird hier einmalig definiert
-        
+
         if mix_button:
             st.write("Mixing up your preferences...")  # Placeholder für Machine Learning Logik
-            
+
             # Ladebalken mit st.progress erstellen
             progress_bar = st.progress(0)
 
@@ -146,11 +159,12 @@ def main():
                 progress_bar.progress(percent_complete + 1)  # Ladebalken erhöhen
             st.success("Loading complete!")  # Erfolgsmeldung nach Abschluss
 
-        # Zeige die Songs der ausgewählten Playlist an
-        for selected_playlist_id in selected_playlist_id:
-            if selected_playlist_id in playlists.groups:
-                selected_playlist = playlists.get_group(selected_playlist_id)
-                st.write(f"Songs in Playlist ID {selected_playlist_id}:")
+        # Zeige die Songs der ausgewählten Playlists an
+        for selected_playlist_id in selected_playlist_ids:
+            if selected_playlist_id in playlists_df['playlist_id'].values:
+                selected_playlist = df[df['playlist_id'] == selected_playlist_id]
+                playlist_display_name = playlist_id_to_name[selected_playlist_id]
+                st.write(f"Songs in {playlist_display_name}:")
                 st.write(selected_playlist[['track_name', 'track_artist', 'duration_ms']])
             else:
                 st.error(f"Playlist mit ID {selected_playlist_id} existiert nicht.")
