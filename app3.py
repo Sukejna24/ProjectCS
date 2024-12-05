@@ -5,6 +5,7 @@ import pandas as pd
 import bcrypt
 import kagglehub
 import plotly.express as px
+import plotly.graph_objects as go
 
 
 def main():
@@ -175,7 +176,14 @@ def main():
         valence_range = st.slider("Valence", min_value=0.0, max_value=1.0, value=(0.0, 1.0), step=0.1)
         energy_range = st.slider("Energy", min_value=0.0, max_value=1.0, value=(0.0, 1.0), step=0.1)
         danceability_range = st.slider("Danceability", min_value=0.0, max_value=1.0, value=(0.0, 1.0), step=0.1)
-
+   
+    # Erstelle ein Diagramm mit den ausgewählten Attributen
+    fig = go.Figure(go.Barpolar(r=[tempo_range[1], valence_range[1], energy_range[1], danceability_range[1]],
+    theta=["Tempo", "Valence", "Energy", "Danceability"],
+    width=[10, 10, 10, 10]))
+    fig.upade_layout(polar=dict(radialaxis=dict(visible=True)), showlegend=False)
+    st.plotly_chart(fig)
+    
     # Filtere Songs basierend auf Benutzerpräferenzen
     filtered_songs = df[
         (df['tempo'] >= tempo_range[0]) & (df['tempo'] <= tempo_range[1]) &
