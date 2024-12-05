@@ -6,22 +6,6 @@ import bcrypt
 import kagglehub
 import plotly.express as px
 
-#CSS für Hintergrund und Schriftfarbe
-def add_custom_css():
-    st.markdown(""" <style>
-    .stApp{background-color: #333333; color: white;}
-    #sidebar anpassung
-    .css-1d391kg{background-color: #444444;}
-    #sidebar Schrift schwarz
-    .css-1d391kg .sidebar-content{color: black !important;}
-    #Überschriften in weiss 
-    h1, h2, h3, h4, h5, h6 {color: white !important;}
-    #Buttons in einem Spotify Grün
-    button{ background-color: #1DB954 !important;}
-    ::-webkit-scrollbar{width: 8px;}
-    ::-webkit-scrollbar{background-color: #b3b3b3;}
-    </style>""", unsafe_allow_html=True)
-add_custom_css()
 def main():
 
     url = "https://raw.githubusercontent.com/Sukejna24/ProjectCS/13fa67d4859f3823f8dada76f37cb27520f9bf06/spotify_songs.csv"
