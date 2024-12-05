@@ -124,7 +124,7 @@ def main():
     sampled_playlists = get_sample_playlists(df)
 
     # Playlist-ID zu Display-Name-Mapping erstellen
-    playlist_id_to_name = dict(zip(playlists_df['playlist_id'], playlists_df['playlist_display_name']))
+    playlist_id_to_name = dict(zip(df['playlist_id'], df['playlist_display_name']))
 
     # Multi-Select für die Benutzer mit den neuen Namen
     selected_playlist_display_names = st.multiselect(
