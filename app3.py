@@ -11,7 +11,9 @@ def add_custom_css():
     st.markdown(""" <style>
     .stApp{background-color: #333333; color: white;}
     #sidebar anpassung
-    .css-1d391kg{background-color: #181818;}
+    .css-1d391kg{background-color: #444444;}
+    #sidebar Schrift schwarz
+    .css-1d391kg . sidebar-content{color: black !important;}
     #Überschriften in weiss 
     h1, h2, h3, h4, h5, h6 {color: white !important;}
     #Buttons in einem Spotify Grün
