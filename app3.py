@@ -113,7 +113,7 @@ def main():
         sampled_playlists = sampled_playlists.reset_index(drop=True)
     
         # Erstelle eine neue Spalte mit einem benutzerfreundlichen Namen
-        sampled_playlists['playlist_name'] = sampled_playlists.apply(
+        sampled_playlists['playlist_display_name'] = sampled_playlists.apply(
             lambda row: f"{row['playlist_genre']} - Songs like '{row['track_name']}'", axis=1
         )
     
@@ -124,7 +124,7 @@ def main():
     sampled_playlists = get_sample_playlists(df)
 
     # Playlist-ID zu Display-Name-Mapping erstellen
-    playlist_id_to_name = dict(zip(playlists_df['playlist_id'], playlists_df['playlist_name']))
+    playlist_id_to_name = dict(zip(playlists_df['playlist_id'], playlists_df['playlist_display_name']))
 
     # Multi-Select für die Benutzer mit den neuen Namen
     selected_playlist_display_names = st.multiselect(
