@@ -105,22 +105,18 @@ def main():
     # Hinweis auf die maximale Auswahl
     st.write("Choose 2 playlists:")
 
-    # Funktion zum Auswählen von maximal 3-4 Playlists pro Genre
+    # Funktion zum Erstellen benutzerfreundlicher Namen
     def get_sample_playlists(df, max_per_genre=4):
-        if 'playlist_genre' not in df.columns or 'track_name' not in df.columns:
-            st.error("Required columns 'playlist_genre' or 'track_name' are missing.")
-            return pd.DataFrame()  # Leerer DataFrame bei Fehler
-
-        # Gruppiere nach Genre und wähle eine zufällige Stichprobe von max_per_genre Playlists pro Genre
-        sampled_playlists = df.groupby('playlist_genre').apply(
-            lambda x: x.sample(n=min(max_per_genre, len(x)), random_state=1)
+        # Gruppiere nach Genre und wähle max_per_genre Playlists pro Genre aus
+        sampled_playlists = (
+            df.groupby("playlist_genre")
+            .apply(lambda x: x.sample(n=min(max_per_genre, len(x)), random_state=1))
+            .reset_index(drop=True)
         )
-        # Entferne die Gruppen-Indexierung nach der Auswahl
-        sampled_playlists = sampled_playlists.reset_index(drop=True)
 
-        # Erstelle eine neue Spalte mit einem benutzerfreundlichen Namen
+        # Erstelle eine neue Spalte für benutzerfreundliche Namen
         sampled_playlists['playlist_display_name'] = sampled_playlists.apply(
-            lambda row: f"{row['playlist_genre']} - Songs like '{row['track_name']}' (ID: {row['playlist_id']})", axis=1
+            lambda row: f"{row['playlist_genre']} - Songs from Artists like '{row['track_artist']}'", axis=1
         )
         return sampled_playlists
 
@@ -138,42 +134,32 @@ def main():
             "Choose playlists",
             options=list(playlist_id_to_name.values())  # Benutzernamen anzeigen
         )
-
+        # Rückübersetzen von benutzerfreundlichen Namen in Playlist-IDs
+        selected_playlist_ids = [
+            playlist_id for playlist_id, display_name in playlist_id_to_name.items()
+            if display_name in selected_playlist_display_names
+        ]
         # Warnung bei mehr als 2 Auswahlmöglichkeiten
-        if len(selected_playlist_display_names) > 2:
+        if len(selected_playlist_ids) > 2:
             st.warning("A maximum of 2 Playlists can be selected.")
 
-        if selected_playlist_display_names:
-            # Hole die Original-Playlist-IDs basierend auf den Display-Namen
-            selected_playlist_ids = [
-                playlist_id for playlist_id, display_name in playlist_id_to_name.items()
-                if display_name in selected_playlist_display_names
-            ]
-
-            # Mix-Up-Button hinzufügen
+        if selected_playlist_ids:
             mix_button = st.button("Mix up")
-
             if mix_button:
                 st.write("Mixing up your preferences...")
-
-                # Ladebalken mit st.progress erstellen
                 progress_bar = st.progress(0)
                 for percent_complete in range(100):
                     time.sleep(0.05)
                     progress_bar.progress(percent_complete + 1)
                 st.success("Loading complete!")
 
-            # Zeige die Songs der ausgewählten Playlists an
-            for selected_playlist_id in selected_playlist_ids:
-                if selected_playlist_id in sampled_playlists['playlist_id'].values:
-                    selected_playlist = df[df['playlist_id'] == selected_playlist_id]
-                    playlist_display_name = playlist_id_to_name[selected_playlist_id]
-                    st.write(f"Songs in {playlist_display_name}:")
-                    st.write(selected_playlist[['track_name', 'track_artist', 'duration_ms']])
-                else:
-                    st.error(f"Playlist with ID {selected_playlist_id} does not exist.")
-        else:
-            st.button("Mix up", disabled=True)
+            #Zeige Songs der ausgewählten Playlists
+            for playlist_id in selected_playlist_ids:
+                selected_playlist = sampled_playlists[sampled_playlists['playlist_id'] == playlist_id]
+                st.write(f"Songs in {playlist_id_to_name[playlist_id]}:")
+                st.write(selected_playlist[['track_name', 'track_artist', 'duration_ms']])
+    else:
+        st.error("No playlists available to display.")
 
    
     #Falls kein möglicher Match
