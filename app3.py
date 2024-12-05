@@ -118,7 +118,7 @@ def main():
             lambda row: f"Songs from singers like: {row['example_artist']}", axis=1
         )
     
-    return sampled_playlists
+        return sampled_playlists
 
 
     # Reduziere den Datensatz auf max. 4 Playlists pro Genre
