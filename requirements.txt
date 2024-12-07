@@ -6,5 +6,4 @@ PyMySQl
 pandas
 bcrypt
 kagglehub
-kaggle
 plotly.express
