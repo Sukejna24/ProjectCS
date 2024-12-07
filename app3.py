@@ -245,16 +245,23 @@ def main():
     # Extrahiere Songnamen 
     song_names = df['track_name'].unique()
 
-    # Songauswahl mit Selectbox
-    selected_songs = st.multiselect("Please select 10 songs of your choice", song_names, max_selections = 10)
+    # Songauswahl mit Multiselect (mehrere Songs auswählbar)
+    selected_songs = st.multiselect(
+        "Please select 10 songs of your choice", 
+        song_names, 
+        max_selections=10  # Maximale Anzahl der auszuwählenden Songs
+    )
 
-    # Informationen zum ausgewählten Song filtern
+    # Überprüfen, ob Songs ausgewählt wurden
     if selected_songs:
+        st.write(f"Ausgewählte Songs: {', '.join(selected_songs)}")
+    
+        # Informationen zu den ausgewählten Songs filtern
         song_info = df[df['track_name'].isin(selected_songs)]
 
-        # Songdetails anzeigen
-        st.write(f"Details zum Song: {selected_songs}")
-        st.write(song_info)
+
+    else:
+        st.write("Bitte wähle mindestens einen Song aus.")
 
     #Visualisierung zur Tanzbarkeit des Songs
     if 'danceability' in song_info.columns:
