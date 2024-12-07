@@ -246,14 +246,15 @@ def main():
     song_names = df['track_name'].unique()
 
     # Songauswahl mit Selectbox
-    selected_song = st.selectbox("Please select 10 songs of your choice", song_names, max_selections = 10)
+    selected_songs = st.selectbox("Please select 10 songs of your choice", song_names, max_selections = 10)
 
     # Informationen zum ausgewählten Song filtern
-    song_info = df[df['track_name'] == selected_song]
+    if selected_songs:
+        song_info = df[df['track_name'].isin(selected_songs)]
 
-    # Songdetails anzeigen
-    st.write(f"Details zum Song: {selected_song}")
-    st.write(song_info)
+        # Songdetails anzeigen
+        st.write(f"Details zum Song: {selected_songs}")
+        st.write(song_info)
 
     #Visualisierung zur Tanzbarkeit des Songs
     if 'danceability' in song_info.columns:
