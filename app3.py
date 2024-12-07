@@ -252,21 +252,6 @@ def main():
         max_selections=10  # Maximale Anzahl der auszuwählenden Songs
     )
 
-    # Überprüfen, ob Songs ausgewählt wurden
-    if selected_songs:
-        st.write(f"Ausgewählte Songs: {', '.join(selected_songs)}")
-    
-        # Informationen zu den ausgewählten Songs filtern
-        song_info = df[df['track_name'].isin(selected_songs)]
-
-
-    else:
-        st.write("Bitte wähle mindestens einen Song aus.")
-
-    #Visualisierung zur Tanzbarkeit des Songs
-    if 'danceability' in song_info.columns:
-        st.line_chart(song_info['danceability'])
-
     #Weitere interaktive Features, z.B. für Bewertung oder Genre-Auswahl
     genre = st.radio("Wähle ein Genre:", df['playlist_genre'].unique())
     genre_data = df[df['playlist_genre'] == genre]
