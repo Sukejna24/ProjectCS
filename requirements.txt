@@ -8,3 +8,4 @@ bcrypt
 kagglehub
 kaggle
 plotly.express
+streamlit.components.v1
