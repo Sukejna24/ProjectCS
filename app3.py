@@ -173,12 +173,46 @@ def main():
             st.session_state.expander_opened = True
 
     # Widgets innerhalb des Containers anzeigen
+    # Widgets innerhalb des Containers anzeigen
     with st.expander("Choose the attributes of your desired Playlist", expanded=st.session_state.expander_opened):
         st.header("Choose the attributes of your desired Playlist")
-        tempo_range = st.slider("Tempo", min_value=0.0, max_value=240.0, value=(0.0, 240.0), step=10.0)
-        valence_range = st.slider("Valence", min_value=0.0, max_value=1.0, value=(0.0, 1.0), step=0.1)
-        energy_range = st.slider("Energy", min_value=0.0, max_value=1.0, value=(0.0, 1.0), step=0.1)
-        danceability_range = st.slider("Danceability", min_value=0.0, max_value=1.0, value=(0.0, 1.0), step=0.1)
+    
+        # Tempo-Slider
+        col1, col2, col3 = st.columns([2, 6, 2])
+        with col1:
+            st.write("Slow")
+        with col2:
+            tempo_range = st.slider("Tempo", min_value=0.0, max_value=240.0, value=(0.0, 240.0), step=10.0, label_visibility="collapsed")
+        with col3:
+            st.write("Fast")
+
+        # Valence-Slider
+        col1, col2, col3 = st.columns([2, 6, 2])
+        with col1:
+            st.write("Sad")
+        with col2:
+            valence_range = st.slider("Valence", min_value=0.0, max_value=1.0, value=(0.0, 1.0), step=0.1, label_visibility="collapsed")
+        with col3:
+            st.write("Happy")
+
+        # Energy-Slider
+        col1, col2, col3 = st.columns([2, 6, 2])
+        with col1:
+            st.write("Low Energy")
+        with col2:
+            energy_range = st.slider("Energy", min_value=0.0, max_value=1.0, value=(0.0, 1.0), step=0.1, label_visibility="collapsed")
+        with col3:
+            st.write("High Energy")
+
+        # Danceability-Slider
+        col1, col2, col3 = st.columns([2, 6, 2])
+        with col1:
+            st.write("Less Danceable")
+        with col2:
+            danceability_range = st.slider("Danceability", min_value=0.0, max_value=1.0, value=(0.0, 1.0), step=0.1, label_visibility="collapsed")
+        with col3:
+            st.write("More Danceable")
+
    
     # Filtere Songs basierend auf Benutzerpräferenzen
     filtered_songs = df[
