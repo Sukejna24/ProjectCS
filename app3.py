@@ -237,12 +237,12 @@ def main():
         progress_bar = st.progress(0)
 
         for percent_complete in range(100):
-            time.sleep(0.1)  # Simuliere Verarbeitung
+            time.sleep(0.05)  # Simuliere Verarbeitung
             progress_bar.progress(percent_complete + 1)
 
         st.success("Process Complete!")
         
-        # Extrahiere Songnamen (angenommen, 'track_name' ist der Name der Song-Spalte)
+    # Extrahiere Songnamen 
     song_names = df['track_name'].unique()
 
     # Songauswahl mit Selectbox
