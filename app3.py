@@ -246,7 +246,7 @@ def main():
     song_names = df['track_name'].unique()
 
     # Songauswahl mit Selectbox
-    selected_song = st.selectbox("Wähle einen Song aus", song_names)
+    selected_song = st.selectbox("Please select 10 songs of your choice", song_names, max_selections = 10)
 
     # Informationen zum ausgewählten Song filtern
     song_info = df[df['track_name'] == selected_song]
