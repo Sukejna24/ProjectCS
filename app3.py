@@ -24,7 +24,7 @@ def main():
     
     st.title("Spotify Melody Match")
 
-    # Datenbank einrichten für den Login einrichten
+    # Datenbank für den Login einrichten
     file_name_users = os.path.join(script_dir, "users.db")
     conn = sqlite3.connect(file_name_users)
     c = conn.cursor()
@@ -57,7 +57,7 @@ def main():
             return True
         return False
 
-    #Streamlit-Anwendung
+    # Streamlit-Anwendung
     with st.sidebar:
         st.header("Login & Registrierung")
 
@@ -119,7 +119,6 @@ def main():
         )
         return sampled_playlists
 
-
     # Reduziere den Datensatz auf max. 4 Playlists pro Genre
     sampled_playlists = get_sample_playlists(df)
 
@@ -160,8 +159,7 @@ def main():
                 st.write(selected_playlist[['track_name', 'track_artist', 'duration_ms']])
     else:
         st.error("No playlists available to display.")
-
-   
+ 
     #Falls kein möglicher Match
     st.write("If there was no potential match found, click below.")
 
@@ -254,7 +252,7 @@ def main():
         max_selections=10  # Maximale Anzahl der auszuwählenden Songs
     )
 
-    #Weitere interaktive Features, z.B. für Bewertung oder Genre-Auswahl
+    # Weitere interaktive Features, z.B. für Bewertung oder Genre-Auswahl
     genre = st.radio("Wähle ein Genre:", df['playlist_genre'].unique())
     genre_data = df[df['playlist_genre'] == genre]
     
@@ -266,7 +264,7 @@ def main():
         fig = px.bar(genre_counts, x=genre_counts.index, y=genre_counts.values, labels={'x': 'Genre', 'y': 'Anzahl Songs'})
         st.plotly_chart(fig)
 
-    #In deinem main()-Code
+    # In deinem main()-Code
     plot_genre_distribution(df)
 
     # Seitenleiste mit Text und anderen Elementen
