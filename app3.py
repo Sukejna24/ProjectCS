@@ -26,10 +26,10 @@ def main():
 
     # Datenbank für den Login einrichten
     file_name_users = os.path.join(script_dir, "users.db")
-    conn = sqlite3.connect(file_name_users)
-    c = conn.cursor()
-    c.execute('''CREATE TABLE IF NOT EXISTS users (username TEXT, password TEXT)''')
-    conn.commit()
+    conn_users = sqlite3.connect(file_name_users)
+    c_users = conn_users.cursor()
+    c_users.execute('''CREATE TABLE IF NOT EXISTS users (username TEXT, password TEXT)''')
+    conn_users.commit()
 
     # Hash-Funktion für Passwörter
     def hash_password(password):
@@ -41,8 +41,8 @@ def main():
     # Registrierung
     def register_user(username, password):
         hashed_password = hash_password(password)
-        c.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, hashed_password))
-        conn.commit()
+        c_users.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, hashed_password))
+        conn_users.commit()
 
     # Überprüfen, ob Benutzer existiert
     def user_exists(username):
@@ -51,8 +51,8 @@ def main():
 
     # Login überprüfen
     def login_user(username, password):
-        c.execute("SELECT * FROM users WHERE username = ?", (username,))
-        user = c.fetchone()
+        c_users.execute("SELECT * FROM users WHERE username = ?", (username,))
+        user = c_users.fetchone()
         if user and check_password(password, user[1]):
             return True
         return False
@@ -67,7 +67,7 @@ def main():
     if 'username' not in st.session_state:
         st.session_state.username = ""
 
-        # Login oder Registrierung anzeigen
+    # Login oder Registrierung anzeigen
     with st.sidebar:
         if not st.session_state.logged_in:
             option = st.selectbox("Aktion wählen", ["Login", "Registrieren"])
