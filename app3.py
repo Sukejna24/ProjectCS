@@ -3,7 +3,8 @@ import time
 import sqlite3
 import pandas as pd
 import bcrypt
-import kagglehub
+import hashlib
+from datetime import datetime
 import plotly.express as px
 import os
 
@@ -19,7 +20,6 @@ def main():
 
     #Einfügen des Spotify logos
     with col2:
-        # Bild-URL
         st.image("https://upload.wikimedia.org/wikipedia/commons/7/71/Spotify.png", width=150)
     
     st.title("Spotify Melody Match")
@@ -28,7 +28,7 @@ def main():
     file_name_users = os.path.join(script_dir, "users.db")
     conn_users = sqlite3.connect(file_name_users)
     c_users = conn_users.cursor()
-    c_users.execute('''CREATE TABLE IF NOT EXISTS users (username TEXT, password TEXT)''')
+    c_users.execute('''CREATE TABLE IF NOT EXISTS users (user_id TEXT PRIMARY KEY, username TEXT, password TEXT)''')
     conn_users.commit()
 
     # Hash-Funktion für Passwörter
@@ -38,22 +38,34 @@ def main():
     def check_password(password, hashed):
         return bcrypt.checkpw(password.encode('utf-8'), hashed)
 
+    # Funktion zur Erstellung einer Benutzer-ID
+    def generate_user_id(username):
+        current_time = datetime.now().strftime("%Y%m%d%H%M%S")
+        username_hash = hashlib.md5(username.encode()).hexdigest()[:6]
+        return f"{current_time}_{username_hash}"
+
     # Registrierung
     def register_user(username, password):
-        hashed_password = hash_password(password)
-        c_users.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, hashed_password))
-        conn_users.commit()
+        if user_exists(username):
+            st.warning("Benutzername existiert bereits!")
+        else:
+            user_id = generate_user_id(username)
+            hashed_password = hash_password(password)
+            c_users.execute("INSERT INTO users (user_id, username, password) VALUES (?, ?, ?)", 
+                            (user_id, username, hashed_password))
+            conn_users.commit()
+            st.success(f"Registrierung erfolgreich! Ihre Benutzer-ID ist: {user_id}")
 
     # Überprüfen, ob Benutzer existiert
     def user_exists(username):
-        c.execute("SELECT * FROM users WHERE username = ?", (username,))
-        return c.fetchone()
+        c_users.execute("SELECT * FROM users WHERE username = ?", (username,))
+        return c_users.fetchone()
 
     # Login überprüfen
     def login_user(username, password):
         c_users.execute("SELECT * FROM users WHERE username = ?", (username,))
         user = c_users.fetchone()
-        if user and check_password(password, user[1]):
+        if user and check_password(password, user[2]):
             return True
         return False
 
@@ -77,11 +89,7 @@ def main():
 
             if option == "Registrieren":
                 if st.button("Registrieren"):
-                    if user_exists(username):
-                        st.warning("Benutzername existiert bereits!")
-                    else:
-                        register_user(username, password)
-                        st.success("Registrierung erfolgreich! Bitte einloggen.")
+                    register_user(username, password)
             elif option == "Login":
                 if st.button("Login"):
                     if login_user(username, password):
@@ -94,7 +102,7 @@ def main():
             st.sidebar.success(f"Eingeloggt als: {st.session_state.username}")
             st.sidebar.button("Logout", on_click=lambda: st.session_state.update({"logged_in": False, "username": ""}))
 
-     # Musikpräferenzen
+    # Musikpräferenzen
     st.write("Welcome to Melody Match! Find the perfect playlist for you and your friends.")
     st.header("Find your Match!")
 
@@ -109,36 +117,27 @@ def main():
 
     # Funktion zum Erstellen benutzerfreundlicher Namen
     def get_sample_playlists(df):
-        # Gruppiere nach Genre 
         sampled_playlists = df.reset_index(drop=True)
-
-
-        # Erstelle eine neue Spalte für benutzerfreundliche Namen
         sampled_playlists['playlist_display_name'] = sampled_playlists.apply(
             lambda row: f"Playlist {row['playlist_name']} - Songs from Artists like '{row['track_artist']}'", axis=1
         )
         return sampled_playlists
 
-    # Reduziere den Datensatz auf max. 4 Playlists pro Genre
     sampled_playlists = get_sample_playlists(df)
 
-    # Überprüfe, ob sampled_playlists gültig ist
     if not sampled_playlists.empty:
-        # Playlist-ID zu Display-Name-Mapping erstellen
         playlist_id_to_name = dict(zip(sampled_playlists['playlist_id'], sampled_playlists['playlist_display_name']))
 
-        # Multi-Select für die Benutzer mit den neuen Namen
         selected_playlist_display_names = st.multiselect(
             "Choose playlists",
             options=list(playlist_id_to_name.values()),
-            format_func=lambda name: name   # Benutzernamen anzeigen
+            format_func=lambda name: name
         )
-        # Rückübersetzen von benutzerfreundlichen Namen in Playlist-IDs
         selected_playlist_ids = [
             playlist_id for playlist_id, display_name in playlist_id_to_name.items()
             if display_name in selected_playlist_display_names
         ]
-        # Warnung bei mehr als 2 Auswahlmöglichkeiten
+
         if len(selected_playlist_ids) > 2:
             st.warning("A maximum of 2 Playlists can be selected.")
 
@@ -152,7 +151,6 @@ def main():
                     progress_bar.progress(percent_complete + 1)
                 st.success("Loading complete!")
 
-            #Zeige Songs der ausgewählten Playlists
             for playlist_id in selected_playlist_ids:
                 selected_playlist = df[df['playlist_id'] == playlist_id]
                 st.write(f"Songs in {playlist_id_to_name[playlist_id]}:")
@@ -160,24 +158,17 @@ def main():
     else:
         st.error("No playlists available to display.")
  
-    #Falls kein möglicher Match
     st.write("If there was no potential match found, click below.")
-
-    # Zustand für den Expander initialisieren
     if "expander_opened" not in st.session_state:
-        st.session_state.expander_opened = False  # Beim ersten Laden offen
+        st.session_state.expander_opened = False
 
-    # Funktion zum Öffnen des Expanders, falls noch nicht offen
     def open_expander():
         if not st.session_state.expander_opened:
             st.session_state.expander_opened = True
 
-    # Widgets innerhalb des Containers anzeigen
-    # Widgets innerhalb des Containers anzeigen
     with st.expander("Choose the attributes of your desired Playlist", expanded=st.session_state.expander_opened):
         st.header("Choose the attributes of your desired Playlist")
     
-        # Tempo-Slider
         col1, col2, col3 = st.columns([2, 6, 2])
         with col1:
             st.write("Slow")
@@ -186,7 +177,6 @@ def main():
         with col3:
             st.write("Fast")
 
-        # Valence-Slider
         col1, col2, col3 = st.columns([2, 6, 2])
         with col1:
             st.write("Sad")
@@ -195,7 +185,6 @@ def main():
         with col3:
             st.write("Happy")
 
-        # Energy-Slider
         col1, col2, col3 = st.columns([2, 6, 2])
         with col1:
             st.write("Low Energy")
@@ -204,7 +193,6 @@ def main():
         with col3:
             st.write("High Energy")
 
-        # Danceability-Slider
         col1, col2, col3 = st.columns([2, 6, 2])
         with col1:
             st.write("Less Danceable")
@@ -213,8 +201,6 @@ def main():
         with col3:
             st.write("More Danceable")
 
-   
-    # Filtere Songs basierend auf Benutzerpräferenzen
     filtered_songs = df[
         (df['tempo'] >= tempo_range[0]) & (df['tempo'] <= tempo_range[1]) &
         (df['valence'] >= valence_range[0]) & (df['valence'] <= valence_range[1]) &
@@ -222,7 +208,6 @@ def main():
         (df['danceability'] >= danceability_range[0]) & (df['danceability'] <= danceability_range[1])
     ]
 
-    # Ergebnisse anzeigen
     st.write("### Songs that match your preferences")
 
     if not filtered_songs.empty:
@@ -232,27 +217,19 @@ def main():
 
     if st.button("Search Playlists"):
         st.write("Recommended songs for you could be: ...")
-
-        # Ladebalken mit st.progress erstellen
         progress_bar = st.progress(0)
-
         for percent_complete in range(100):
-            time.sleep(0.05)  # Simuliere Verarbeitung
+            time.sleep(0.05)
             progress_bar.progress(percent_complete + 1)
-
         st.success("Process Complete!")
         
-    # Extrahiere Songnamen 
     song_names = df['track_name'].unique()
-
-    # Songauswahl mit Multiselect (mehrere Songs auswählbar)
     selected_songs = st.multiselect(
         "Please select 10 songs of your choice", 
         song_names, 
-        max_selections=10  # Maximale Anzahl der auszuwählenden Songs
+        max_selections=10
     )
 
-    # Weitere interaktive Features, z.B. für Bewertung oder Genre-Auswahl
     genre = st.radio("Wähle ein Genre:", df['playlist_genre'].unique())
     genre_data = df[df['playlist_genre'] == genre]
     
@@ -264,19 +241,12 @@ def main():
         fig = px.bar(genre_counts, x=genre_counts.index, y=genre_counts.values, labels={'x': 'Genre', 'y': 'Anzahl Songs'})
         st.plotly_chart(fig)
 
-    # In deinem main()-Code
     plot_genre_distribution(df)
 
-    # Seitenleiste mit Text und anderen Elementen
     st.sidebar.header("Do you like the application?")
     st.sidebar.write("Please rate your experience with us")
-    
-    # Setze die Sterne als Buttons
-    ### Benutzer kann auf einen der Buttons klicken, um eine Bewertung abzugeben
     stars = ["⭐", "⭐⭐", "⭐⭐⭐", "⭐⭐⭐⭐", "⭐⭐⭐⭐⭐"]
-    rating = st.sidebar.radio("", options=stars, index=2)  # Standardwert auf "⭐⭐⭐" setzen
-
-    # Ausgabe der gewählten Bewertung
+    rating = st.sidebar.radio("", options=stars, index=2)
     st.sidebar.write(f"Du hast {rating} vergeben.")
 
 if __name__ == "__main__":
