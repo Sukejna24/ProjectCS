@@ -24,8 +24,11 @@ def main():
     
     st.title("Spotify Melody Match")
 
+    # Absoluter Pfad zur Datenbank im Repository
+    db_path = os.path.join(os.path.dirname(__file__), 'users.db')
+
     # Datenbank einrichten für den Login einrichten
-    conn = sqlite3.connect('users.db')
+    conn = sqlite3.connect(db_path)
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS users (username TEXT, password TEXT)''')
     conn.commit()
