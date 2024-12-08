@@ -136,7 +136,7 @@ def main():
         conn_user_db = sqlite3.connect(user_db_path)
 
         # Daten für einen Overview abrufen
-        query_playlist_overview = """SELECT playlist_name, playlist_genre, playlist_subgenre, track_artist, track_album_name, track_name FROM user_songs"""
+        query_playlist_overview = """SELECT DISTINCT playlist_name, playlist_genre, playlist_subgenre, track_artist, track_album_name, track_name FROM user_songs"""
         user_songs_df_overview = pd.read_sql_query(query_playlist_overview, conn_user_db)
 
         # Scrollbare Tabelle anzeigen
@@ -145,19 +145,19 @@ def main():
         with st.expander("Suche", expanded=st.session_state.expander_opened):
 
             # Dynamische Suchoption hinzufügen
-            search_column = st.selectbox("Suche nach:", ["track_artist", "track_name"])
-            search_query = st.text_input(f"Geben Sie den {search_column} ein:")
+            search_column_1 = st.selectbox("Suche nach:", ["track_artist", "track_name", "playlist_name"], key="search_column_1")
+            search_query_1 = st.text_input(f"Geben Sie den {search_column_1} ein:", key="search_query_1")
 
             # Suchergebnisse anzeigen
-            if search_query:
-                user_songs_df_search = f"""SELECT track_artist, track_name, danceability, energy, key, loudness, mode, speechiness, acousticness, instrumentalness, liveness, valence, tempo, duration_ms FROM user_songs WHERE {search_column} LIKE ?"""
-                user_songs_df_search = pd.read_sql_query(user_songs_df_search, conn_user_db, params=(f"%{search_query}%",))
-                if not user_songs_df_search.empty:
+            if search_query_1:
+                query_playlist_search_1 = f"""SELECT DISTINCT playlist_name, track_artist, track_name, danceability, energy, key, loudness, mode, speechiness, acousticness, instrumentalness, liveness, valence, tempo, duration_ms FROM user_songs WHERE {search_column_1} LIKE ?"""
+                user_songs_df_search_1 = pd.read_sql_query(query_playlist_search_1, conn_user_db, params=(f"%{search_query_1}%",))
+                if not user_songs_df_search_1.empty:
                     # Ergebnisse anzeigen, wenn etwas gefunden wurde
-                    st.dataframe(user_songs_df_search, use_container_width=True, height=400)
+                    st.dataframe(user_songs_df_search_1, use_container_width=True, height=400)
 
                     # Zeige "Legende"-Button nach erfolgreicher Suche
-                    if st.button("Erklärung der Audio Features"):
+                    if st.button("Erklärung der Audio Features", key="audio_features"):
                         st.session_state.show_legend = not st.session_state.show_legend
 
                     # Beschreibungen anzeigen, wenn "Legende" aktiviert ist
@@ -227,10 +227,10 @@ def main():
                         """)
                 else:
                     # Nachricht anzeigen, wenn keine Treffer vorhanden sind
-                    st.write("Kein Treffer gefunden. Versuchen Sie es mit einer anderen Eingabe.")
+                    st.warning("Kein Treffer gefunden. Versuchen Sie es mit einer anderen Eingabe.")
 
         # Filter nach Audio-Features
-        query_playlist_filter = """SELECT track_artist, track_name, tempo, valence, energy, danceability FROM user_songs"""
+        query_playlist_filter = """SELECT DISTINCT track_artist, track_name, tempo, valence, energy, danceability FROM user_songs"""
         user_songs_df_filter = pd.read_sql_query(query_playlist_filter, conn_user_db)
 
         with st.expander("Filter nach Audio-Features", expanded=st.session_state.expander_opened):
@@ -284,7 +284,7 @@ def main():
                 st.dataframe(filtered_songs, use_container_width=True, height=400)
 
                 # Legenden-Schalter
-                if st.button("Erklärung der Audio Features"):
+                if st.button("Erklärung der Audio Features", key="audio_features_duplicate"):
                     st.session_state.show_legend = not st.session_state.show_legend
 
                 # Beschreibungen anzeigen, wenn "Legende" aktiviert ist
@@ -311,7 +311,153 @@ def main():
                 """)
 
             else:
-                st.write("Keine Songs entsprechen den Filterkriterien.")
+                st.warning("Keine Songs entsprechen den Filterkriterien.")
+
+        # CSS zur Anpassung des Designs
+        st.markdown("""
+            <style>
+            .song-list {
+                font-size: 14px !important;
+                line-height: 1.6 !important;
+                display: flex;
+                justify-content: space-between;
+            }
+            .remove-button {
+                font-size: 10px !important;
+                padding: 1px 3px !important;
+                color: red !important;
+                background: none !important;
+                border: none !important;
+                cursor: pointer !important;
+            }
+            .song-count {
+                font-size: 16px !important;
+                font-weight: bold !important;
+                margin-bottom: 10px !important;
+            }
+            </style>
+        """, unsafe_allow_html=True)
+
+        with st.expander("Mix Up", expanded=st.session_state.expander_opened):
+            # Dynamische Suchoption hinzufügen
+            search_column_2 = st.selectbox("Suche nach:", ["track_artist", "track_name"], key="search_column_2")
+            search_query_2 = st.text_input(f"Geben Sie den {search_column_2} ein:", key="search_query_2")
+
+            # Warenkorb in der Session speichern
+            if "cart" not in st.session_state:
+                st.session_state.cart = []
+
+            # Anzahl der Songs im Warenkorb anzeigen
+            if st.session_state.cart:
+                st.markdown(f"<div class='song-count'>Ausgewählte Songs: {len(st.session_state.cart)}</div>", unsafe_allow_html=True)
+            else:
+                st.markdown("<div class='song-count'>Ihr Warenkorb ist leer.</div>", unsafe_allow_html=True)
+
+            # Suchergebnisse anzeigen
+            if search_query_2:
+                # Abfrage von Tracks nach Suchbegriff
+                query_playlist_search_2 = f"""
+                SELECT DISTINCT track_artist, track_name, danceability, energy, key, loudness, mode, speechiness, acousticness, 
+                instrumentalness, liveness, valence, tempo, duration_ms 
+                FROM user_songs WHERE {search_column_2} LIKE ?
+                """
+                user_songs_df_search_2 = pd.read_sql_query(query_playlist_search_2, conn_user_db, params=(f"%{search_query_2}%",))
+
+                if not user_songs_df_search_2.empty:
+                    st.write("Wählen Sie Songs aus, um sie in den Warenkorb zu legen:")
+                    
+                    for i, row in user_songs_df_search_2.iterrows():
+                        # Eindeutigen Schlüssel für die Checkbox generieren
+                        checkbox_key = f"checkbox_{i}_{row['track_name']}_{row['track_artist']}"
+                        is_checked = row.to_dict() in st.session_state.cart
+                        checked = st.checkbox(
+                            f"{row['track_name']} von {row['track_artist']}", 
+                            value=is_checked, 
+                            key=checkbox_key
+                        )
+                        if checked and not is_checked:
+                            # Hinzufügen zum Warenkorb
+                            st.session_state.cart.append(row.to_dict())
+                        elif not checked and is_checked:
+                            # Entfernen aus dem Warenkorb
+                            st.session_state.cart.remove(row.to_dict())
+                else:
+                    # Meldung anzeigen, wenn keine Treffer gefunden werden
+                    st.warning("Kein Treffer gefunden. Versuchen Sie es mit einer anderen Eingabe.")
+
+            # Warenkorb anzeigen (immer sichtbar)
+            if st.session_state.cart:
+                st.write("Ihr Warenkorb:")
+                for index, track in enumerate(st.session_state.cart):
+                    col1, col2 = st.columns([5, 1])
+                    with col1:
+                        st.markdown(f"<div class='song-list'><b>{track['track_name']}</b> - <i>{track['track_artist']}</i></div>", unsafe_allow_html=True)
+                    with col2:
+                        if st.button(f"❌", key=f"remove_cart_{index}", help="Löschen"):
+                            st.session_state.cart.pop(index)
+                            st.experimental_rerun()  # Seite neu laden, um Änderungen zu reflektieren
+
+            # Button nur anzeigen, wenn 20 Songs im Warenkorb sind
+            if len(st.session_state.cart) >= 20:
+                if st.button("Ähnliche Songs finden"):
+                    # DataFrame aus dem Warenkorb erstellen
+                    selected_tracks_df = pd.DataFrame(st.session_state.cart)
+
+                    # Machine-Learning-Modell verwenden, um ähnliche Songs zu finden
+                    from sklearn.neighbors import NearestNeighbors
+                    import numpy as np
+
+                    # Daten für ML vorbereiten
+                    feature_columns = [
+                        "danceability", "energy", "key", "loudness", "mode",
+                        "speechiness", "acousticness", "instrumentalness", "liveness",
+                        "valence", "tempo", "duration_ms"
+                    ]
+
+                    # Fit-Modell auf allen Songs
+                    query_playlist_all = """
+                    SELECT * FROM user_songs
+                    """
+                    user_songs_df_all= pd.read_sql_query(query_playlist_all, conn_user_db)
+                    knn = NearestNeighbors(n_neighbors=300, metric="euclidean")
+                    knn.fit(user_songs_df_all[feature_columns])
+
+                    # Suche nach ähnlichen Songs basierend auf den ausgewählten Tracks
+                    selected_features = selected_tracks_df[feature_columns].values
+                    distances, indices = knn.kneighbors(selected_features)
+
+                    # Ergebnisse sammeln
+                    user_songs_df_similar = user_songs_df_all.iloc[np.unique(indices.flatten())]
+
+                    # Playlist-Metadaten hinzufügen
+                    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
+                    user_songs_df_similar["playlist_name"] = f"Mix Up {timestamp}"
+                    user_songs_df_similar["playlist_genre"] = f"Mix Up {timestamp}"
+                    user_songs_df_similar["playlist_subgenre"] = f"Mix Up {timestamp}"
+                    user_songs_df_similar["playlist_id"] = timestamp
+
+                    # Ergebnisse anzeigen
+                    st.subheader("Ähnliche Songs")
+                    st.dataframe(user_songs_df_similar, use_container_width=True, height=400)
+
+                    if st.button("Passt diese Playlist?"):
+                        try:
+                            # Playlist an all_songs_df anhängen
+                            query_playlist_all = pd.concat([query_playlist_all, user_songs_df_similar], ignore_index=True)
+                            
+                            # Überschreibe die Datenbank mit all_songs_df
+                            query_playlist_all.to_sql("user_songs", conn_user_db, if_exists="replace", index=False)
+
+                            # Datenbankänderungen speichern
+                            conn_user_db.commit()
+
+                            # Erfolgreiche Speicherung bestätigen
+                            st.success("Die Playlist wurde erfolgreich gespeichert.")
+                        except Exception as e:
+                            st.error(f"Fehler beim Speichern der Playlist: {e}")
+                        finally:
+                            # Verbindung schließen
+                            conn_user_db.close()
 
         conn_user_db.close()
 
