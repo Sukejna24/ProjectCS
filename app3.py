@@ -40,9 +40,10 @@ def main():
 
     # Funktion zur Erstellung einer Benutzer-ID
     def generate_user_id(username):
-        current_time = datetime.now().strftime("%Y%m%d%H%M%S")
-        username_hash = hashlib.md5(username.encode()).hexdigest()[:6]
-        return f"{current_time}_{username_hash}"
+        timestamp = datetime.now().strftime("%H%M%S")  # Nur Stunden, Minuten, Sekunden
+        data = f"{username}{timestamp}"
+        user_hash = hashlib.md5(data.encode()).hexdigest()[:5]  # Kürze den Hash auf 5 Zeichen
+        return user_hash
 
     # Registrierung
     def register_user(username, password):
