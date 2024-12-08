@@ -5,17 +5,21 @@ import bcrypt
 import hashlib
 from datetime import datetime
 import os
-import plotly.express as px
-import time
 
 def main():
-    # Verzeichnis des aktuellen Skripts
-    script_dir = os.path.dirname(os.path.abspath(__file__))
+    # Initialisierung der Session-States
+    if 'logged_in' not in st.session_state:
+        st.session_state.logged_in = False
+    if 'username' not in st.session_state:
+        st.session_state.username = ""
+    if 'user_id' not in st.session_state:
+        st.session_state.user_id = ""
+    if 'show_legend' not in st.session_state:
+        st.session_state.show_legend = False
+    if 'expander_opened' not in st.session_state:
+        st.session_state.expander_opened = False  # Initialisierung von expander_opened
 
-    file_name_spotify_songs = os.path.join(script_dir, "spotify_songs.csv")
-    df = pd.read_csv(file_name_spotify_songs)
-
-    # Erstelle drei Spalten, wobei die äußeren als Ränder dienen, um das Bild in der Mitte zu zentrieren
+    # Erstelle drei Spalten, wobei die äußeren als Ränder dienen um das Bild in der Mitte zu zentrieren
     col1, col2, col3 = st.columns([1, 3, 1])
 
     # Einfügen des Spotify Logos
@@ -23,6 +27,17 @@ def main():
         st.image("https://upload.wikimedia.org/wikipedia/commons/7/71/Spotify.png", width=150)
     
     st.title("Spotify Melody Match")
+
+    # Verzeichnis des aktuellen Skripts
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    songs_dir = os.path.join(script_dir, "songs")
+
+    # Stelle sicher, dass das Verzeichnis "songs" existiert
+    if not os.path.exists(songs_dir):
+        os.makedirs(songs_dir)
+
+    file_name_spotify_songs = os.path.join(script_dir, "spotify_songs.csv")
+    df = pd.read_csv(file_name_spotify_songs)
 
     # Hauptdatenbank für Benutzer
     file_name_users = os.path.join(script_dir, "users.db")
@@ -47,7 +62,7 @@ def main():
 
     # Funktion zum Erstellen und Befüllen der Benutzer-Datenbank
     def create_user_database(user_id):
-        user_db_path = os.path.join(script_dir, f"{user_id}.db")
+        user_db_path = os.path.join(songs_dir, f"{user_id}.db")
         conn_user_db = sqlite3.connect(user_db_path)
         df.to_sql('user_songs', conn_user_db, if_exists='replace', index=False)
         conn_user_db.commit()
@@ -86,14 +101,6 @@ def main():
     with st.sidebar:
         st.header("Login & Registrierung")
 
-    # Session-Handling
-    if 'logged_in' not in st.session_state:
-        st.session_state.logged_in = False
-    if 'username' not in st.session_state:
-        st.session_state.username = ""
-    if 'user_id' not in st.session_state:
-        st.session_state.user_id = ""
-
     # Login oder Registrierung anzeigen
     with st.sidebar:
         if not st.session_state.logged_in:
@@ -118,129 +125,195 @@ def main():
         else:
             st.sidebar.success(f"Eingeloggt als: {st.session_state.username}")
             st.sidebar.write(f"Ihre Benutzer-ID: {st.session_state.user_id}")
-            st.sidebar.button("Logout", on_click=lambda: st.session_state.update({"logged_in": False, "username": "", "user_id": ""}))
+            st.sidebar.button("Logout", on_click=lambda: st.session_state.update({"logged_in": False, "username": "", "user_id": "", "show_legend": False}))
 
-    # Nach erfolgreichem Login Benutzer-Datenbank anzeigen
+    # Nach erfolgreichem Login Benutzer-Datenbank anzeigen (nur einen kleinen Teil)
     if st.session_state.logged_in:
         st.header("Ihre persönlichen Songs")
-        user_db_path = os.path.join(script_dir, f"{st.session_state.user_id}.db")
+
+        # Zugriff auf die Datenbank des Benutzers
+        user_db_path = os.path.join(songs_dir, f"{st.session_state.user_id}.db")
         conn_user_db = sqlite3.connect(user_db_path)
 
-        # Benutzer-spezifische Daten abrufen
-        user_songs_df = pd.read_sql_query("SELECT * FROM user_songs", conn_user_db)
-        st.write(user_songs_df)
+        # Daten für einen Overview abrufen
+        query_playlist_overview = """SELECT playlist_name, playlist_genre, playlist_subgenre, track_artist, track_album_name, track_name FROM user_songs"""
+        user_songs_df_overview = pd.read_sql_query(query_playlist_overview, conn_user_db)
+
+        # Scrollbare Tabelle anzeigen
+        st.dataframe(user_songs_df_overview, use_container_width=True, height=200)
+
+        with st.expander("Suche", expanded=st.session_state.expander_opened):
+
+            # Dynamische Suchoption hinzufügen
+            search_column = st.selectbox("Suche nach:", ["track_artist", "track_name"])
+            search_query = st.text_input(f"Geben Sie den {search_column} ein:")
+
+            # Suchergebnisse anzeigen
+            if search_query:
+                user_songs_df_search = f"""SELECT track_artist, track_name, danceability, energy, key, loudness, mode, speechiness, acousticness, instrumentalness, liveness, valence, tempo, duration_ms FROM user_songs WHERE {search_column} LIKE ?"""
+                user_songs_df_search = pd.read_sql_query(user_songs_df_search, conn_user_db, params=(f"%{search_query}%",))
+                if not user_songs_df_search.empty:
+                    # Ergebnisse anzeigen, wenn etwas gefunden wurde
+                    st.dataframe(user_songs_df_search, use_container_width=True, height=400)
+
+                    # Zeige "Legende"-Button nach erfolgreicher Suche
+                    if st.button("Erklärung der Audio Features"):
+                        st.session_state.show_legend = not st.session_state.show_legend
+
+                    # Beschreibungen anzeigen, wenn "Legende" aktiviert ist
+                    if st.session_state.show_legend:
+                        st.markdown("""
+                        ### Danceability
+                        Gibt an, wie geeignet ein Track für das Tanzen ist. Basierend auf einer Kombination von Elementen wie Tempo, Rhythmus-Stabilität, Beat-Stärke und Gesamtrhythmus.  
+                        **Skala:** 0.0 bis 1.0 (höherer Wert = tanzbarer).
+
+                        ### Energy
+                        Gibt das Maß an Intensität und Aktivität eines Tracks an. Tracks mit hoher Energie haben ein schnelles Tempo, einen starken Beat und laute Instrumente.  
+                        **Skala:** 0.0 bis 1.0 (höherer Wert = energischer).
+
+                        ### Valence
+                        Gibt die musikalische Positivität eines Tracks an. Tracks mit hoher Valence klingen fröhlich, glücklich und euphorisch.  
+                        **Skala:** 0.0 bis 1.0 (höherer Wert = positiver).
+
+                        ### Tempo
+                        Das geschätzte Tempo des Tracks in Schlägen pro Minute (BPM).  
+                        **Einheit:** Beats pro Minute (BPM).
+
+                        ### Speechiness
+                        Gibt den Anteil der gesprochenen Worte in einem Track an. Hohe Werte deuten auf mehr gesprochene Inhalte hin (z. B. Podcasts, Audiobooks, Rap).  
+                        **Skala:** 
+                        - Werte über 0.66: Wahrscheinlich reiner gesprochener Inhalt.
+                        - 0.33–0.66: Mischung aus Musik und gesprochenen Inhalten.
+                        - Unter 0.33: Hauptsächlich Musik.
+
+                        ### Liveness
+                        Gibt die Wahrscheinlichkeit an, dass der Track vor einem Live-Publikum aufgeführt wurde.  
+                        **Skala:** 0.0 bis 1.0 (höherer Wert = mehr Live-Charakter). Werte über 0.8 deuten auf Live-Aufnahmen hin.
+
+                        ### Instrumentalness
+                        Schätzt, wie instrumental ein Track ist. Höhere Werte deuten darauf hin, dass der Track wenig oder keinen Gesang enthält.  
+                        **Skala:** 0.0 bis 1.0 (Werte nahe 1.0 deuten auf reine Instrumentalmusik hin).
+
+                        ### Acousticness
+                        Gibt an, wie akustisch ein Track ist.  
+                        **Skala:** 0.0 bis 1.0 (höherer Wert = stärker akustisch).
+
+                        ### Key
+                        Gibt die Tonart des Tracks an.  
+                        **Werte:** 
+                        - 0 = C
+                        - 1 = C#
+                        - 2 = D
+                        - …
+                        - 11 = B
+                        - -1: Keine Tonart erkennbar.
+
+                        ### Mode
+                        Gibt an, ob ein Track in Dur (1) oder Moll (0) ist.
+
+                        ### Loudness
+                        Gibt die durchschnittliche Lautstärke des Tracks in Dezibel (dB) an.  
+                        **Einheit:** Dezibel (dB).
+
+                        ### Duration_ms
+                        Die Länge des Tracks in Millisekunden.  
+                        **Einheit:** Millisekunden (ms).
+
+                        ### Time Signature
+                        Gibt die geschätzte Anzahl der Beats pro Takt an.  
+                        **Werte:**
+                        - 3 = 3/4-Takt (Walzer)
+                        - 4 = 4/4-Takt (Standard)
+                        """)
+                else:
+                    # Nachricht anzeigen, wenn keine Treffer vorhanden sind
+                    st.write("Kein Treffer gefunden. Versuchen Sie es mit einer anderen Eingabe.")
+
+        # Filter nach Audio-Features
+        query_playlist_filter = """SELECT track_artist, track_name, tempo, valence, energy, danceability FROM user_songs"""
+        user_songs_df_filter = pd.read_sql_query(query_playlist_filter, conn_user_db)
+
+        with st.expander("Filter nach Audio-Features", expanded=st.session_state.expander_opened):
+            # Tempo-Filter
+            col1, col2, col3 = st.columns([2, 6, 2])
+            with col1:
+                st.write("Langsames Tempo")
+            with col2:
+                tempo_range = st.slider("Tempo", min_value=0.0, max_value=240.0, value=(0.0, 240.0), step=10.0, label_visibility="collapsed")
+            with col3:
+             st.write("Schnelles Tempo")
+
+            # Valence-Filter
+            col1, col2, col3 = st.columns([2, 6, 2])
+            with col1:
+                st.write("Traurig")
+            with col2:
+                valence_range = st.slider("Valence", min_value=0.0, max_value=1.0, value=(0.0, 1.0), step=0.1, label_visibility="collapsed")
+            with col3:
+                st.write("Fröhlich")
+
+            # Energy-Filter
+            col1, col2, col3 = st.columns([2, 6, 2])
+            with col1:
+                st.write("Niedrige Energie")
+            with col2:
+                energy_range = st.slider("Energy", min_value=0.0, max_value=1.0, value=(0.0, 1.0), step=0.1, label_visibility="collapsed")
+            with col3:
+                st.write("Hohe Energie")
+
+            # Danceability-Filter
+            col1, col2, col3 = st.columns([2, 6, 2])
+            with col1:
+                st.write("Weniger tanzbar")
+            with col2:
+                danceability_range = st.slider("Danceability", min_value=0.0, max_value=1.0, value=(0.0, 1.0), step=0.1, label_visibility="collapsed")
+            with col3:
+                st.write("Mehr tanzbar")
+
+            # Songs nach den Filtern auswählen
+            filtered_songs = user_songs_df_filter[
+                (user_songs_df_filter['tempo'] >= tempo_range[0]) & (user_songs_df_filter['tempo'] <= tempo_range[1]) &
+                (user_songs_df_filter['valence'] >= valence_range[0]) & (user_songs_df_filter['valence'] <= valence_range[1]) &
+                (user_songs_df_filter['energy'] >= energy_range[0]) & (user_songs_df_filter['energy'] <= energy_range[1]) &
+                (user_songs_df_filter['danceability'] >= danceability_range[0]) & (user_songs_df_filter['danceability'] <= danceability_range[1])
+                ]
+
+            # Gefilterte Songs anzeigen
+            st.subheader("Gefilterte Songs")
+            if not filtered_songs.empty:
+                st.dataframe(filtered_songs, use_container_width=True, height=400)
+
+                # Legenden-Schalter
+                if st.button("Erklärung der Audio Features"):
+                    st.session_state.show_legend = not st.session_state.show_legend
+
+                # Beschreibungen anzeigen, wenn "Legende" aktiviert ist
+                if st.session_state.show_legend:
+                    st.markdown("""
+                    ### Tempo
+                    Das geschätzte Tempo des Tracks in Schlägen pro Minute (BPM).  
+                    **Einheit:** Beats pro Minute (BPM).
+                        
+                    ### Valence
+                    Gibt die musikalische Positivität eines Tracks an. Tracks mit hoher Valence klingen fröhlich, glücklich und euphorisch.  
+                    **Skala:** 0.0 bis 1.0 (höherer Wert = positiver).
+                        
+                    ### Danceability
+                    Gibt an, wie geeignet ein Track für das Tanzen ist. Basierend auf einer Kombination von Elementen wie Tempo, Rhythmus-Stabilität, Beat-Stärke und Gesamtrhythmus.  
+                    **Skala:** 0.0 bis 1.0 (höherer Wert = tanzbarer).
+
+                    ### Energy
+                    Gibt das Maß an Intensität und Aktivität eines Tracks an. Tracks mit hoher Energie haben ein schnelles Tempo, einen starken Beat und laute Instrumente.  
+                    **Skala:** 0.0 bis 1.0 (höherer Wert = energischer).
+
+                    ### Danceability
+                    Wie tanzbar der Track ist. Höherer Wert = besser für Tanz geeignet.
+                """)
+
+            else:
+                st.write("Keine Songs entsprechen den Filterkriterien.")
 
         conn_user_db.close()
-
-    # Musikpräferenzen
-    st.write("Welcome to Melody Match! Find the perfect playlist for you and your friends.")
-    st.header("Find your Match!")
-
-    # Gruppiere die Songs nach Playlist-ID
-    playlists = df.groupby('playlist_id')
-
-    # Auswahl der Playlist
-    playlist_ids = df['playlist_id'].unique()
-
-    # Hinweis auf die maximale Auswahl
-    st.write("Choose 2 playlists:")
-
-    def get_sample_playlists(df):
-        sampled_playlists = df.reset_index(drop=True)
-        sampled_playlists['playlist_display_name'] = sampled_playlists.apply(
-            lambda row: f"Playlist {row['playlist_name']} - Songs from Artists like '{row['track_artist']}'", axis=1
-        )
-        return sampled_playlists
-
-    sampled_playlists = get_sample_playlists(df)
-
-    if not sampled_playlists.empty:
-        playlist_id_to_name = dict(zip(sampled_playlists['playlist_id'], sampled_playlists['playlist_display_name']))
-
-        selected_playlist_display_names = st.multiselect(
-            "Choose playlists",
-            options=list(playlist_id_to_name.values()),
-            format_func=lambda name: name
-        )
-        selected_playlist_ids = [
-            playlist_id for playlist_id, display_name in playlist_id_to_name.items()
-            if display_name in selected_playlist_display_names
-        ]
-
-        if len(selected_playlist_ids) > 2:
-            st.warning("A maximum of 2 Playlists can be selected.")
-
-        if selected_playlist_ids:
-            mix_button = st.button("Mix up")
-            if mix_button:
-                st.write("Mixing up your preferences...")
-                progress_bar = st.progress(0)
-                for percent_complete in range(100):
-                    time.sleep(0.05)
-                    progress_bar.progress(percent_complete + 1)
-                st.success("Loading complete!")
-
-            for playlist_id in selected_playlist_ids:
-                selected_playlist = df[df['playlist_id'] == playlist_id]
-                st.write(f"Songs in {playlist_id_to_name[playlist_id]}:")
-                st.write(selected_playlist[['track_name', 'track_artist', 'duration_ms']])
-    else:
-        st.error("No playlists available to display.")
-
-    # Filterfunktion
-    st.write("If there was no potential match found, click below.")
-
-    if "expander_opened" not in st.session_state:
-        st.session_state.expander_opened = False
-
-    with st.expander("Choose the attributes of your desired Playlist", expanded=st.session_state.expander_opened):
-        st.header("Choose the attributes of your desired Playlist")
-    
-        col1, col2, col3 = st.columns([2, 6, 2])
-        with col1:
-            st.write("Slow")
-        with col2:
-            tempo_range = st.slider("Tempo", min_value=0.0, max_value=240.0, value=(0.0, 240.0), step=10.0, label_visibility="collapsed")
-        with col3:
-            st.write("Fast")
-
-        col1, col2, col3 = st.columns([2, 6, 2])
-        with col1:
-            st.write("Sad")
-        with col2:
-            valence_range = st.slider("Valence", min_value=0.0, max_value=1.0, value=(0.0, 1.0), step=0.1, label_visibility="collapsed")
-        with col3:
-            st.write("Happy")
-
-        col1, col2, col3 = st.columns([2, 6, 2])
-        with col1:
-            st.write("Low Energy")
-        with col2:
-            energy_range = st.slider("Energy", min_value=0.0, max_value=1.0, value=(0.0, 1.0), step=0.1, label_visibility="collapsed")
-        with col3:
-            st.write("High Energy")
-
-        col1, col2, col3 = st.columns([2, 6, 2])
-        with col1:
-            st.write("Less Danceable")
-        with col2:
-            danceability_range = st.slider("Danceability", min_value=0.0, max_value=1.0, value=(0.0, 1.0), step=0.1, label_visibility="collapsed")
-        with col3:
-            st.write("More Danceable")
-
-    filtered_songs = df[
-        (df['tempo'] >= tempo_range[0]) & (df['tempo'] <= tempo_range[1]) &
-        (df['valence'] >= valence_range[0]) & (df['valence'] <= valence_range[1]) &
-        (df['energy'] >= energy_range[0]) & (df['energy'] <= energy_range[1]) &
-        (df['danceability'] >= danceability_range[0]) & (df['danceability'] <= danceability_range[1])
-    ]
-
-    st.write("### Songs that match your preferences")
-
-    if not filtered_songs.empty:
-        st.write(filtered_songs[['track_name', 'track_artist', 'tempo', 'valence', 'energy', 'danceability']])
-    else:
-        st.write("No songs match your preferences.")
 
 if __name__ == "__main__":
     main()
