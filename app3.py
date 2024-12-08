@@ -9,9 +9,10 @@ import os
 
 def main():
 
-    script_dir = os.path.dirname(os.path.abspath(__file__))  # Verzeichnis des aktuellen Skripts
-    file_name = os.path.join(script_dir, "spotify_songs.csv")
-    df = pd.read_csv(file_name)
+    url = "https://raw.githubusercontent.com/Sukejna24/ProjectCS/13fa67d4859f3823f8dada76f37cb27520f9bf06/spotify_songs.csv"
+
+    #Lade die CSV-Datei direkt von GitHub
+    df = pd.read_csv(url)
 
     # Erstelle drei Spalten, wobei die äußeren als Ränder dienen um das Bild in der Mitte zu zentrieren
     col1, col2, col3 = st.columns([1, 3, 1])
