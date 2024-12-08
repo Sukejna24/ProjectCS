@@ -7,6 +7,15 @@ from datetime import datetime
 import os
 
 def main():
+    # Erstelle drei Spalten, wobei die äußeren als Ränder dienen um das Bild in der Mitte zu zentrieren
+    col1, col2, col3 = st.columns([1, 3, 1])
+
+    #Einfügen des Spotify logos
+    with col2:
+        st.image("https://upload.wikimedia.org/wikipedia/commons/7/71/Spotify.png", width=150)
+    
+    st.title("Spotify Melody Match")
+
     # Verzeichnis des aktuellen Skripts
     script_dir = os.path.dirname(os.path.abspath(__file__))
     songs_dir = os.path.join(script_dir, "songs")
@@ -123,12 +132,12 @@ def main():
         conn_user_db = sqlite3.connect(user_db_path)
 
         # Benutzer-spezifische Daten abrufen
-        query = """SELECT playlist_name, playlist_genre, playlist_subgenre, track_artist, track_album_name, track_name, playlist_name FROM user_songs"""
+        query = """SELECT playlist_name, playlist_genre, playlist_subgenre, track_artist, track_album_name, track_name FROM user_songs"""
         user_songs_df = pd.read_sql_query(query, conn_user_db)
         conn_user_db.close()
 
         # Scrollbare Tabelle anzeigen
-        st.dataframe(user_songs_df, use_container_width=True, height=600)
+        st.dataframe(user_songs_df, use_container_width=True, height=300)
 
 if __name__ == "__main__":
     main()
