@@ -1,12 +1,12 @@
 import streamlit as st
-import time
 import sqlite3
 import pandas as pd
 import bcrypt
 import hashlib
 from datetime import datetime
-import plotly.express as px
 import os
+import plotly.express as px
+import time
 
 def main():
     # Verzeichnis des aktuellen Skripts
@@ -15,16 +15,16 @@ def main():
     file_name_spotify_songs = os.path.join(script_dir, "spotify_songs.csv")
     df = pd.read_csv(file_name_spotify_songs)
 
-    # Erstelle drei Spalten, wobei die äußeren als Ränder dienen um das Bild in der Mitte zu zentrieren
+    # Erstelle drei Spalten, wobei die äußeren als Ränder dienen, um das Bild in der Mitte zu zentrieren
     col1, col2, col3 = st.columns([1, 3, 1])
 
-    #Einfügen des Spotify logos
+    # Einfügen des Spotify Logos
     with col2:
         st.image("https://upload.wikimedia.org/wikipedia/commons/7/71/Spotify.png", width=150)
     
     st.title("Spotify Melody Match")
 
-    # Datenbank für den Login einrichten
+    # Hauptdatenbank für Benutzer
     file_name_users = os.path.join(script_dir, "users.db")
     conn_users = sqlite3.connect(file_name_users)
     c_users = conn_users.cursor()
@@ -45,6 +45,14 @@ def main():
         user_hash = hashlib.md5(data.encode()).hexdigest()[:5]  # Kürze den Hash auf 5 Zeichen
         return user_hash
 
+    # Funktion zum Erstellen und Befüllen der Benutzer-Datenbank
+    def create_user_database(user_id):
+        user_db_path = os.path.join(script_dir, f"{user_id}.db")
+        conn_user_db = sqlite3.connect(user_db_path)
+        df.to_sql('user_songs', conn_user_db, if_exists='replace', index=False)
+        conn_user_db.commit()
+        conn_user_db.close()
+
     # Registrierung
     def register_user(username, password):
         if user_exists(username):
@@ -55,6 +63,10 @@ def main():
             c_users.execute("INSERT INTO users (user_id, username, password) VALUES (?, ?, ?)", 
                             (user_id, username, hashed_password))
             conn_users.commit()
+
+            # Erstelle individuelle Benutzer-Datenbank
+            create_user_database(user_id)
+
             st.success(f"Registrierung erfolgreich! Ihre Benutzer-ID ist: {user_id}")
 
     # Überprüfen, ob Benutzer existiert
@@ -67,8 +79,8 @@ def main():
         c_users.execute("SELECT * FROM users WHERE username = ?", (username,))
         user = c_users.fetchone()
         if user and check_password(password, user[2]):
-            return True
-        return False
+            return user[0]  # Gibt die user_id zurück
+        return None
 
     # Streamlit-Anwendung
     with st.sidebar:
@@ -79,6 +91,8 @@ def main():
         st.session_state.logged_in = False
     if 'username' not in st.session_state:
         st.session_state.username = ""
+    if 'user_id' not in st.session_state:
+        st.session_state.user_id = ""
 
     # Login oder Registrierung anzeigen
     with st.sidebar:
@@ -93,15 +107,30 @@ def main():
                     register_user(username, password)
             elif option == "Login":
                 if st.button("Login"):
-                    if login_user(username, password):
+                    user_id = login_user(username, password)
+                    if user_id:
                         st.session_state.logged_in = True
                         st.session_state.username = username
+                        st.session_state.user_id = user_id
                         st.success(f"Willkommen, {username}!")
                     else:
                         st.error("Falscher Benutzername oder Passwort.")
         else:
             st.sidebar.success(f"Eingeloggt als: {st.session_state.username}")
-            st.sidebar.button("Logout", on_click=lambda: st.session_state.update({"logged_in": False, "username": ""}))
+            st.sidebar.write(f"Ihre Benutzer-ID: {st.session_state.user_id}")
+            st.sidebar.button("Logout", on_click=lambda: st.session_state.update({"logged_in": False, "username": "", "user_id": ""}))
+
+    # Nach erfolgreichem Login Benutzer-Datenbank anzeigen
+    if st.session_state.logged_in:
+        st.header("Ihre persönlichen Songs")
+        user_db_path = os.path.join(script_dir, f"{st.session_state.user_id}.db")
+        conn_user_db = sqlite3.connect(user_db_path)
+
+        # Benutzer-spezifische Daten abrufen
+        user_songs_df = pd.read_sql_query("SELECT * FROM user_songs", conn_user_db)
+        st.write(user_songs_df)
+
+        conn_user_db.close()
 
     # Musikpräferenzen
     st.write("Welcome to Melody Match! Find the perfect playlist for you and your friends.")
@@ -116,7 +145,6 @@ def main():
     # Hinweis auf die maximale Auswahl
     st.write("Choose 2 playlists:")
 
-    # Funktion zum Erstellen benutzerfreundlicher Namen
     def get_sample_playlists(df):
         sampled_playlists = df.reset_index(drop=True)
         sampled_playlists['playlist_display_name'] = sampled_playlists.apply(
@@ -158,14 +186,12 @@ def main():
                 st.write(selected_playlist[['track_name', 'track_artist', 'duration_ms']])
     else:
         st.error("No playlists available to display.")
- 
+
+    # Filterfunktion
     st.write("If there was no potential match found, click below.")
+
     if "expander_opened" not in st.session_state:
         st.session_state.expander_opened = False
-
-    def open_expander():
-        if not st.session_state.expander_opened:
-            st.session_state.expander_opened = True
 
     with st.expander("Choose the attributes of your desired Playlist", expanded=st.session_state.expander_opened):
         st.header("Choose the attributes of your desired Playlist")
@@ -215,40 +241,6 @@ def main():
         st.write(filtered_songs[['track_name', 'track_artist', 'tempo', 'valence', 'energy', 'danceability']])
     else:
         st.write("No songs match your preferences.")
-
-    if st.button("Search Playlists"):
-        st.write("Recommended songs for you could be: ...")
-        progress_bar = st.progress(0)
-        for percent_complete in range(100):
-            time.sleep(0.05)
-            progress_bar.progress(percent_complete + 1)
-        st.success("Process Complete!")
-        
-    song_names = df['track_name'].unique()
-    selected_songs = st.multiselect(
-        "Please select 10 songs of your choice", 
-        song_names, 
-        max_selections=10
-    )
-
-    genre = st.radio("Wähle ein Genre:", df['playlist_genre'].unique())
-    genre_data = df[df['playlist_genre'] == genre]
-    
-    st.write(f"### Songs im Genre: {genre}")
-    st.write(genre_data)
-
-    def plot_genre_distribution(df):
-        genre_counts = df['playlist_genre'].value_counts()
-        fig = px.bar(genre_counts, x=genre_counts.index, y=genre_counts.values, labels={'x': 'Genre', 'y': 'Anzahl Songs'})
-        st.plotly_chart(fig)
-
-    plot_genre_distribution(df)
-
-    st.sidebar.header("Do you like the application?")
-    st.sidebar.write("Please rate your experience with us")
-    stars = ["⭐", "⭐⭐", "⭐⭐⭐", "⭐⭐⭐⭐", "⭐⭐⭐⭐⭐"]
-    rating = st.sidebar.radio("", options=stars, index=2)
-    st.sidebar.write(f"Du hast {rating} vergeben.")
 
 if __name__ == "__main__":
     main()
