@@ -343,15 +343,15 @@ def main():
             search_column_2 = st.selectbox("Suche nach:", ["track_artist", "track_name"], key="search_column_2")
             search_query_2 = st.text_input(f"Geben Sie den {search_column_2} ein:", key="search_query_2")
 
-            # Warenkorb in der Session speichern
+            # Korb in der Session speichern
             if "cart" not in st.session_state:
                 st.session_state.cart = []
 
-            # Anzahl der Songs im Warenkorb anzeigen
+            # Anzahl der Songs im Korb anzeigen
             if st.session_state.cart:
                 st.markdown(f"<div class='song-count'>Ausgewählte Songs: {len(st.session_state.cart)}</div>", unsafe_allow_html=True)
             else:
-                st.markdown("<div class='song-count'>Ihr Warenkorb ist leer.</div>", unsafe_allow_html=True)
+                st.markdown("<div class='song-count'>Ihr Korb ist leer.</div>", unsafe_allow_html=True)
 
             # Suchergebnisse anzeigen
             if search_query_2:
@@ -364,7 +364,7 @@ def main():
                 user_songs_df_search_2 = pd.read_sql_query(query_playlist_search_2, conn_user_db, params=(f"%{search_query_2}%",))
 
                 if not user_songs_df_search_2.empty:
-                    st.write("Wählen Sie Songs aus, um sie in den Warenkorb zu legen:")
+                    st.write("Wählen Sie Songs aus, um sie in den Korb zu legen:")
                     
                     for i, row in user_songs_df_search_2.iterrows():
                         # Eindeutigen Schlüssel für die Checkbox generieren
@@ -376,18 +376,18 @@ def main():
                             key=checkbox_key
                         )
                         if checked and not is_checked:
-                            # Hinzufügen zum Warenkorb
+                            # Hinzufügen zum Korb
                             st.session_state.cart.append(row.to_dict())
                         elif not checked and is_checked:
-                            # Entfernen aus dem Warenkorb
+                            # Entfernen aus dem Korb
                             st.session_state.cart.remove(row.to_dict())
                 else:
                     # Meldung anzeigen, wenn keine Treffer gefunden werden
                     st.warning("Kein Treffer gefunden. Versuchen Sie es mit einer anderen Eingabe.")
 
-            # Warenkorb anzeigen (immer sichtbar)
+            # Korb anzeigen (immer sichtbar)
             if st.session_state.cart:
-                st.write("Ihr Warenkorb:")
+                st.write("Ihr Korb:")
                 for index, track in enumerate(st.session_state.cart):
                     col1, col2 = st.columns([5, 1])
                     with col1:
@@ -397,10 +397,10 @@ def main():
                             st.session_state.cart.pop(index)
                             st.experimental_rerun()  # Seite neu laden, um Änderungen zu reflektieren
 
-            # Button nur anzeigen, wenn 20 Songs im Warenkorb sind
+            # Button nur anzeigen, wenn 20 Songs im Korb sind
             if len(st.session_state.cart) >= 20:
                 if st.button("Ähnliche Songs finden"):
-                    # DataFrame aus dem Warenkorb erstellen
+                    # DataFrame aus dem Korb erstellen
                     selected_tracks_df = pd.DataFrame(st.session_state.cart)
 
                     # Machine-Learning-Modell verwenden, um ähnliche Songs zu finden
