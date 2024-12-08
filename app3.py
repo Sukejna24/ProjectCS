@@ -136,7 +136,7 @@ def main():
         conn_user_db = sqlite3.connect(user_db_path)
 
         # Daten für einen Overview abrufen
-        query_playlist_overview = """SELECT DISTINCT playlist_name, playlist_genre, playlist_subgenre, track_artist, track_album_name, track_name FROM user_songs"""
+        query_playlist_overview = """SELECT DISTINCT track_name, track_artist, playlist_name, playlist_genre, playlist_subgenre FROM user_songs"""
         user_songs_df_overview = pd.read_sql_query(query_playlist_overview, conn_user_db)
 
         # Scrollbare Tabelle anzeigen
