@@ -7,6 +7,22 @@ from datetime import datetime
 import os
 
 def main():
+    
+    tab = st.sidebar.radio("Wähle eine Seite", ["Startseite", "Seite 1", "Seite 2"])
+    
+    # Inhalt basierend auf der Tab-Auswahl
+    if tab == "Startseite":
+        st.title("Willkommen auf der Startseite")
+        st.write("Dies ist die Startseite der Anwendung.")
+
+    elif tab == "Seite 1":
+        st.title("Seite 1")
+        st.write("Willkommen auf Seite 1!")
+
+    elif tab == "Seite 2":
+        st.title("Seite 2")
+        st.write("Dies ist Seite 2.")
+        
     # Initialisierung der Session-States
     if 'logged_in' not in st.session_state:
         st.session_state.logged_in = False
@@ -136,7 +152,7 @@ def main():
         conn_user_db = sqlite3.connect(user_db_path)
 
         # Daten für einen Overview abrufen
-        query_playlist_overview = """SELECT track_artist, playlist_name, playlist_genre, playlist_subgenre, track_album_name, track_name FROM user_songs"""
+        query_playlist_overview = """SELECT track_name, track_artist, playlist_name, playlist_genre, playlist_subgenre FROM user_songs"""
         user_songs_df_overview = pd.read_sql_query(query_playlist_overview, conn_user_db)
 
         # Scrollbare Tabelle anzeigen
@@ -229,6 +245,7 @@ def main():
                     # Nachricht anzeigen, wenn keine Treffer vorhanden sind
                     st.write("Kein Treffer gefunden. Versuchen Sie es mit einer anderen Eingabe.")
 
+        
         # Filter nach Audio-Features
         query_playlist_filter = """SELECT track_artist, track_name, tempo, valence, energy, danceability FROM user_songs"""
         user_songs_df_filter = pd.read_sql_query(query_playlist_filter, conn_user_db)
