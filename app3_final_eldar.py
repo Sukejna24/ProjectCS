@@ -116,12 +116,12 @@ def main():
 
         query_playlist_overview = """
         SELECT DISTINCT 
-            playlist_name, 
+            playlist_name,
+            track_name,
+            track_artist,
+            track_album_name,
             playlist_genre, 
-            playlist_subgenre, 
-            track_artist, 
-            track_album_name, 
-            track_name 
+            playlist_subgenre
         FROM user_songs
         """
 
