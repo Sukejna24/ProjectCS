@@ -27,6 +27,10 @@ def main():
         st.image("https://upload.wikimedia.org/wikipedia/commons/7/71/Spotify.png", width=150)
     
     st.title("Track Finder")
+    st.subheader("""Welcome to track finder! Are you looking for new songs that are customised to your music preferences? 
+                 Then you've come to the right place. 
+                 With us you can easily select the songs you like and immediately receive a customised playlist just for you.  
+                 """)
 
     # Definition of the path of the actual script
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -159,6 +163,8 @@ def main():
             st.sidebar.write(f"Your user-ID: {st.session_state.user_id}")
             st.sidebar.button("Logout", on_click=lambda: st.session_state.update({"logged_in": False, "username": "", "user_id": "", "show_legend": False}))
 
+        st.subheader("Navigator:")
+        
     # Show user database after successful login (only a small part)
     if st.session_state.logged_in:
         st.header("Your personal songs")
@@ -193,7 +199,7 @@ def main():
 
             # Show results of the search
             if search_query_1:
-                query_playlist_search_1 = f"""SELECT DISTINCT playlist_name, track_artist, track_name, danceability, energy, key, loudness, mode, speechiness, acousticness, instrumentalness, liveness, valence, tempo, duration_ms FROM spotify_songs WHERE {search_column_1} LIKE ?"""
+                query_playlist_search_1 = f"""SELECT DISTINCT playlist_name, track_artist, track_name, danceability, energy, loudness, speechiness, acousticness, instrumentalness, liveness, valence, tempo, duration_ms FROM spotify_songs WHERE {search_column_1} LIKE ?"""
                 spotify_songs_df_search_1 = pd.read_sql_query(query_playlist_search_1, conn_songs_db, params=(f"%{search_query_1}%",))
                 if not spotify_songs_df_search_1.empty:
                     # Shwo results if songs were found
@@ -241,19 +247,6 @@ def main():
                         Indicates how acoustic a track is.   
                         **Scale:** 0.0 to 1.0 (higher value = more acoustic).
 
-                        ### Key
-                        Specifies the tonality of the track.  
-                        **Values:** 
-                        - 0 = C
-                        - 1 = C#
-                        - 2 = D
-                        - …
-                        - 11 = B
-                        - -1: No tonality recognisable.
-
-                        ### Mode
-                        Indicates whether a track is in major (1) or minor (0).
-
                         ### Loudness
                         Indicates the average volume of the track in decibels (dB). 
                         **Unit:** Decibel (dB).
@@ -261,12 +254,7 @@ def main():
                         ### Duration_ms
                         The length of the track in milliseconds.   
                         **Unit:** Milliseconds (ms).
-
-                        ### Time Signature
-                        Indicates the estimated number of beats per bar.  
-                        **Values:**
-                        - 3 = 3/4-Takt (Walzer)
-                        - 4 = 4/4-Takt (Standard)""")
+                      """)  
                 else:
                     # Display message if no hits are available
                     st.warning("No match found. Try another entry.")
@@ -347,9 +335,6 @@ def main():
                     ### Energy
                     Indicates the level of intensity and activity of a track. Tracks with high energy have a fast tempo, a strong beat and loud instruments.  
                     **Scale:** 0.0 to 1.0 (higher value = more energetic).
-
-                    ### Danceability
-                    How danceable the track is. Higher value = more suitable for dancing.
                 """)
 
             else:
@@ -380,7 +365,7 @@ def main():
             </style>
         """, unsafe_allow_html=True)
 
-        with st.expander("Mix Up", expanded=st.session_state.expander_opened):
+        with st.expander("Find songs based on your preferences", expanded=st.session_state.expander_opened):
             # Add dynamic search option
             search_column_2 = st.selectbox("Search for:", ["track_artist", "track_name"], key="search_column_2")
             search_query_2 = st.text_input(f"Please insert {search_column_2}:", key="search_query_2")
