@@ -20,17 +20,28 @@ def main():
         st.session_state.expander_opened = False  # initialisation of expander_opened
 
     # creats 3 columns, both at the end are for the frame, to centralize the picture
-    col1, col2, col3 = st.columns([1, 3, 1])
+    col1, col2, col3 = st.columns([1, 2, 1])
 
     # Import spotify logo
     with col2:
-        st.image("https://upload.wikimedia.org/wikipedia/commons/7/71/Spotify.png", width=150)
+        st.image("https://upload.wikimedia.org/wikipedia/commons/7/71/Spotify.png", width=140)
     
-    st.title("Track Finder")
-    st.subheader("""Welcome to track finder! Are you looking for new songs that are customised to your music preferences? 
-                 Then you've come to the right place. 
-                 With us you can easily select the songs you like and immediately receive a customised playlist just for you.  
-                 """)
+        st.title("Track Finder")
+        
+    st.markdown("""
+    <div style="background-color: #f0f2f6; padding: 15px; border-radius: 10px; font-size: 16px;">
+        <span style="font-size: 24px; font-weight: bold;">Welcome to track finder! </span> <br>
+        Are you looking for new songs that are customized to your music preferences?
+        Then you've come to the right place.<br>
+        With us, you can easily select the songs you like and immediately receive a customized playlist just for you
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # To create a distance between the boxes
+    st.write("")
+    
+    st.warning("**Please log in first to see our page**")
+
 
     # Definition of the path of the actual script
     script_dir = os.path.dirname(os.path.abspath(__file__))
