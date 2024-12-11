@@ -53,7 +53,7 @@ def main():
         font-size: 16px;
     }
     div.stButton > button:hover {
-        background-color: #45A049;
+        background-color: #D1FFD1;
     }
 
     /* Tabellen-Styling */
@@ -102,17 +102,17 @@ def main():
         st.write("Find music that matches your style.")
 
     with col3:
-        st.subheader("Analyze")
+        st.subheader("Analyze 📈")
         st.write("Understand your audio preferences.")
-        
-    st.markdown("""
-    <div style="background-color: #D1FFD1; padding: 15px; border-radius: 10px; font-size: 16px;">
-        <span style="font-size: 24px; font-weight: bold;">Welcome to track finder! </span> <br>
-        Are you looking for new songs that are customized to your music preferences?
-        Then you've come to the right place.<br>
-        With us, you can easily select the songs you like and immediately receive a customized playlist just for you
-    </div>
-    """, unsafe_allow_html=True)
+    
+    if not st.session_state.logged_in:    
+        st.markdown("""
+        <div style="background-color: #D1FFD1; padding: 15px; border-radius: 10px; font-size: 17px;">
+            Are you looking for new songs that are customized to your music preferences? <br>
+            Then you've come to the right place.<br>
+            With us, you can easily select the songs you like and immediately receive a customized playlist just for you
+        </div>
+        """, unsafe_allow_html=True)
     
     # To create a distance between the boxes
     st.write("")
@@ -316,24 +316,32 @@ def main():
         songs_db_path = os.path.join(script_dir, "spotify_songs.db")
         conn_songs_db = sqlite3.connect(songs_db_path)
 
-        st.header("Search")
+        with st.expander("Search", expanded= True):
+            st.header("Search")
+            #Definition of two columns
+            col4, col5 = st.columns(2)
+            
+            with col4:
 
-        #Colour for selectbox:
-        st.markdown("""
-        <style>
-        div[data-baseweb="select"] > div {
-            background-color: lightblue; /* Hintergrundfarbe */
-            border-radius: 5px;         /* Abgerundete Ecken */
-            padding: 2px;              /* Innenabstand */
-            font-size: 16px;           /* Schriftgröße */
-        }
-        </style>
-        """, unsafe_allow_html=True)
+                #Colour for selectbox:
+                st.markdown("""
+                <style>
+                div[data-baseweb="select"] > div {
+                    background-color: lightblue; /* Hintergrundfarbe */
+                    border-radius: 5px;         /* Abgerundete Ecken */
+                    padding: 2px;              /* Innenabstand */
+                    font-size: 16px;           /* Schriftgröße */
+                }
+                </style>
+                """, unsafe_allow_html=True)
 
-        # Dynamische Suchoption hinzufügen
-        search_column_1 = st.selectbox("Search for:", ["track_artist", "track_name", "playlist_name"], key="search_column_1")
-        search_query_1 = st.text_input(f"Please insert {search_column_1}:", key="search_query_1")
-        
+
+                # Dynamische Suchoption hinzufügen
+                search_column_1 = st.selectbox("Search for:", ["track_artist", "track_name", "playlist_name"], key="search_column_1")
+            with col5:
+                 search_query_1 = st.text_input(f"Please insert {search_column_1}:", key="search_query_1")
+            
+    
         # Show results of the search
         if search_query_1:
             query_playlist_search_1 = f"""SELECT DISTINCT playlist_name, track_artist, track_name, danceability, energy, loudness, speechiness, 
