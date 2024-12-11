@@ -7,6 +7,7 @@ from datetime import datetime
 import os
 import matplotlib.pyplot as plt
 import seaborn as sns
+import re
 
 def main():
     # Initialisation of Session-States, all important variables are checked if they exist in session_state. If not they are initialised
@@ -85,6 +86,26 @@ def main():
         data = f"{username}{timestamp}"
         user_hash = hashlib.md5(data.encode()).hexdigest()[:5]  # Shortens the hash to 5 characters
         return user_hash
+
+    # Funktion zur Passwortstärke-Überprüfung
+    def check_password_strength(password):
+    # Bedingungen für ein starkes Passwort:
+    # 1. Mindestens 8 Zeichen
+    # 2. Mindestens ein Großbuchstabe
+    # 3. Mindestens ein Kleinbuchstabe
+    # 4. Mindestens eine Zahl
+    # 5. Mindestens ein Sonderzeichen
+
+        if len(password) < 8:
+            return "weak", "Das Passwort muss mindestens 8 Zeichen lang sein."
+        if not re.search(r"[A-Z]", password):
+            return "weak", "Das Passwort muss mindestens einen Großbuchstaben enthalten."
+        if not re.search(r"[a-z]", password):
+            return "weak", "Das Passwort muss mindestens einen Kleinbuchstaben enthalten."
+        if not re.search(r"[0-9]", password):
+            return "weak", "Das Passwort muss mindestens eine Zahl enthalten."
+
+        return "Stark", "Das Passwort ist stark!"
 
     # Function to create the Users database and to import and apply songs
     def create_user_database(user_id):
@@ -169,8 +190,17 @@ def main():
                 password = st.text_input("Password", type="password")
 
                 if option == "Registration":
-                    if st.button("Registration"):
-                        register_user(username, password)
+                    strength, message = None, None  # Initialisierung der Variablen
+                    if username and password:
+                        # Checks if the password is strong 
+                        strength, message = check_password_strength(password)
+                    if strength == "weak":
+                        st.error(f"weak password: {message}")
+                    else:
+                        if st.button("Registration"):
+                            register_user(username, password)
+                        else:
+                            st.warning("Bitte Benutzername und Passwort eingeben.")
                 elif option == "Login":
                     if st.button("Login"):
                         user_id = login_user(username, password)
@@ -569,6 +599,63 @@ def main():
 
         # Anzeige der Top 10 Artists für den Benutzer
         get_user_top_artists(st.session_state.user_id)
+        
+        # function to show the distribution of the different genres
+        def plot_genre_distribution(user_id):
+            try:
+                user_db_path = os.path.join(songs_dir, f"{user_id}.db")
+                conn_user_db = sqlite3.connect(user_db_path)
+                query = "SELECT playlist_genre FROM user_songs"
+                genre_df = pd.read_sql_query(query, conn_user_db)
+
+                if genre_df.empty:
+                    st.warning("Keine Genre-Daten verfügbar.")
+                    return
+
+                genre_counts = genre_df['playlist_genre'].value_counts()
+
+                # Plot
+                plt.figure(figsize=(8, 6))
+                genre_counts.plot(kind='bar', color='skyblue')
+                plt.title("Verteilung der Genres")
+                plt.xlabel("Genre")
+                plt.ylabel("Anzahl")
+                st.pyplot(plt)
+
+                conn_user_db.close()
+
+            except Exception as e:
+                st.error(f"Fehler beim Abrufen der Genres: {e}")
+
+        # Function to show the distribution of an audio-feature 
+        plot_genre_distribution(st.session_state.user_id)
+
+
+        def plot_audio_feature_distribution(user_id, feature):
+            try:
+                user_db_path = os.path.join(songs_dir, f"{user_id}.db")
+                conn_user_db = sqlite3.connect(user_db_path)
+                query = f"SELECT {feature} FROM user_songs"
+                feature_df = pd.read_sql_query(query, conn_user_db)
+
+                if feature_df.empty:
+                    st.warning(f"Keine Daten für {feature} verfügbar.")
+                    return
+
+                # Plot
+                plt.figure(figsize=(8, 6))
+                sns.histplot(feature_df[feature], kde=True, bins=20, color='green')
+                plt.title(f"Verteilung von {feature}")
+                plt.xlabel(feature.capitalize())
+                plt.ylabel("Anzahl")
+                st.pyplot(plt)
+
+                conn_user_db.close()
+
+            except Exception as e:
+                st.error(f"Fehler beim Abrufen von {feature}: {e}")
+
+        plot_audio_feature_distribution(st.session_state.user_id, 'danceability')
 
 if __name__ == "__main__":
     main()
