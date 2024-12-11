@@ -221,7 +221,8 @@ def main():
 
             # Show results of the search
             if search_query_1:
-                query_playlist_search_1 = f"""SELECT DISTINCT playlist_name, track_artist, track_name, danceability, energy, loudness, speechiness, acousticness, instrumentalness, liveness, valence, tempo, duration_ms FROM spotify_songs WHERE {search_column_1} LIKE ?"""
+                query_playlist_search_1 = f"""SELECT DISTINCT playlist_name, track_artist, track_name, danceability, energy, loudness, speechiness, 
+                instrumentalness, liveness, valence, tempo, duration_ms FROM spotify_songs WHERE {search_column_1} LIKE ?"""
                 spotify_songs_df_search_1 = pd.read_sql_query(query_playlist_search_1, conn_songs_db, params=(f"%{search_query_1}%",))
                 if not spotify_songs_df_search_1.empty:
                     # Shwo results if songs were found
@@ -265,10 +266,6 @@ def main():
                         Estimates how instrumental a track is. Higher values indicate that the track contains little or no vocals.
                         **Scale:** 0.0 to 1.0 (values close to 1.0 indicate pure instrumental music).
 
-                        ### Acousticness
-                        Indicates how acoustic a track is.   
-                        **Scale:** 0.0 to 1.0 (higher value = more acoustic).
-
                         ### Loudness
                         Indicates the average volume of the track in decibels (dB). 
                         **Unit:** Decibel (dB).
@@ -289,11 +286,11 @@ def main():
             # Tempo-Filter
             col1, col2, col3 = st.columns([2, 6, 2])
             with col1:
-                st.write("Slow tempo")
+                st.write("Slow")
             with col2:
                 tempo_range = st.slider("Tempo", min_value=0.0, max_value=240.0, value=(0.0, 240.0), step=10.0, label_visibility="collapsed")
             with col3:
-             st.write("fast tempo")
+             st.write("Fast")
 
             # Valence-Filter
             col1, col2, col3 = st.columns([2, 6, 2])
@@ -316,11 +313,11 @@ def main():
             # Danceability-Filter
             col1, col2, col3 = st.columns([2, 6, 2])
             with col1:
-                st.write("less danceable")
+                st.write("Less danceable")
             with col2:
                 danceability_range = st.slider("Danceability", min_value=0.0, max_value=1.0, value=(0.0, 1.0), step=0.1, label_visibility="collapsed")
             with col3:
-                st.write("more danceable")
+                st.write("More danceable")
 
             #  Select songs according to the filters
             filtered_songs = spotify_songs_df_filter[
@@ -388,6 +385,7 @@ def main():
         """, unsafe_allow_html=True)
 
         with st.expander("Find songs based on your preferences", expanded=st.session_state.expander_opened):
+            st.write("Choose as many songs as you want (min. 5)")
             # Add dynamic search option
             search_column_2 = st.selectbox("Search for:", ["track_artist", "track_name"], key="search_column_2")
             search_query_2 = st.text_input(f"Please insert {search_column_2}:", key="search_query_2")
