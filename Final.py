@@ -685,12 +685,14 @@ def main():
                 st.write("Do you like the songs? Save now!")
                 
                 # Playlist name input
-                playlist_name = st.text_input("Enter a name for your playlist:", "")
+                playlist_name = st.text_input("Enter a name for your playlist:", "My Playlist") #name the new created playlist before adding it to the database
                 
                 if st.button("Save Playlist"):
                     # Assure that the datafram is not empty
                     if not st.session_state.user_songs_df_similar.empty:
                         try:
+                            # Add the playlist name to the DataFrame
+                            st.session_state.user_songs_df_similar["playlist_name"] = playlist_name
                             user_db_path = os.path.join(songs_dir, f"{st.session_state.user_id}.db")
                             conn_user_db = sqlite3.connect(user_db_path)
                             st.session_state.user_songs_df_similar.to_sql(
