@@ -18,18 +18,21 @@ def main():
         st.session_state.show_legend = False
     if 'expander_opened' not in st.session_state:
         st.session_state.expander_opened = False  # initialisation of expander_opened
+    # Initialize session state
+    if 'sidebar_open' not in st.session_state:
+        st.session_state.sidebar_open = False
 
     # creats 3 columns, both at the end are for the frame, to centralize the picture
     col1, col2, col3 = st.columns([1, 2, 1])
 
     # Import spotify logo
     with col2:
-        st.image("https://upload.wikimedia.org/wikipedia/commons/7/71/Spotify.png", width=140)
+        st.image("https://upload.wikimedia.org/wikipedia/commons/7/71/Spotify.png", width=160)
     
         st.title("Track Finder")
         
     st.markdown("""
-    <div style="background-color: #f0f2f6; padding: 15px; border-radius: 10px; font-size: 16px;">
+    <div style="background-color: #D3D3D3; padding: 15px; border-radius: 10px; font-size: 16px;">
         <span style="font-size: 24px; font-weight: bold;">Welcome to track finder! </span> <br>
         Are you looking for new songs that are customized to your music preferences?
         Then you've come to the right place.<br>
@@ -40,7 +43,11 @@ def main():
     # To create a distance between the boxes
     st.write("")
     
-    st.warning("**Please log in first to see our page**")
+     #Redirects user to Login sidebar
+    st.info("**Please log in first to see our page**")
+    if not st.session_state.sidebar_open:
+        if st.button("Login"):
+            st.session_state.sidebar_open = True
 
 
     # Definition of the path of the actual script
@@ -144,37 +151,39 @@ def main():
         conn_user_db.close()
         return user_songs_df_overview
 
-    # Streamlit-application
-    with st.sidebar:
-        st.header("Login & Registration")
+    # Opens sidebar if login Button has been clicked
+    if st.session_state.sidebar_open:
+        # Streamlit-application
+        with st.sidebar:
+            st.header("Login & Registration")
 
-    # User chooses to log in or to registrate
-    with st.sidebar:
-        if not st.session_state.logged_in:
-            option = st.selectbox("Choose an action:", ["Login", "Registration"])
+        # User chooses to log in or to registrate
+        with st.sidebar:
+            if not st.session_state.logged_in:
+                option = st.selectbox("Choose an action:", ["Login", "Registration"])
     
-            username = st.text_input("Username")
-            password = st.text_input("Password", type="password")
+                username = st.text_input("Username")
+                password = st.text_input("Password", type="password")
 
-            if option == "Registration":
-                if st.button("Registration"):
-                    register_user(username, password)
-            elif option == "Login":
-                if st.button("Login"):
-                    user_id = login_user(username, password)
-                    if user_id:
-                        st.session_state.logged_in = True
-                        st.session_state.username = username
-                        st.session_state.user_id = user_id
-                        st.success(f"Welcome, {username}!")
-                    else:
-                        st.error("Incorrect user name or password.")
-        else:
-            st.sidebar.success(f"Logged in as: {st.session_state.username}")
-            st.sidebar.write(f"Your user-ID: {st.session_state.user_id}")
-            st.sidebar.button("Logout", on_click=lambda: st.session_state.update({"logged_in": False, "username": "", "user_id": "", "show_legend": False}))
+                if option == "Registration":
+                    if st.button("Registration"):
+                        register_user(username, password)
+                elif option == "Login":
+                    if st.button("Login"):
+                        user_id = login_user(username, password)
+                        if user_id:
+                            st.session_state.logged_in = True
+                            st.session_state.username = username
+                            st.session_state.user_id = user_id
+                            st.success(f"Welcome, {username}!")
+                        else:
+                            st.error("Incorrect user name or password.")
+            else:
+                st.sidebar.success(f"Logged in as: {st.session_state.username}")
+                st.sidebar.write(f"Your user-ID: {st.session_state.user_id}")
+                st.sidebar.button("Logout", on_click=lambda: st.session_state.update({"logged_in": False, "username": "", "user_id": "", "show_legend": False}))
 
-        st.subheader("Navigator:")
+            st.subheader("Navigator:")
         
     # Show user database after successful login (only a small part)
     if st.session_state.logged_in:
