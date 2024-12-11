@@ -9,3 +9,4 @@ kagglehub
 plotly.express
 matplotlib.pyplot
 seaborn
+re
