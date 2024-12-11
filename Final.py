@@ -13,14 +13,57 @@ def main():
     
     st.markdown("""
     <style>
-        body {
-            background-color: #D1FFD1;
-        }
-        .stApp {
-            background-color: #ffffff;
-            border-radius: 10px;
-            padding: 20px;
-        }
+    /* Allgemeiner Hintergrund */
+    body {
+        background-color: #E8F5E9;
+    }
+
+    /* App-Hintergrund */
+    .stApp {
+        background-color: #ffffff;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Header-Box */
+    .header-box {
+        background-color: #4CAF50;
+        color: white;
+        padding: 15px;
+        border-radius: 10px;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    /* Rahmen für Expander */
+    .st-expander {
+        border: 2px solid #4CAF50;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+    /* Buttons */
+    div.stButton > button {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+    div.stButton > button:hover {
+        background-color: #45A049;
+    }
+
+    /* Tabellen-Styling */
+    .dataframe {
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 10px;
+        margin-top: 20px;
+        background-color: #F9F9F9;
+    }
     </style>
     """, unsafe_allow_html=True)
       
