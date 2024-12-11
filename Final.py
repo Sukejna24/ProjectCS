@@ -328,7 +328,7 @@ def main():
     # This list is empty in the beggining
     if st.session_state.logged_in:
         st.subheader("Songs picked for you:")
-        st.info("Discover more songs that you could like!")
+        
 
         # Access to the user's database / connection
         user_db_path = os.path.join(songs_dir, f"{st.session_state.user_id}.db")
@@ -348,6 +348,7 @@ def main():
 
         # Displays user data
         st.dataframe(user_songs_df_overview, use_container_width=True, height=200)
+        st.info("Discover more songs that you could like!")
 
         # Saves songs to the users database
         save_csv_to_database(df)
@@ -435,9 +436,9 @@ def main():
                 The length of the track in milliseconds.   
                 **Unit:** Milliseconds (ms).
                 """)  
-        else:
-            # Display message if no hits are available
-            st.warning("No match found. Try another entry.")
+            else:
+                # Display message if no hits are available
+                st.warning("No match found. Try another entry.")
             
 #**********************************************************************
 # 6. Filtering by audio features
