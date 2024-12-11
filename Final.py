@@ -10,7 +10,23 @@ import seaborn as sns
 import re
 
 def main():
+    st.markdown("""
+    <div style="background-color: lightblue; padding: 18px; border-radius: 10px;">
+        <h1 style="text-align: center;">🎵 Welcome to Track Finder!</h1>
+        <p style="text-align: center;">Discover new tracks tailored to your taste!</p>
+    </div>
+    """, unsafe_allow_html=True)
     
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.subheader(" 🔍 Discover")
+        st.write("Find music that matches your style.")
+
+    with col3:
+        st.subheader("Analyze")
+        st.write("Understand your audio preferences.")
+
     
     st.markdown("""
     <style>
