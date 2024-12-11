@@ -10,15 +10,18 @@ import seaborn as sns
 import re
 
 def main():
+    # extend main page to wide layout
+    st.set_page_config(page_title="Track Finder", layout="wide")
     
+    # style templates for the whole page
     st.markdown("""
     <style>
-    /* Allgemeiner Hintergrund */
+    /* General background */
     body {
         background-color: #E8F5E9;
     }
 
-    /* App-Hintergrund */
+    /* App-background */
     .stApp {
         background-color: #ffffff;
         border-radius: 15px;
@@ -36,7 +39,7 @@ def main():
         margin-bottom: 20px;
     }
 
-    /* Rahmen für Expander */
+    /* Frame for Expander */
     .st-expander {
         border: 2px solid #4CAF50;
         border-radius: 10px;
@@ -56,7 +59,7 @@ def main():
         background-color: #D1FFD1;
     }
 
-    /* Tabellen-Styling */
+    /* Table-Styling */
     .dataframe {
         border: 1px solid #ddd;
         border-radius: 10px;
@@ -66,7 +69,8 @@ def main():
     }
     </style>
     """, unsafe_allow_html=True)
-      
+    
+    # All important variables are checked if they exist in session_state. If not they are initialised
     # Initialisation of Session-States, all important variables are checked if they exist in session_state. If not they are initialised
     if 'logged_in' not in st.session_state:
         st.session_state.logged_in = False
@@ -82,7 +86,11 @@ def main():
     if 'sidebar_open' not in st.session_state:
         st.session_state.sidebar_open = False
 
-    # creats 3 columns, both at the end are for the frame, to centralize the picture
+#**********************************
+# 1. Preparation and formatting
+#**********************************  
+
+    # Creation of 3 columns, both at the end are for the frame, to centralize the picture
     col1, col2, col3 = st.columns(3)
      
     # Import spotify logo
@@ -98,8 +106,14 @@ def main():
     """, unsafe_allow_html=True)
         
     with col1:
-        st.subheader(" 🔍 Discover")
-        st.write("Find music that matches your style.")
+        st.markdown("""
+        <div style="background-color: #f0f0f0; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+            <h2 style="color: #333; font-size: 24px; margin-bottom: 10px;">🔍 Discover</h2>
+            <p style="font-size: 16px; color: #555;">
+            Find music that matches your style.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
 
     with col3:
         st.subheader("Analyze 📈")
@@ -515,7 +529,7 @@ def main():
 
             # Display the number of songs in the basket
             if st.session_state.cart:
-                st.markdown(f"<div class='song-count'>Choosen songs: {len(st.session_state.cart)}</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='song-count'>Chosen songs: {len(st.session_state.cart)}</div>", unsafe_allow_html=True)
             else:
                 st.markdown("<div class='song-count'>Your basket is empty.</div>", unsafe_allow_html=True)
 
