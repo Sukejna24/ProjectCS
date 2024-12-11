@@ -8,3 +8,4 @@ bcrypt
 kagglehub
 plotly.express
 matplotlib.pyplot
+seaborn

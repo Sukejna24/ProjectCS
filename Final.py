@@ -5,6 +5,7 @@ import bcrypt
 import hashlib
 from datetime import datetime
 import os
+import matplotlib.pyplot as plt
 
 def main():
     # Initialisation of Session-States, all important variables are checked if they exist in session_state. If not they are initialised
@@ -531,7 +532,18 @@ def main():
                     else:
                         st.error("No songs to save available!")
 
-        conn_songs_db.close() #close connection
+    # Top 10 Künstler nach Songanzahl
+    top_artists = df['track_artist'].value_counts().head(10)
+
+    plt.figure(figsize=(10, 6))
+    sns.barplot(x=top_artists.values, y=top_artists.index, palette="Blues_d")
+    plt.title("Top 10 Artists nach Anzahl der Songs")
+    plt.xlabel("Anzahl der Songs")
+    plt.ylabel("Künstler")
+    st.pyplot(plt)
+
+
+conn_songs_db.close() #close connection
 
 if __name__ == "__main__":
     main()
