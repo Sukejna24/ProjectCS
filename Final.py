@@ -10,23 +10,6 @@ import seaborn as sns
 import re
 
 def main():
-    st.markdown("""
-    <div style="background-color: lightblue; padding: 18px; border-radius: 10px;">
-        <h1 style="text-align: center;">🎵 Welcome to Track Finder!</h1>
-        <p style="text-align: center;">Discover new tracks tailored to your taste!</p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    col1, col2, col3 = st.columns(3)
-
-    with col1:
-        st.subheader(" 🔍 Discover")
-        st.write("Find music that matches your style.")
-
-    with col3:
-        st.subheader("Analyze")
-        st.write("Understand your audio preferences.")
-
     
     st.markdown("""
     <style>
@@ -57,13 +40,27 @@ def main():
         st.session_state.sidebar_open = False
 
     # creats 3 columns, both at the end are for the frame, to centralize the picture
-    col1, col2, col3 = st.columns([1, 2, 1])
-
+    col1, col2, col3 = st.columns(3)
+     
     # Import spotify logo
     with col2:
         st.image("https://upload.wikimedia.org/wikipedia/commons/7/71/Spotify.png", width=160)
     
-        st.title(" 🎵 Track Finder")
+    # Beispiel für Header mit CSS
+    st.markdown("""
+        <div class="header-box">
+            <h1>🎵 Welcome to Track Finder!</h1>
+            <p>Discover, analyze, and create playlists tailored to your taste.</p>
+        </div>
+    """, unsafe_allow_html=True)
+        
+    with col1:
+        st.subheader(" 🔍 Discover")
+        st.write("Find music that matches your style.")
+
+    with col3:
+        st.subheader("Analyze")
+        st.write("Understand your audio preferences.")
         
     st.markdown("""
     <div style="background-color: #D1FFD1; padding: 15px; border-radius: 10px; font-size: 16px;">
@@ -247,7 +244,7 @@ def main():
                 st.sidebar.write(f"Your user-ID: {st.session_state.user_id}")
                 st.sidebar.button("Logout", on_click=lambda: st.session_state.update({"logged_in": False, "username": "", "user_id": "", "show_legend": False}))
 
-            st.subheader("Navigator:")
+         
     
             
     # Show user database after successful login (only a small part)
