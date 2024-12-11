@@ -86,25 +86,33 @@ def main():
     if 'sidebar_open' not in st.session_state:
         st.session_state.sidebar_open = False
 
-#**********************************
+#***************************************************************
 # 1. Preparation and formatting
-#**********************************  
+#***************************************************************  
 
     # Creation of 3 columns, both at the end are for the frame, to centralize the picture
     col1, col2, col3 = st.columns(3)
      
     # Import spotify logo
-    with col2:
-        st.image("https://upload.wikimedia.org/wikipedia/commons/7/71/Spotify.png", width=160)
+    # Centralize picture with HTML und CSS
+    st.markdown("""
+    <div style="text-align: center;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/7/71/Spotify.png" alt="Spotify Logo" width="220">
+    </div>
+    """, unsafe_allow_html=True)
     
-    # Beispiel für Header mit CSS
+    # To create a distance between the Logo and the boxes
+    st.write("")
+    
+    # Header-box frontpage with html
     st.markdown("""
         <div class="header-box">
             <h1>🎵 Welcome to Track Finder!</h1>
             <p>Discover, analyze, and create playlists tailored to your taste.</p>
         </div>
     """, unsafe_allow_html=True)
-        
+    
+    # Text boxes frontpage    
     with col1:
         st.markdown("""
         <div style="background-color: #f0f0f0; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
@@ -119,26 +127,31 @@ def main():
         st.subheader("Analyze 📈")
         st.write("Understand your audio preferences.")
     
+    # Text on starting page is only shown as long as the user is not logged in. After Log in the textbox disappears.
     if not st.session_state.logged_in:    
         st.markdown("""
         <div style="background-color: #D1FFD1; padding: 15px; border-radius: 10px; font-size: 17px;">
             Are you looking for new songs that are customized to your music preferences? <br>
             Then you've come to the right place.<br>
-            With us, you can easily select the songs you like and immediately receive a customized playlist just for you
+            With us, you can easily select the songs you like and immediately receive a customized playlist just for you.<br>
+            Try it out!
         </div>
         """, unsafe_allow_html=True)
     
     # To create a distance between the boxes
     st.write("")
 
-       
-    # Message please sign up disappears after session_state logged_in        
+    # Message "Sign in" disappears after the user has logged in and the sidebar has been opened     
     # Redirects user to Login sidebar
     if not st.session_state.sidebar_open:
         st.info("**Please log in to continue**")
         if st.button("Sign in"):
             st.session_state.sidebar_open = True
             
+#*******************************************************************************************************          
+# 2. Dataframe and database preparation/creation
+#*******************************************************************************************************
+
     # Definition of the path of the actual script
     script_dir = os.path.dirname(os.path.abspath(__file__))
     songs_dir = os.path.join(script_dir, "songs")
@@ -147,52 +160,18 @@ def main():
     if not os.path.exists(songs_dir):
         os.makedirs(songs_dir)
         
-    # Reads the csv-file
-    file_name_spotify_songs = os.path.join(script_dir, "spotify_songs.csv")
+    # Reads the csv-file and loads the data
+    file_name_spotify_songs = os.path.join(script_dir, "spotify_songs.csv") #spotify_songs is the spotify dataframe
     df = pd.read_csv(file_name_spotify_songs)
 
-    # Creation of the main database of the user 
+    # Creation of the main database 'users.db' of the user 
     file_name_users = os.path.join(script_dir, "users.db")
     conn_users = sqlite3.connect(file_name_users)
     c_users = conn_users.cursor()
-    c_users.execute('''CREATE TABLE IF NOT EXISTS users (user_id TEXT PRIMARY KEY, username TEXT, password TEXT)''')
+    c_users.execute('''CREATE TABLE IF NOT EXISTS users (user_id TEXT PRIMARY KEY, username TEXT, password TEXT)''') #new registration
     conn_users.commit()
-
-    # Hash-function, creation and storing of the password 
-    def hash_password(password):
-        return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-
-    def check_password(password, hashed):
-        return bcrypt.checkpw(password.encode('utf-8'), hashed)
-
-    # function that creates User-ID to new registrated Users
-    def generate_user_id(username):
-        timestamp = datetime.now().strftime("%H%M%S")  # User ID based on second, minute and hour of first registration
-        data = f"{username}{timestamp}"
-        user_hash = hashlib.md5(data.encode()).hexdigest()[:5]  # Shortens the hash to 5 characters
-        return user_hash
-
-    # Funktion zur Passwortstärke-Überprüfung
-    def check_password_strength(password):
-    # Bedingungen für ein starkes Passwort:
-    # 1. Mindestens 8 Zeichen
-    # 2. Mindestens ein Großbuchstabe
-    # 3. Mindestens ein Kleinbuchstabe
-    # 4. Mindestens eine Zahl
-    # 5. Mindestens ein Sonderzeichen
-
-        if len(password) < 8:
-            return "weak", "Das Passwort muss mindestens 8 Zeichen lang sein."
-        if not re.search(r"[A-Z]", password):
-            return "weak", "Das Passwort muss mindestens einen Großbuchstaben enthalten."
-        if not re.search(r"[a-z]", password):
-            return "weak", "Das Passwort muss mindestens einen Kleinbuchstaben enthalten."
-        if not re.search(r"[0-9]", password):
-            return "weak", "Das Passwort muss mindestens eine Zahl enthalten."
-
-        return "Stark", "Das Passwort ist stark!"
-
-    # Function to create the Users database and to import and apply songs
+    
+        # Function to create the Users database and to import and apply songs
     def create_user_database(user_id):
         user_db_path = os.path.join(songs_dir, f"{user_id}.db")
         conn_user_db = sqlite3.connect(user_db_path)
@@ -209,8 +188,45 @@ def main():
         df.to_sql('spotify_songs', conn_songs_db, if_exists='replace', index=False)
         conn_songs_db.commit()
         conn_songs_db.close()
+    
+#**********************************************************
+# 3. Login process and defining functions
+#**********************************************************
 
-    # Registration for first time users
+    # Hash-function, creation and storing of the password 
+    def hash_password(password):
+        return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+
+    def check_password(password, hashed):
+        return bcrypt.checkpw(password.encode('utf-8'), hashed)
+
+    # Function that creates an User-ID to new registrated Users
+    def generate_user_id(username):
+        timestamp = datetime.now().strftime("%H%M%S")  # User ID based on second, minute and hour of first registration
+        data = f"{username}{timestamp}"
+        user_hash = hashlib.md5(data.encode()).hexdigest()[:5]  # Shortens the hash to 5 characters
+        return user_hash
+
+    # Function to check password safety
+    def check_password_strength(password):
+    # Conditions for a strong password:
+    # 1. At least 8 characters
+    # 2. At least one uppercase letter
+    # 3. At least one lowercase letter
+    # 4. At least one number
+        #re librarie checks if the password meets the conditions
+        if len(password) < 8:
+            return "Weak", "The password must be at least 8 characters long."
+        if not re.search(r"[A-Z]", password):
+            return "Weak", "The password must contain at least one uppercase letter."
+        if not re.search(r"[a-z]", password):
+            return "Weak", "The password must contain at least one lowercase letter."
+        if not re.search(r"[0-9]", password):
+            return "Weak", "The password must contain at least one number."
+        
+        return "Strong", "The password is strong!"
+
+    # Function for registration of first-time users
     def register_user(username, password):
         if user_exists(username):
             st.warning("Username already exists!")
@@ -260,7 +276,7 @@ def main():
         conn_user_db.close()
         return user_songs_df_overview
 
-    # Opens sidebar if login Button has been clicked
+    # Opens sidebar if Sign in Button has been clicked
     if st.session_state.sidebar_open:
         # Streamlit-application
         with st.sidebar:
@@ -278,11 +294,11 @@ def main():
                     strength, message = None, None  # Initialisierung der Variablen
                     if username and password:
                         # Checks if the password is strong 
-                        strength, message = check_password_strength(password)
-                    if strength == "weak":
-                        st.error(f"weak password: {message}")
+                        strength, message = check_password_strength(password) #conditions from above
+                    if strength == "Weak":
+                        st.error(f"Weak password: {message}")
                     else:
-                        if st.button("Registration"):
+                        if st.button("Registration"): 
                             register_user(username, password)
                         else:
                             st.warning("Bitte Benutzername und Passwort eingeben.")
@@ -301,14 +317,18 @@ def main():
                 st.sidebar.write(f"Your user-ID: {st.session_state.user_id}")
                 st.sidebar.button("Logout", on_click=lambda: st.session_state.update({"logged_in": False, "username": "", "user_id": "", "show_legend": False}))
 
-         
-    
-            
-    # Show user database after successful login (only a small part)
-    if st.session_state.logged_in:
-        st.header("Your personal songs")
 
-        # # Access to the user's database
+ #*****************************************************************        
+ # 4. Individual Database
+ #*****************************************************************  
+ 
+    # Show user database after successful login (only a small part)
+    # This list is empty in the beggining
+    if st.session_state.logged_in:
+        st.subheader("Songs picked for you:")
+        st.info("Discover more songs that you could like!")
+
+        # Access to the user's database / connection
         user_db_path = os.path.join(songs_dir, f"{st.session_state.user_id}.db")
         conn_user_db = sqlite3.connect(user_db_path)        
 
@@ -319,18 +339,25 @@ def main():
         # Initial load
         user_songs_df_overview = load_user_db()
 
-        # Display the data and add a refresh button
+        # Display the data and add a refresh button, the new songs appear in the list.
         if st.button("Refresh"):
             user_songs_df_overview = load_user_db()
             st.success("Database refreshed!")
 
+        # Displays user data
         st.dataframe(user_songs_df_overview, use_container_width=True, height=200)
 
+        # Saves songs to the users database
         save_csv_to_database(df)
         songs_db_path = os.path.join(script_dir, "spotify_songs.db")
         conn_songs_db = sqlite3.connect(songs_db_path)
         
-        st.header("Search")
+#************************************************************************        
+#5. Dynamik search feature (search by track_name & artist_name)
+#************************************************************************  
+    
+        # Expander which stays open and doesn't need to be openend
+        st.header("Search songs")
         with st.expander("", expanded= True):
             #Definition of two column
             #Colour for selectbox:
@@ -346,7 +373,7 @@ def main():
             """, unsafe_allow_html=True)
 
 
-            # Dynamische Suchoption hinzufügen
+            # Add dynamik search-option
             search_column_1 = st.selectbox("Search for:", ["track_artist", "track_name", "playlist_name"], key="search_column_1")
             search_query_1 = st.text_input(f"Please insert {search_column_1}:", key="search_query_1")
                     
@@ -357,7 +384,7 @@ def main():
             instrumentalness, liveness, valence, tempo, duration_ms FROM spotify_songs WHERE {search_column_1} LIKE ?"""
             spotify_songs_df_search_1 = pd.read_sql_query(query_playlist_search_1, conn_songs_db, params=(f"%{search_query_1}%",))
             if not spotify_songs_df_search_1.empty:
-                # Shwo results if songs were found
+                # Show results if songs were found
                 st.dataframe(spotify_songs_df_search_1, use_container_width=True, height=400)
 
             # Show legend button after successful search
@@ -409,15 +436,20 @@ def main():
         else:
             # Display message if no hits are available
             st.warning("No match found. Try another entry.")
+            
+#**********************************************************************
+# 6. Filtering by audio features
+#**********************************************************************
 
-        # Filter by audio features
+        # Selection of the variables shown in the database
         query_playlist_filter = """SELECT DISTINCT track_artist, track_name, tempo, valence, energy, danceability FROM spotify_songs"""
         spotify_songs_df_filter = pd.read_sql_query(query_playlist_filter, conn_songs_db)
 
+        # Creation of the variables sliders
         st.subheader("Filter your songs by audio-features")
         with st.expander("Filter by audio-features", expanded=True):
             # Tempo-Filter
-            col1, col2, col3 = st.columns([2, 6, 2])
+            col1, col2, col3 = st.columns([2, 8, 2])
             with col1:
                 st.write("Slow")
             with col2:
@@ -426,7 +458,7 @@ def main():
              st.write("Fast")
 
             # Valence-Filter
-            col1, col2, col3 = st.columns([2, 6, 2])
+            col1, col2, col3 = st.columns([2, 8, 2])
             with col1:
                 st.write("Sad")
             with col2:
@@ -435,7 +467,7 @@ def main():
                 st.write("Happy")
 
             # Energy-Filter
-            col1, col2, col3 = st.columns([2, 6, 2])
+            col1, col2, col3 = st.columns([2, 8, 2])
             with col1:
                 st.write("Low energy")
             with col2:
@@ -444,15 +476,15 @@ def main():
                 st.write("High energie")
 
             # Danceability-Filter
-            col1, col2, col3 = st.columns([2, 6, 2])
+            col1, col2, col3 = st.columns([2, 8, 2])
             with col1:
-                st.write("Less danceable")
+                st.write("Chill music")
             with col2:
                 danceability_range = st.slider("Danceability", min_value=0.0, max_value=1.0, value=(0.0, 1.0), step=0.1, label_visibility="collapsed")
             with col3:
-                st.write("More danceable")
+                st.write("Dance music")
 
-            #  Select songs according to the filters
+            # Select songs according to the filters
             filtered_songs = spotify_songs_df_filter[
                 (spotify_songs_df_filter['tempo'] >= tempo_range[0]) & (spotify_songs_df_filter['tempo'] <= tempo_range[1]) &
                 (spotify_songs_df_filter['valence'] >= valence_range[0]) & (spotify_songs_df_filter['valence'] <= valence_range[1]) &
@@ -490,7 +522,11 @@ def main():
                 """)
 
             else:
-                st.warning("No songs match the filter criteria.")
+                st.warning("No songs match your chosen criteria.")
+                
+#********************************************************************************
+# 7. Playlist creation with machine learning
+#******************************************************************************** 
 
         # CSS for customising the design
         st.markdown("""
@@ -518,7 +554,7 @@ def main():
         """, unsafe_allow_html=True)
         st.subheader("Create your own playlist!")
         with st.expander("Find songs based on your preferences", expanded=st.session_state.expander_opened):
-            st.write("Choose as many songs as you want (min. 5)")
+            st.write("Choose as many songs as you want. A minimum of 5 is required.")
             # Add dynamic search option
             search_column_2 = st.selectbox("Search for:", ["track_artist", "track_name"], key="search_column_2")
             search_query_2 = st.text_input(f"Please insert {search_column_2}:", key="search_query_2")
@@ -587,8 +623,12 @@ def main():
             # Initialize empty dataframe
             if "user_songs_df_similar" not in st.session_state:
                 st.session_state.user_songs_df_similar = pd.DataFrame()  # Fallback for later access
+            
+#*********************************************************
+# 8. Machine learning knn
+#*********************************************************
 
-            # Show button only if there are 20 songs in the basket
+            # Show button only if there are at least 5 songs in the basket
             if len(st.session_state.cart) >= 5:
                 if st.button("Find similar songs"):
                     # Create DataFrame from the basket
@@ -665,9 +705,12 @@ def main():
                         st.error("No songs to save available!")
 
   
-
         conn_songs_db.close() #close connection
         
+#******************************************************
+# 9. Visualizations
+#******************************************************
+       
         # function to get the top 10 artists
         def get_user_top_artists(user_id):
             try:
@@ -682,10 +725,10 @@ def main():
                     st.warning("Keine Songs in der Datenbank gefunden.")
                     return
 
-                # Top 10 Artists berechnen
+                # Calculate top 10 artists from a user
                 top_artists = user_songs_df['track_artist'].value_counts().head(10)
 
-                # Plot erstellen
+                # Create plot 
                 plt.figure(figsize=(10, 6))
                 sns.barplot(x=top_artists.values, y=top_artists.index, palette="Blues_d")
                 plt.title("Top 10 Artists")
@@ -697,6 +740,8 @@ def main():
 
             except Exception as e:
                 st.error(f"Fehler beim Zugriff auf die Datenbank: {e}")
+                
+        # Call function to show top 10 artists      
         st.subheader("Your top 10 artists")      
         with st.expander("",  expanded = True):
             # Anzeige der Top 10 Artists für den Benutzer
@@ -712,7 +757,7 @@ def main():
                 genre_df = pd.read_sql_query(query, conn_user_db)
 
                 if genre_df.empty:
-                    st.warning("Keine Genre-Daten verfügbar.")
+                    st.warning("No genre data available.")
                     return
 
                 genre_counts = genre_df['playlist_genre'].value_counts()
@@ -720,22 +765,22 @@ def main():
                 # Plot
                 plt.figure(figsize=(8, 6))
                 genre_counts.plot(kind='bar', color='skyblue')
-                plt.title("Verteilung der Genres")
+                plt.title("Distribution of Genres")
                 plt.xlabel("Genre")
-                plt.ylabel("Anzahl")
+                plt.ylabel("Number")
                 st.pyplot(plt)
 
                 conn_user_db.close()
 
             except Exception as e:
-                st.error(f"Fehler beim Abrufen der Genres: {e}")
+                st.error(f"Error while calling the genres: {e}")
                 
         st.subheader("Your most listened genres.")
         with st.expander("Open to see more"):
             # Function to show the distribution of an audio-feature 
             plot_genre_distribution(st.session_state.user_id)
 
-
+        # Function to calculate distribution of any variable, example valence
         def plot_audio_feature_distribution(user_id, feature):
             try:
                 user_db_path = os.path.join(songs_dir, f"{user_id}.db")
@@ -744,13 +789,13 @@ def main():
                 feature_df = pd.read_sql_query(query, conn_user_db)
 
                 if feature_df.empty:
-                    st.warning(f"Keine Daten für {feature} verfügbar.")
+                    st.warning(f"No data for {feature} available.")
                     return
 
                 # Plot
                 plt.figure(figsize=(8, 6))
                 sns.histplot(feature_df[feature], kde=True, bins=20, color='green')
-                plt.title(f"Verteilung von {feature}")
+                plt.title(f"Distribution {feature}")
                 plt.xlabel(feature.capitalize())
                 plt.ylabel("Anzahl")
                 st.pyplot(plt)
