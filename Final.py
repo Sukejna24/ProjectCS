@@ -42,13 +42,6 @@ def main():
     
     # To create a distance between the boxes
     st.write("")
-    
-     #Redirects user to Login sidebar
-    st.info("**Please log in first to see our page**")
-    if not st.session_state.sidebar_open:
-        if st.button("Login"):
-            st.session_state.sidebar_open = True
-
 
     # Definition of the path of the actual script
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -184,7 +177,16 @@ def main():
                 st.sidebar.button("Logout", on_click=lambda: st.session_state.update({"logged_in": False, "username": "", "user_id": "", "show_legend": False}))
 
             st.subheader("Navigator:")
+    
+        # Message please sign up disappears after session_state logged_in        
+    if not st.session_state.logged_in:
+        st.info("**Please log in first to see our page**")
         
+    #Redirects user to Login sidebar
+    if not st.session_state.sidebar_open:
+        if st.button("Sign in"):
+            st.session_state.sidebar_open = True
+            
     # Show user database after successful login (only a small part)
     if st.session_state.logged_in:
         st.header("Your personal songs")
