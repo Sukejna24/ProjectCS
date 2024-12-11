@@ -6,6 +6,7 @@ import hashlib
 from datetime import datetime
 import os
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 def main():
     # Initialisation of Session-States, all important variables are checked if they exist in session_state. If not they are initialised
