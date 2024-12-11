@@ -10,6 +10,21 @@ import seaborn as sns
 import re
 
 def main():
+    
+    
+    st.markdown("""
+    <style>
+        body {
+            background-color: #f0f2f6;
+        }
+        .stApp {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+        }
+    </style>
+    """, unsafe_allow_html=True)
+      
     # Initialisation of Session-States, all important variables are checked if they exist in session_state. If not they are initialised
     if 'logged_in' not in st.session_state:
         st.session_state.logged_in = False
@@ -32,7 +47,7 @@ def main():
     with col2:
         st.image("https://upload.wikimedia.org/wikipedia/commons/7/71/Spotify.png", width=160)
     
-        st.title("Track Finder")
+        st.title(" 🎵 Track Finder")
         
     st.markdown("""
     <div style="background-color: #D3D3D3; padding: 15px; border-radius: 10px; font-size: 16px;">
