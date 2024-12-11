@@ -510,6 +510,10 @@ def main():
             # Save button is shown if songs have been generated 
             if st.session_state.similar_songs_generated and not st.session_state.save_playlist_clicked:
                 st.write("Do you like the songs? Save now!")
+                
+                # Playlist name input
+                playlist_name = st.text_input("Enter a name for your playlist:", "")
+                
                 if st.button("Save Playlist"):
                     # Assure that the datafram is not empty
                     if not st.session_state.user_songs_df_similar.empty:
@@ -522,7 +526,7 @@ def main():
                             conn_user_db.commit()
                             conn_user_db.close()
 
-                            st.success("The Playlist has been saved successfully!")
+                            st.success(f"The '{playlist_name}' has been saved successfully!")
                             st.session_state.similar_songs_generated = False
                         except Exception as e:
                             st.error(f"Error when saving the playlist: {e}")
