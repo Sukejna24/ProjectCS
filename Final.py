@@ -317,31 +317,26 @@ def main():
         conn_songs_db = sqlite3.connect(songs_db_path)
         
         st.header("Search")
-        with st.expander("See more", expanded= True):
-            #Definition of two columns
-            col4, col5 = st.columns(2)
+        with st.expander("", expanded= True):
+            #Definition of two column
+            #Colour for selectbox:
+            st.markdown("""
+            <style>
+            div[data-baseweb="select"] > div {
+                background-color: lightblue; /* Hintergrundfarbe */
+                border-radius: 5px;         /* Abgerundete Ecken */
+                padding: 2px;              /* Innenabstand */
+                font-size: 16px;           /* Schriftgröße */
+            }
+            </style>
+            """, unsafe_allow_html=True)
+
+
+            # Dynamische Suchoption hinzufügen
+            search_column_1 = st.selectbox("Search for:", ["track_artist", "track_name", "playlist_name"], key="search_column_1")
+            search_query_1 = st.text_input(f"Please insert {search_column_1}:", key="search_query_1")
+                    
             
-            with col4:
-
-                #Colour for selectbox:
-                st.markdown("""
-                <style>
-                div[data-baseweb="select"] > div {
-                    background-color: lightblue; /* Hintergrundfarbe */
-                    border-radius: 5px;         /* Abgerundete Ecken */
-                    padding: 2px;              /* Innenabstand */
-                    font-size: 16px;           /* Schriftgröße */
-                }
-                </style>
-                """, unsafe_allow_html=True)
-
-
-                # Dynamische Suchoption hinzufügen
-                search_column_1 = st.selectbox("Search for:", ["track_artist", "track_name", "playlist_name"], key="search_column_1")
-            with col5:
-                 search_query_1 = st.text_input(f"Please insert {search_column_1}:", key="search_query_1")
-            
-    
         # Show results of the search
         if search_query_1:
             query_playlist_search_1 = f"""SELECT DISTINCT playlist_name, track_artist, track_name, danceability, energy, loudness, speechiness, 
