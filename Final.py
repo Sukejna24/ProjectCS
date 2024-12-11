@@ -400,6 +400,7 @@ def main():
         query_playlist_filter = """SELECT DISTINCT track_artist, track_name, tempo, valence, energy, danceability FROM spotify_songs"""
         spotify_songs_df_filter = pd.read_sql_query(query_playlist_filter, conn_songs_db)
 
+        st.subheader("Filter your songs by audio-features")
         with st.expander("Filter by audio-features", expanded=True):
             # Tempo-Filter
             col1, col2, col3 = st.columns([2, 6, 2])
@@ -501,7 +502,7 @@ def main():
             }
             </style>
         """, unsafe_allow_html=True)
-
+        st.subheader("Create your own playlist!")
         with st.expander("Find songs based on your preferences", expanded=st.session_state.expander_opened):
             st.write("Choose as many songs as you want (min. 5)")
             # Add dynamic search option
