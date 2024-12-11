@@ -532,18 +532,42 @@ def main():
                     else:
                         st.error("No songs to save available!")
 
-    # Top 10 Künstler nach Songanzahl
-    top_artists = df['track_artist'].value_counts().head(10)
+  
 
-    plt.figure(figsize=(10, 6))
-    sns.barplot(x=top_artists.values, y=top_artists.index, palette="Blues_d")
-    plt.title("Top 10 Artists nach Anzahl der Songs")
-    plt.xlabel("Anzahl der Songs")
-    plt.ylabel("Künstler")
-    st.pyplot(plt)
+        conn_songs_db.close() #close connection
+        
+        # function to get the top 10 artists
+        def get_user_top_artists(user_id):
+            try:
+                user_db_path = os.path.join(songs_dir, f"{user_id}.db")
+                conn_user_db = sqlite3.connect(user_db_path)
 
+                # call data from database
+                query = "SELECT track_artist FROM user_songs"
+                user_songs_df = pd.read_sql_query(query, conn_user_db)
 
-conn_songs_db.close() #close connection
+                if user_songs_df.empty:
+                    st.warning("Keine Songs in der Datenbank gefunden.")
+                    return
+
+                # Top 10 Artists berechnen
+                top_artists = user_songs_df['track_artist'].value_counts().head(10)
+
+                # Plot erstellen
+                plt.figure(figsize=(10, 6))
+                sns.barplot(x=top_artists.values, y=top_artists.index, palette="Blues_d")
+                plt.title("Top 10 Artists")
+                plt.xlabel("Number of songs")
+                plt.ylabel("Artists")
+                st.pyplot(plt)
+
+                conn_user_db.close()
+
+            except Exception as e:
+                st.error(f"Fehler beim Zugriff auf die Datenbank: {e}")
+
+        # Anzeige der Top 10 Artists für den Benutzer
+        get_user_top_artists(st.session_state.user_id)
 
 if __name__ == "__main__":
     main()
