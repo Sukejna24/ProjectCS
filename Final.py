@@ -91,7 +91,7 @@ def main():
 #***************************************************************  
 
     # Creation of 3 columns, both at the end are for the frame, to centralize the picture
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3 = st.columns([2, 8, 2])
      
     # Import spotify logo
     # Centralize picture with HTML und CSS
@@ -104,13 +104,15 @@ def main():
     # To create a distance between the Logo and the boxes
     st.write("")
     
-    # Header-box frontpage with html
-    st.markdown("""
-        <div class="header-box">
-            <h1>🎵 Welcome to Track Finder!</h1>
-            <p>Discover, analyze, and create playlists tailored to your taste.</p>
-        </div>
-    """, unsafe_allow_html=True)
+    with col2:
+    
+        # Header-box frontpage with html
+        st.markdown("""
+            <div class="header-box">
+                <h1>🎵 Welcome to Track Finder!</h1>
+                <p>Discover, analyze, and create playlists tailored to your taste.</p>
+            </div>
+        """, unsafe_allow_html=True)
     
     # Text boxes frontpage    
     with col1:
