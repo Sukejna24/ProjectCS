@@ -373,7 +373,7 @@ def main():
         # Expander which stays open and doesn't need to be openend
         st.header("Search songs")
         with st.expander("Open to see more", expanded= True):
-            st.info("Get inspired by searching songs by artist, name or genre!")
+            st.write("Get inspired by searching songs by artist, name or genre!")
             #Colour for selectbox:
             st.markdown("""
             <style>
@@ -392,65 +392,65 @@ def main():
             search_query_1 = st.text_input(f"Please insert {search_column_1}:", key="search_query_1")
                     
             
-        # Show results of the search
-        if search_query_1:
-            query_playlist_search_1 = f"""SELECT DISTINCT playlist_name, track_artist, track_name, danceability, energy, loudness, speechiness, 
-            instrumentalness, liveness, valence, tempo, duration_ms FROM spotify_songs WHERE {search_column_1} LIKE ?"""
-            spotify_songs_df_search_1 = pd.read_sql_query(query_playlist_search_1, conn_songs_db, params=(f"%{search_query_1}%",))
-            if not spotify_songs_df_search_1.empty:
-                # Show results if songs were found
-                st.dataframe(spotify_songs_df_search_1, use_container_width=True, height=400)
-
-            # Show legend button after successful search
-            if st.button("Explanation of the Audio Features", key="audio_features"):
-                st.session_state.show_legend = not st.session_state.show_legend
-
-            # Show description if legend is activated
-            if st.session_state.show_legend:
-                st.markdown("""
-                ### Danceability
-                Indicates how suitable a track is for dancing. It is based on a combination of elements such as tempo, rhythm stability, beat strength and overall rhythm.   
-                **Scale:** 0.0 to 1.0 (higher value = more danceable).
-
-                ### Energy
-                Indicates the level of intensity and activity of a track. Tracks with high energy have a fast tempo, a strong beat and loud instruments.    
-                **Scale:** 0.0 to 1.0 (higher value = more energetic).
-
-                ### Valence
-                Indicates the musical positivity of a track. Tracks with a high valence sound cheerful, happy and euphoric.   
-                **Scale:** 0.0 to 1.0 (higher value = more positive).
-
-                ### Tempo
-                The estimated tempo of the track in beats per minute (BPM).    
-                **Unit:** Beats per minute (BPM).
-
-                ### Speechiness
-                Indicates the proportion of spoken words in a track. High values indicate more spoken content (e.g. podcasts, audiobooks, rap).  
-                **Scale:** 
-                - Values above 0.66: Probably pure spoken content.
-                - 0.33-0.66: Mixture of music and spoken content.
-                - Below 0.33: Mainly music.
-
-                ### Liveness
-                Indicates the probability that the track was performed in front of a live audience. 
-                **Scale:** 0.0 to 1.0 (higher value = more live character). Values above 0.8 indicate live recordings.
-
-                ### Instrumentalness
-                Estimates how instrumental a track is. Higher values indicate that the track contains little or no vocals.
-                **Scale:** 0.0 to 1.0 (values close to 1.0 indicate pure instrumental music).
-
-                ### Loudness
-                Indicates the average volume of the track in decibels (dB). 
-                **Unit:** Decibel (dB).
-
-                ### Duration_ms
-                The length of the track in milliseconds.   
-                **Unit:** Milliseconds (ms).
-                """)  
-            else:
+            # Show results of the search
+            if search_query_1:
+                query_playlist_search_1 = f"""SELECT DISTINCT playlist_name, track_artist, track_name, danceability, energy, loudness, speechiness, 
+                instrumentalness, liveness, valence, tempo, duration_ms FROM spotify_songs WHERE {search_column_1} LIKE ?"""
+                spotify_songs_df_search_1 = pd.read_sql_query(query_playlist_search_1, conn_songs_db, params=(f"%{search_query_1}%",))
+                if not spotify_songs_df_search_1.empty:
+                    # Show results if songs were found
+                    st.dataframe(spotify_songs_df_search_1, use_container_width=True, height=400)             
+                else:
                 # Display message if no hits are available
-                st.warning("No match found. Try another entry.")
-            
+                    st.warning("No match found. Try another entry.")
+                    
+                # Show legend button after successful search
+                if st.button("Explanation of the Audio Features", key="audio_features"):
+                    st.session_state.show_legend = not st.session_state.show_legend
+
+                # Show description if legend is activated
+                if st.session_state.show_legend:
+                    st.markdown("""
+                    ### Danceability
+                    Indicates how suitable a track is for dancing. It is based on a combination of elements such as tempo, rhythm stability, beat strength and overall rhythm.   
+                    **Scale:** 0.0 to 1.0 (higher value = more danceable).
+
+                    ### Energy
+                    Indicates the level of intensity and activity of a track. Tracks with high energy have a fast tempo, a strong beat and loud instruments.    
+                    **Scale:** 0.0 to 1.0 (higher value = more energetic).
+
+                    ### Valence
+                    Indicates the musical positivity of a track. Tracks with a high valence sound cheerful, happy and euphoric.   
+                    **Scale:** 0.0 to 1.0 (higher value = more positive).
+
+                    ### Tempo
+                    The estimated tempo of the track in beats per minute (BPM).    
+                    **Unit:** Beats per minute (BPM).
+
+                    ### Speechiness
+                    Indicates the proportion of spoken words in a track. High values indicate more spoken content (e.g. podcasts, audiobooks, rap).  
+                    **Scale:** 
+                    - Values above 0.66: Probably pure spoken content.
+                    - 0.33-0.66: Mixture of music and spoken content.
+                    - Below 0.33: Mainly music.
+
+                    ### Liveness
+                    Indicates the probability that the track was performed in front of a live audience. 
+                    **Scale:** 0.0 to 1.0 (higher value = more live character). Values above 0.8 indicate live recordings.
+
+                    ### Instrumentalness
+                    Estimates how instrumental a track is. Higher values indicate that the track contains little or no vocals.
+                    **Scale:** 0.0 to 1.0 (values close to 1.0 indicate pure instrumental music).
+
+                    ### Loudness
+                    Indicates the average volume of the track in decibels (dB). 
+                    **Unit:** Decibel (dB).
+
+                    ### Duration_ms
+                    The length of the track in milliseconds.   
+                    **Unit:** Milliseconds (ms).
+                    """)  
+                
 #**********************************************************************
 # 6. Filtering by audio features
 #**********************************************************************
@@ -509,7 +509,7 @@ def main():
             # Show filtered songs
             st.subheader("Filtered songs")
             if not filtered_songs.empty:
-                st.dataframe(filtered_songs, use_container_width=True, height=400)
+                st.dataframe(filtered_songs, use_container_width=True, height=300)
 
                 # Show legend 
                 if st.button("Description of audio features", key="audio_features_duplicate"):
