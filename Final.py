@@ -173,7 +173,7 @@ def main():
     c_users.execute('''CREATE TABLE IF NOT EXISTS users (user_id TEXT PRIMARY KEY, username TEXT, password TEXT)''') #new registration
     conn_users.commit()
     
-        # Function to create the Users database and to import and apply songs
+    # Function to create the Users database 'user.db and to import and apply songs
     def create_user_database(user_id):
         user_db_path = os.path.join(songs_dir, f"{user_id}.db")
         conn_user_db = sqlite3.connect(user_db_path)
@@ -183,7 +183,7 @@ def main():
         conn_user_db.commit()
         conn_user_db.close()
 
-    # creation of the data base and saving a pandas dataframe into an SQL database
+    # creation of the database and saving a pandas dataframe into an SQL database
     def save_csv_to_database(df):
         songs_db_path = os.path.join(script_dir, "spotify_songs.db") #creates the file path SQL Database
         conn_songs_db = sqlite3.connect(songs_db_path)
@@ -249,7 +249,7 @@ def main():
         c_users.execute("SELECT * FROM users WHERE username = ?", (username,))
         return c_users.fetchone()
 
-    # Check login
+    # Check if username and password are already registrated
     def login_user(username, password):
         c_users.execute("SELECT * FROM users WHERE username = ?", (username,))
         user = c_users.fetchone()
@@ -356,7 +356,7 @@ def main():
         conn_songs_db = sqlite3.connect(songs_db_path)
         
 #************************************************************************        
-#5. Dynamik search feature (search by track_name & artist_name)
+#5. Dynamik search feature (search by track_name, playlist_name & artist_name)
 #************************************************************************  
     
         # Expander which stays open and doesn't need to be openend
@@ -628,20 +628,20 @@ def main():
                 st.session_state.user_songs_df_similar = pd.DataFrame()  # Fallback for later access
             
 #*********************************************************
-# 8. Machine learning knn
+# 8. Supervised Machine learning, nearest neighbor 
 #*********************************************************
 
             # Show button only if there are at least 5 songs in the basket
             if len(st.session_state.cart) >= 5:
                 if st.button("Find similar songs"):
-                    # Create DataFrame from the basket
+                    # Create DataFrame 'selected_tracks_df for the users chosen songs
                     selected_tracks_df = pd.DataFrame(st.session_state.cart)
 
                     # Use machine learning model to find similar songs
                     from sklearn.neighbors import NearestNeighbors
                     import numpy as np
 
-                    # Prepare data for Machine Learning
+                    # Prepare data for Machine Learning by defining the learning parameters                 
                     feature_columns = [
                         "danceability", "energy", "key", "loudness", "mode",
                         "speechiness", "acousticness", "instrumentalness", "liveness",
@@ -653,17 +653,17 @@ def main():
                     SELECT * FROM spotify_songs
                     """
                     spotify_songs_df_all = pd.read_sql_query(query_playlist_all, conn_songs_db)
-                    knn = NearestNeighbors(n_neighbors=300, metric="euclidean")
-                    knn.fit(spotify_songs_df_all[feature_columns])
+                    knn = NearestNeighbors(n_neighbors=300, metric="euclidean") #euclidean is the distance metric, 300 nearest neighbors
+                    knn.fit(spotify_songs_df_all[feature_columns]) #training it on all songs
 
                     # Search for similar songs based on the selected tracks
                     selected_features = selected_tracks_df[feature_columns].values
-                    distances, indices = knn.kneighbors(selected_features)
+                    distances, indices = knn.kneighbors(selected_features) #calculation of indices and distance
 
                     # Collect results
-                    user_songs_df_similar = spotify_songs_df_all.iloc[np.unique(indices.flatten())]
+                    user_songs_df_similar = spotify_songs_df_all.iloc[np.unique(indices.flatten())] #based on the indices the correct song can be retrieved from the spotify_songs_df
 
-                    # Save into st.session_state
+                    # Save into st.session_state for further processing
                     st.session_state.user_songs_df_similar = user_songs_df_similar
 
                     # Add playlist metadata
@@ -675,7 +675,7 @@ def main():
 
                     # Show results
                     st.subheader("Similar songs")
-                    st.dataframe(user_songs_df_similar, use_container_width=True, height=400)
+                    st.dataframe(user_songs_df_similar, use_container_width=True, height=400) # the recommended songs are displayed in the dataframe
 
                     # refresh state
                     st.session_state.similar_songs_generated = True
@@ -693,7 +693,7 @@ def main():
                     if not st.session_state.user_songs_df_similar.empty:
                         try:
                             # Add the playlist name to the DataFrame
-                            st.session_state.user_songs_df_similar["playlist_name"] = playlist_name
+                            st.session_state.user_songs_df_similar["playlist_name", "My Playlist"] = playlist_name #My Playlist as default
                             user_db_path = os.path.join(songs_dir, f"{st.session_state.user_id}.db")
                             conn_user_db = sqlite3.connect(user_db_path)
                             st.session_state.user_songs_df_similar.to_sql(
