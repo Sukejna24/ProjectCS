@@ -371,7 +371,7 @@ def main():
 #************************************************************************  
     
         # Expander which stays open and doesn't need to be openend
-        st.header("Search songs")
+        st.header("Search for songs")
         with st.expander("Open to see more", expanded= True):
             st.write("Get inspired by searching songs by artist, name or genre!")
             #Colour for selectbox:
@@ -567,7 +567,7 @@ def main():
             </style>
         """, unsafe_allow_html=True)
         st.subheader("Create your own playlist!")
-        with st.expander("Find songs based on your preferences", expanded=st.session_state.expander_opened):
+        with st.expander("Find songs based on your preferences", expanded=True):
             st.write("Choose as many songs as you want. A minimum of 5 is required.")
             # Add dynamic search option
             search_column_2 = st.selectbox("Search for:", ["track_artist", "track_name"], key="search_column_2")
