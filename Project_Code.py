@@ -378,6 +378,10 @@ def main():
     
         
         elif selected_page == "Search":
+            # initialize connection
+            songs_db_path = os.path.join(script_dir, "spotify_songs.db")
+            conn_songs_db = sqlite3.connect(songs_db_path)
+
             # Expander which stays open and doesn't need to be openend
             st.header("Search songs")
             with st.expander("Open to see more", expanded= True):
@@ -447,6 +451,8 @@ def main():
                         The length of the track in milliseconds.   
                         **Unit:** Milliseconds (ms).
                         """)  
+                        
+            conn_songs_db.close() #close connection
                     
 #**********************************************************************
 # 6. Filtering by audio features
