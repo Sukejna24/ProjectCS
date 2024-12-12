@@ -372,8 +372,8 @@ def main():
     
         # Expander which stays open and doesn't need to be openend
         st.header("Search songs")
-        with st.expander("", expanded= True):
-            #Definition of two column
+        with st.expander("Open to see more", expanded= True):
+            st.info("Get inspired by searching songs by artist, name or genre!")
             #Colour for selectbox:
             st.markdown("""
             <style>
@@ -388,7 +388,7 @@ def main():
 
 
             # Add dynamik search-option
-            search_column_1 = st.selectbox("Search for:", ["track_artist", "track_name", "playlist_name"], key="search_column_1")
+            search_column_1 = st.selectbox("Search for:", ["track_artist", "track_name", "playlist_genre"], key="search_column_1")
             search_query_1 = st.text_input(f"Please insert {search_column_1}:", key="search_query_1")
                     
             
@@ -731,7 +731,7 @@ def main():
 #******************************************************
 # 9. Visualizations
 #******************************************************
-       
+              
         # function to get the top 10 artists
         def get_user_top_artists(user_id):
             try:
@@ -761,14 +761,7 @@ def main():
 
             except Exception as e:
                 st.error(f"Fehler beim Zugriff auf die Datenbank: {e}")
-                
-        # Call function to show top 10 artists      
-        st.subheader("Your top 10 artists")      
-        with st.expander("",  expanded = True):
-            # Anzeige der Top 10 Artists für den Benutzer
-            get_user_top_artists(st.session_state.user_id)
             
-    
         # function to show the distribution of the different genres
         def plot_genre_distribution(user_id):
             try:
@@ -795,11 +788,7 @@ def main():
 
             except Exception as e:
                 st.error(f"Error while calling the genres: {e}")
-                
-        st.subheader("Your most listened genres.")
-        with st.expander("Open to see more"):
-            # Function to show the distribution of an audio-feature 
-            plot_genre_distribution(st.session_state.user_id)
+            
 
         # Function to calculate distribution of any variable, example valence
         def plot_audio_feature_distribution(user_id, feature):
@@ -825,10 +814,25 @@ def main():
 
             except Exception as e:
                 st.error(f"Fehler beim Abrufen von {feature}: {e}")
-
-        st.subheader("Your music mood.")
-        with st.expander("Open to see"):
-            plot_audio_feature_distribution(st.session_state.user_id, 'valence')
+                
+      
+        # Sidebar: Choose the visualisation you want to open
+        visualization_option = st.sidebar.selectbox(
+            "Choose a visualization:",
+            ["Top 10 Artists", "Genre Distribution", "Audio Feature Distribution"]
+        )
+        # Page, where the visualisation is shown
+        st.subheader("Explore your music data")
+        # Framing to show the plots
+        col1, col2, col3= st.columns([1,4,1])
+        # The visualisation that was chosen in the sidebar is displayed. 
+        with col2:
+            if visualization_option == "Top 10 Artists":
+                get_user_top_artists(st.session_state.user_id)
+            elif visualization_option == "Genre Distribution":
+                plot_genre_distribution(st.session_state.user_id)
+            elif visualization_option == "Audio Feature Distribution":
+                plot_audio_feature_distribution(st.session_state.user_id, "valence")
 
 if __name__ == "__main__":
     main()
