@@ -693,7 +693,6 @@ def main():
                         # Add playlist metadata
                         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
                         user_songs_df_similar["playlist_name"] = f"Mix Up {timestamp}"
-                        user_songs_df_similar["playlist_genre"] = f"Mix Up {timestamp}"
                         user_songs_df_similar["playlist_subgenre"] = f"Mix Up {timestamp}"
                         user_songs_df_similar["playlist_id"] = timestamp
 
