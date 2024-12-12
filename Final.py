@@ -65,7 +65,7 @@ def main():
         border-radius: 10px;
         padding: 10px;
         margin-top: 20px;
-        background-color: #F9F9F9;
+        background-color: #FAF3E0;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -89,6 +89,10 @@ def main():
 #***************************************************************
 # 1. Preparation and formatting
 #***************************************************************  
+
+    # Seitenoptionen für den Navigator
+    pages = ["Your Songs", "Search", "Filter by Audio Features", "Find New Songs"]
+
 
     # Creation of 3 columns, both at the end are for the frame, to centralize the picture
     col1, col2, col3 = st.columns([2, 8, 2])
@@ -145,7 +149,6 @@ def main():
             <b style="font-size: 24px;">Try it out today!</b>
         </div>
         """, unsafe_allow_html=True)
-
     
     # To create a distance between the boxes
     st.write("")
@@ -287,9 +290,7 @@ def main():
 
     # Opens sidebar if Sign in Button has been clicked
     if st.session_state.sidebar_open:
-        # Streamlit-application
-        with st.sidebar:
-            st.header("Login & Registration")
+        st.sidebar.title("Login & Registration")
 
         # User chooses to log in or to registrate
         with st.sidebar:
@@ -326,396 +327,414 @@ def main():
                 st.sidebar.write(f"Your user-ID: {st.session_state.user_id}")
                 st.sidebar.button("Logout", on_click=lambda: st.session_state.update({"logged_in": False, "username": "", "user_id": "", "show_legend": False}))
 
-
  #*****************************************************************        
  # 4. Individual Database
  #*****************************************************************  
- 
+
     # Show user database after successful login (only a small part)
     # This list is empty in the beggining
     if st.session_state.logged_in:
-        st.subheader("Songs picked for you:")
-        
+        # Sidebar-Navigation
+        st.sidebar.title("Navigation")
+        selected_page = st.sidebar.radio("Go to", pages)
+        if selected_page == "Your Songs":
+            # Hauptseiten basierend auf der Auswahl
+            st.subheader("Songs picked for you:")
+            
 
-        # Access to the user's database / connection
-        user_db_path = os.path.join(songs_dir, f"{st.session_state.user_id}.db")
-        conn_user_db = sqlite3.connect(user_db_path)        
+            # Access to the user's database / connection
+            user_db_path = os.path.join(songs_dir, f"{st.session_state.user_id}.db")
+            conn_user_db = sqlite3.connect(user_db_path)        
 
-        # Check if user_id is set in session state
-        if 'user_id' not in st.session_state:
-            st.session_state.user_id = 'default_user'  # Replace with your default user logic
+            # Check if user_id is set in session state
+            if 'user_id' not in st.session_state:
+                st.session_state.user_id = 'default_user'  # Replace with your default user logic
 
-        # Initial load and sort of displayed dataframe
-        user_songs_df_overview = load_user_db()
-        # Sort the data (e.g., by playlist_id or timestamp column)
-        if "playlist_subgenre" in user_songs_df_overview.columns:
-            user_songs_df_overview = user_songs_df_overview.sort_values(by="playlist_subgenre", ascending=False)
-
-        # Display the data and add a refresh button, the new songs appear in the list.
-        if st.button("Refresh"):
+            # Initial load and sort of displayed dataframe
             user_songs_df_overview = load_user_db()
+            # Sort the data (e.g., by playlist_id or timestamp column)
             if "playlist_subgenre" in user_songs_df_overview.columns:
                 user_songs_df_overview = user_songs_df_overview.sort_values(by="playlist_subgenre", ascending=False)
-            st.success("Database refreshed!")
 
-        # Displays user data
-        st.dataframe(user_songs_df_overview, use_container_width=True, height=400)
-        st.info("Discover more songs that you could like!")
+            # Display the data and add a refresh button, the new songs appear in the list.
+            if st.button("Refresh"):
+                user_songs_df_overview = load_user_db()
+                if "playlist_subgenre" in user_songs_df_overview.columns:
+                    user_songs_df_overview = user_songs_df_overview.sort_values(by="playlist_subgenre", ascending=False)
+                st.success("Database refreshed!")
 
-        # Saves songs to the users database
-        save_csv_to_database(df)
-        songs_db_path = os.path.join(script_dir, "spotify_songs.db")
-        conn_songs_db = sqlite3.connect(songs_db_path)
+            # Displays user data
+            st.dataframe(user_songs_df_overview, use_container_width=True, height=400)
+            st.info("Discover more songs that you could like!")
+
+            # Saves songs to the users database
+            save_csv_to_database(df)
+            songs_db_path = os.path.join(script_dir, "spotify_songs.db")
+            conn_songs_db = sqlite3.connect(songs_db_path)
         
 #************************************************************************        
 #5. Dynamik search feature (search by track_name, playlist_name & artist_name)
 #************************************************************************  
     
-        # Expander which stays open and doesn't need to be openend
-        st.header("Search for songs")
-        with st.expander("Open to see more", expanded= True):
-            st.write("Get inspired by searching songs by artist, name or genre!")
-    
-            # Add dynamik search-option
-            search_column_1 = st.selectbox("Search for:", ["track_artist", "track_name", "playlist_genre"], key="search_column_1")
-            search_query_1 = st.text_input(f"Please insert {search_column_1}:", key="search_query_1")
-                    
-            
-            # Show results of the search
-            if search_query_1:
-                query_playlist_search_1 = f"""SELECT DISTINCT playlist_name, track_artist, track_name, danceability, energy, loudness, speechiness, 
-                instrumentalness, liveness, valence, tempo, duration_ms FROM spotify_songs WHERE {search_column_1} LIKE ?"""
-                spotify_songs_df_search_1 = pd.read_sql_query(query_playlist_search_1, conn_songs_db, params=(f"%{search_query_1}%",))
-                if not spotify_songs_df_search_1.empty:
-                    # Show results if songs were found
-                    st.dataframe(spotify_songs_df_search_1, use_container_width=True, height=400)             
-                else:
-                # Display message if no hits are available
-                    st.warning("No match found. Try another entry.")
-                    
-                # Show legend button after successful search
-                if st.button("Explanation of the Audio Features", key="audio_features"):
-                    st.session_state.show_legend = not st.session_state.show_legend
+        
+        elif selected_page == "Search":
+            # Expander which stays open and doesn't need to be openend
+            st.header("Search songs")
+            with st.expander("Open to see more", expanded= True):
+                st.write("Get inspired by searching songs by artist, name or genre!")
+        
 
-                # Show description if legend is activated
-                if st.session_state.show_legend:
-                    st.markdown("""
-                    ### Danceability
-                    Indicates how suitable a track is for dancing. It is based on a combination of elements such as tempo, rhythm stability, beat strength and overall rhythm.   
-                    **Scale:** 0.0 to 1.0 (higher value = more danceable).
-
-                    ### Energy
-                    Indicates the level of intensity and activity of a track. Tracks with high energy have a fast tempo, a strong beat and loud instruments.    
-                    **Scale:** 0.0 to 1.0 (higher value = more energetic).
-
-                    ### Valence
-                    Indicates the musical positivity of a track. Tracks with a high valence sound cheerful, happy and euphoric.   
-                    **Scale:** 0.0 to 1.0 (higher value = more positive).
-
-                    ### Tempo
-                    The estimated tempo of the track in beats per minute (BPM).    
-                    **Unit:** Beats per minute (BPM).
-
-                    ### Speechiness
-                    Indicates the proportion of spoken words in a track. High values indicate more spoken content (e.g. podcasts, audiobooks, rap).  
-                    **Scale:** 
-                    - Values above 0.66: Probably pure spoken content.
-                    - 0.33-0.66: Mixture of music and spoken content.
-                    - Below 0.33: Mainly music.
-
-                    ### Liveness
-                    Indicates the probability that the track was performed in front of a live audience. 
-                    **Scale:** 0.0 to 1.0 (higher value = more live character). Values above 0.8 indicate live recordings.
-
-                    ### Instrumentalness
-                    Estimates how instrumental a track is. Higher values indicate that the track contains little or no vocals.
-                    **Scale:** 0.0 to 1.0 (values close to 1.0 indicate pure instrumental music).
-
-                    ### Loudness
-                    Indicates the average volume of the track in decibels (dB). 
-                    **Unit:** Decibel (dB).
-
-                    ### Duration_ms
-                    The length of the track in milliseconds.   
-                    **Unit:** Milliseconds (ms).
-                    """)  
+                # Add dynamik search-option
+                search_column_1 = st.selectbox("Search for:", ["track_artist", "track_name", "playlist_genre"], key="search_column_1")
+                search_query_1 = st.text_input(f"Please insert {search_column_1}:", key="search_query_1")
+                        
                 
+                # Show results of the search
+                if search_query_1:
+                    query_playlist_search_1 = f"""SELECT DISTINCT playlist_name, track_artist, track_name, danceability, energy, loudness, speechiness, 
+                    instrumentalness, liveness, valence, tempo, duration_ms FROM spotify_songs WHERE {search_column_1} LIKE ?"""
+                    spotify_songs_df_search_1 = pd.read_sql_query(query_playlist_search_1, conn_songs_db, params=(f"%{search_query_1}%",))
+                    if not spotify_songs_df_search_1.empty:
+                        # Show results if songs were found
+                        st.dataframe(spotify_songs_df_search_1, use_container_width=True, height=400)             
+                    else:
+                    # Display message if no hits are available
+                        st.warning("No match found. Try another entry.")
+                        
+                    # Show legend button after successful search
+                    if st.button("Explanation of the Audio Features", key="audio_features"):
+                        st.session_state.show_legend = not st.session_state.show_legend
+
+                    # Show description if legend is activated
+                    if st.session_state.show_legend:
+                        st.markdown("""
+                        ### Danceability
+                        Indicates how suitable a track is for dancing. It is based on a combination of elements such as tempo, rhythm stability, beat strength and overall rhythm.   
+                        **Scale:** 0.0 to 1.0 (higher value = more danceable).
+
+                        ### Energy
+                        Indicates the level of intensity and activity of a track. Tracks with high energy have a fast tempo, a strong beat and loud instruments.    
+                        **Scale:** 0.0 to 1.0 (higher value = more energetic).
+
+                        ### Valence
+                        Indicates the musical positivity of a track. Tracks with a high valence sound cheerful, happy and euphoric.   
+                        **Scale:** 0.0 to 1.0 (higher value = more positive).
+
+                        ### Tempo
+                        The estimated tempo of the track in beats per minute (BPM).    
+                        **Unit:** Beats per minute (BPM).
+
+                        ### Speechiness
+                        Indicates the proportion of spoken words in a track. High values indicate more spoken content (e.g. podcasts, audiobooks, rap).  
+                        **Scale:** 
+                        - Values above 0.66: Probably pure spoken content.
+                        - 0.33-0.66: Mixture of music and spoken content.
+                        - Below 0.33: Mainly music.
+
+                        ### Liveness
+                        Indicates the probability that the track was performed in front of a live audience. 
+                        **Scale:** 0.0 to 1.0 (higher value = more live character). Values above 0.8 indicate live recordings.
+
+                        ### Instrumentalness
+                        Estimates how instrumental a track is. Higher values indicate that the track contains little or no vocals.
+                        **Scale:** 0.0 to 1.0 (values close to 1.0 indicate pure instrumental music).
+
+                        ### Loudness
+                        Indicates the average volume of the track in decibels (dB). 
+                        **Unit:** Decibel (dB).
+
+                        ### Duration_ms
+                        The length of the track in milliseconds.   
+                        **Unit:** Milliseconds (ms).
+                        """)  
+                    
 #**********************************************************************
 # 6. Filtering by audio features
 #**********************************************************************
 
-        # Selection of the variables shown in the database
-        query_playlist_filter = """SELECT DISTINCT track_artist, track_name, tempo, valence, energy, danceability FROM spotify_songs"""
-        spotify_songs_df_filter = pd.read_sql_query(query_playlist_filter, conn_songs_db)
+        
+        elif selected_page == "Filter by Audio Features":
+            # Selection of the variables shown in the database
+            songs_db_path = os.path.join(script_dir, "spotify_songs.db")
+            conn_songs_db = sqlite3.connect(songs_db_path)
 
-        # Creation of the variables sliders
-        st.subheader("Filter your songs by audio-features")
-        with st.expander("Filter by audio-features", expanded=True):
-            # Tempo-Filter
-            col1, col2, col3 = st.columns([2, 8, 2])
-            with col1:
-                st.write("Slow")
-            with col2:
-                tempo_range = st.slider("Tempo", min_value=0.0, max_value=240.0, value=(0.0, 240.0), step=10.0, label_visibility="collapsed")
-            with col3:
-             st.write("Fast")
+            query_playlist_filter = """SELECT DISTINCT track_artist, track_name, tempo, valence, energy, danceability FROM spotify_songs"""
+            spotify_songs_df_filter = pd.read_sql_query(query_playlist_filter, conn_songs_db)
 
-            # Valence-Filter
-            col1, col2, col3 = st.columns([2, 8, 2])
-            with col1:
-                st.write("Sad")
-            with col2:
-                valence_range = st.slider("Valence", min_value=0.0, max_value=1.0, value=(0.0, 1.0), step=0.1, label_visibility="collapsed")
-            with col3:
-                st.write("Happy")
+            # Creation of the variables sliders
+            st.subheader("Filter your songs by audio-features")
+            with st.expander("Filter by audio-features", expanded=True):
+                # Tempo-Filter
+                col1, col2, col3 = st.columns([2, 8, 2])
+                with col1:
+                    st.write("Slow")
+                with col2:
+                    tempo_range = st.slider("Tempo", min_value=0.0, max_value=240.0, value=(0.0, 240.0), step=10.0, label_visibility="collapsed")
+                with col3:
+                    st.write("Fast")
 
-            # Energy-Filter
-            col1, col2, col3 = st.columns([2, 8, 2])
-            with col1:
-                st.write("Low energy")
-            with col2:
-                energy_range = st.slider("Energy", min_value=0.0, max_value=1.0, value=(0.0, 1.0), step=0.1, label_visibility="collapsed")
-            with col3:
-                st.write("High energie")
+                # Valence-Filter
+                col1, col2, col3 = st.columns([2, 8, 2])
+                with col1:
+                    st.write("Sad")
+                with col2:
+                    valence_range = st.slider("Valence", min_value=0.0, max_value=1.0, value=(0.0, 1.0), step=0.1, label_visibility="collapsed")
+                with col3:
+                    st.write("Happy")
 
-            # Danceability-Filter
-            col1, col2, col3 = st.columns([2, 8, 2])
-            with col1:
-                st.write("Chill music")
-            with col2:
-                danceability_range = st.slider("Danceability", min_value=0.0, max_value=1.0, value=(0.0, 1.0), step=0.1, label_visibility="collapsed")
-            with col3:
-                st.write("Dance music")
+                # Energy-Filter
+                col1, col2, col3 = st.columns([2, 8, 2])
+                with col1:
+                    st.write("Low energy")
+                with col2:
+                    energy_range = st.slider("Energy", min_value=0.0, max_value=1.0, value=(0.0, 1.0), step=0.1, label_visibility="collapsed")
+                with col3:
+                    st.write("High energie")
 
-            # Select songs according to the filters
-            filtered_songs = spotify_songs_df_filter[
-                (spotify_songs_df_filter['tempo'] >= tempo_range[0]) & (spotify_songs_df_filter['tempo'] <= tempo_range[1]) &
-                (spotify_songs_df_filter['valence'] >= valence_range[0]) & (spotify_songs_df_filter['valence'] <= valence_range[1]) &
-                (spotify_songs_df_filter['energy'] >= energy_range[0]) & (spotify_songs_df_filter['energy'] <= energy_range[1]) &
-                (spotify_songs_df_filter['danceability'] >= danceability_range[0]) & (spotify_songs_df_filter['danceability'] <= danceability_range[1])
-                ]
+                # Danceability-Filter
+                col1, col2, col3 = st.columns([2, 8, 2])
+                with col1:
+                    st.write("Chill music")
+                with col2:
+                    danceability_range = st.slider("Danceability", min_value=0.0, max_value=1.0, value=(0.0, 1.0), step=0.1, label_visibility="collapsed")
+                with col3:
+                    st.write("Dance music")
 
-            # Show filtered songs
-            st.subheader("Filtered songs")
-            if not filtered_songs.empty:
-                st.dataframe(filtered_songs, use_container_width=True, height=300)
+                # Select songs according to the filters
+                filtered_songs = spotify_songs_df_filter[
+                    (spotify_songs_df_filter['tempo'] >= tempo_range[0]) & (spotify_songs_df_filter['tempo'] <= tempo_range[1]) &
+                    (spotify_songs_df_filter['valence'] >= valence_range[0]) & (spotify_songs_df_filter['valence'] <= valence_range[1]) &
+                    (spotify_songs_df_filter['energy'] >= energy_range[0]) & (spotify_songs_df_filter['energy'] <= energy_range[1]) &
+                    (spotify_songs_df_filter['danceability'] >= danceability_range[0]) & (spotify_songs_df_filter['danceability'] <= danceability_range[1])
+                    ]
 
-                # Show legend 
-                if st.button("Description of audio features", key="audio_features_duplicate"):
-                    st.session_state.show_legend = not st.session_state.show_legend
+                # Show filtered songs
+                st.subheader("Filtered songs")
+                if not filtered_songs.empty:
+                    st.dataframe(filtered_songs, use_container_width=True, height=300)
 
-                # Show descriptions when "Legend" is activated
-                if st.session_state.show_legend:
-                    st.markdown("""
-                    ### Tempo
-                    The estimated tempo of the track in beats per minute (BPM).    
-                    **Unit:** Beats per minute (BPM).
-                        
-                    ### Valence
-                    Indicates the musical positivity of a track. Tracks with a high valence sound cheerful, happy and euphoric.  
-                    **Scale:** 0.0 to 1.0 (higher value = more positive).
-                        
-                    ### Danceability
-                    Indicates how suitable a track is for dancing. Based on a combination of elements such as tempo, rhythm stability, beat strength and overall rhythm.   
-                    **Scale:** 0.0 to 1.0 (higher value = more danceable).
+                    # Show legend 
+                    if st.button("Description of audio features", key="audio_features_duplicate"):
+                        st.session_state.show_legend = not st.session_state.show_legend
 
-                    ### Energy
-                    Indicates the level of intensity and activity of a track. Tracks with high energy have a fast tempo, a strong beat and loud instruments.  
-                    **Scale:** 0.0 to 1.0 (higher value = more energetic).
-                """)
+                    # Show descriptions when "Legend" is activated
+                    if st.session_state.show_legend:
+                        st.markdown("""
+                        ### Tempo
+                        The estimated tempo of the track in beats per minute (BPM).    
+                        **Unit:** Beats per minute (BPM).
+                            
+                        ### Valence
+                        Indicates the musical positivity of a track. Tracks with a high valence sound cheerful, happy and euphoric.  
+                        **Scale:** 0.0 to 1.0 (higher value = more positive).
+                            
+                        ### Danceability
+                        Indicates how suitable a track is for dancing. Based on a combination of elements such as tempo, rhythm stability, beat strength and overall rhythm.   
+                        **Scale:** 0.0 to 1.0 (higher value = more danceable).
 
-            else:
-                st.warning("No songs match your chosen criteria.")
+                        ### Energy
+                        Indicates the level of intensity and activity of a track. Tracks with high energy have a fast tempo, a strong beat and loud instruments.  
+                        **Scale:** 0.0 to 1.0 (higher value = more energetic).
+                    """)
+
+                else:
+                    st.warning("No songs match your chosen criteria.")
+                    
+            conn_songs_db.close() #close connection
                 
 #********************************************************************************
 # 7. Playlist creation with machine learning
 #******************************************************************************** 
 
-        # CSS for customising the design
-        st.markdown("""
-            <style>
-            .song-list {
-                font-size: 14px !important;
-                line-height: 1.6 !important;
-                display: flex;
-                justify-content: space-between;
-            }
-            .remove-button {
-                font-size: 10px !important;
-                padding: 1px 3px !important;
-                color: red !important;
-                background: none !important;
-                border: none !important;
-                cursor: pointer !important;
-            }
-            .song-count {
-                font-size: 16px !important;
-                font-weight: bold !important;
-                margin-bottom: 10px !important;
-            }
-            </style>
-        """, unsafe_allow_html=True)
-        st.subheader("Create your own playlist!")
-        with st.expander("Find songs based on your preferences", expanded=True):
-            st.write("Choose as many songs as you want. A minimum of 5 is required.")
-            # Add dynamic search option
-            search_column_2 = st.selectbox("Search for:", ["track_artist", "track_name"], key="search_column_2")
-            search_query_2 = st.text_input(f"Please insert {search_column_2}:", key="search_query_2")
+        
+        elif selected_page == "Find New Songs":
+            songs_db_path = os.path.join(script_dir, "spotify_songs.db")
+            conn_songs_db = sqlite3.connect(songs_db_path)
+            # CSS for customising the design
+            st.markdown("""
+                <style>
+                .song-list {
+                    font-size: 14px !important;
+                    line-height: 1.6 !important;
+                    display: flex;
+                    justify-content: space-between;
+                }
+                .remove-button {
+                    font-size: 10px !important;
+                    padding: 1px 3px !important;
+                    color: red !important;
+                    background: none !important;
+                    border: none !important;
+                    cursor: pointer !important;
+                }
+                .song-count {
+                    font-size: 16px !important;
+                    font-weight: bold !important;
+                    margin-bottom: 10px !important;
+                }
+                </style>
+            """, unsafe_allow_html=True)
+            st.subheader("Create your own playlist!")
+            with st.expander("Find songs based on your preferences", expanded=True):
+                st.write("Choose as many songs as you want. A minimum of 5 is required.")
+                # Add dynamic search option
+                search_column_2 = st.selectbox("Search for:", ["track_artist", "track_name"], key="search_column_2")
+                search_query_2 = st.text_input(f"Please insert {search_column_2}:", key="search_query_2")
 
-            # Save basket in the session
-            if "cart" not in st.session_state:
-                st.session_state.cart = []
+                # Save basket in the session
+                if "cart" not in st.session_state:
+                    st.session_state.cart = []
 
-            # Display the number of songs in the basket
-            if st.session_state.cart:
-                st.markdown(f"<div class='song-count'>Chosen songs: {len(st.session_state.cart)}</div>", unsafe_allow_html=True)
-            else:
-                st.markdown("<div class='song-count'>Your basket is empty.</div>", unsafe_allow_html=True)
-
-            # Show search results
-            if search_query_2:
-                # Query tracks by search term
-                query_playlist_search_2 = f"""
-                SELECT DISTINCT track_artist, track_name, danceability, energy, key, loudness, mode, speechiness, acousticness, 
-                instrumentalness, liveness, valence, tempo, duration_ms 
-                FROM spotify_songs WHERE {search_column_2} LIKE ?
-                """
-                spotify_songs_df_search_2 = pd.read_sql_query(query_playlist_search_2, conn_songs_db, params=(f"%{search_query_2}%",))
-
-                if not spotify_songs_df_search_2.empty:
-                    st.write("Select songs to add them to the basket:")
-                    
-                    for i, row in spotify_songs_df_search_2.iterrows():
-                        # Generate a unique key for the checkbox
-                        checkbox_key = f"checkbox_{i}_{row['track_name']}_{row['track_artist']}"
-                        is_checked = row.to_dict() in st.session_state.cart
-                        checked = st.checkbox(
-                            f"{row['track_name']} von {row['track_artist']}", 
-                            value=is_checked, 
-                            key=checkbox_key
-                        )
-                        if checked and not is_checked:
-                            # Add to basket
-                            st.session_state.cart.append(row.to_dict())
-                        elif not checked and is_checked:
-                            # Delete from basket
-                            st.session_state.cart.remove(row.to_dict())
+                # Display the number of songs in the basket
+                if st.session_state.cart:
+                    st.markdown(f"<div class='song-count'>Chosen songs: {len(st.session_state.cart)}</div>", unsafe_allow_html=True)
                 else:
-                    # Display message if no hits are found
-                    st.warning("No match found. Try another entry.")
+                    st.markdown("<div class='song-count'>Your basket is empty.</div>", unsafe_allow_html=True)
 
-            # Show basket (always visible)
-            if st.session_state.cart:
-                st.write("Your basket:")
-                for index, track in enumerate(st.session_state.cart):
-                    col1, col2 = st.columns([5, 1])
-                    with col1:
-                        st.markdown(f"<div class='song-list'><b>{track['track_name']}</b> - <i>{track['track_artist']}</i></div>", unsafe_allow_html=True)
-                    with col2:
-                        if st.button(f"❌", key=f"remove_cart_{index}", help="Löschen"):
-                            st.session_state.cart.pop(index)
-                            st.experimental_rerun()  # Reload page to reflect changes
-
-            # Initialize session_state
-            if "similar_songs_generated" not in st.session_state:
-                st.session_state.similar_songs_generated = False
-
-            if "save_playlist_clicked" not in st.session_state:
-                st.session_state.save_playlist_clicked = False
-
-            # Initialize empty dataframe
-            if "user_songs_df_similar" not in st.session_state:
-                st.session_state.user_songs_df_similar = pd.DataFrame()  # Fallback for later access
-            
-#*********************************************************
-# 8. Supervised Machine learning, nearest neighbor 
-#*********************************************************
-
-            # Show button only if there are at least 5 songs in the basket
-            if len(st.session_state.cart) >= 5:
-                
-                # User can choose how many similar songs he want to add, since the user selects more than one song, the number selected on the slider
-                # counts per song chosen
-                defined_n_neighbors = st.slider("Number of similar songs to find:", min_value=10, max_value=300, value=150, step=10)
-                    
-                if st.button("Find similar songs"):
-                    # Create DataFrame 'selected_tracks_df for the users chosen songs
-                    selected_tracks_df = pd.DataFrame(st.session_state.cart)
-                    
-                    # Use machine learning model to find similar songs
-                    from sklearn.neighbors import NearestNeighbors
-                    import numpy as np
-
-                    # Prepare data for Machine Learning by defining the learning parameters                 
-                    feature_columns = [
-                        "danceability", "energy", "key", "loudness", "mode",
-                        "speechiness", "acousticness", "instrumentalness", "liveness",
-                        "valence", "tempo", "duration_ms"
-                    ]
-
-                    # Fit model on all songs
-                    query_playlist_all = """
-                    SELECT * FROM spotify_songs
+                # Show search results
+                if search_query_2:
+                    # Query tracks by search term
+                    query_playlist_search_2 = f"""
+                    SELECT DISTINCT track_artist, track_name, danceability, energy, key, loudness, mode, speechiness, acousticness, 
+                    instrumentalness, liveness, valence, tempo, duration_ms 
+                    FROM spotify_songs WHERE {search_column_2} LIKE ?
                     """
-                    spotify_songs_df_all = pd.read_sql_query(query_playlist_all, conn_songs_db)
-                    knn = NearestNeighbors(n_neighbors= defined_n_neighbors, metric="euclidean") #euclidean is the distance metric, number of nearest neighbors is define with the slider
-                    knn.fit(spotify_songs_df_all[feature_columns]) #training it on all songs
+                    spotify_songs_df_search_2 = pd.read_sql_query(query_playlist_search_2, conn_songs_db, params=(f"%{search_query_2}%",))
 
-                    # Search for similar songs based on the selected tracks
-                    selected_features = selected_tracks_df[feature_columns].values
-                    distances, indices = knn.kneighbors(selected_features) #calculation of indices and distance
+                    if not spotify_songs_df_search_2.empty:
+                        st.write("Select songs to add them to the basket:")
+                        
+                        for i, row in spotify_songs_df_search_2.iterrows():
+                            # Generate a unique key for the checkbox
+                            checkbox_key = f"checkbox_{i}_{row['track_name']}_{row['track_artist']}"
+                            is_checked = row.to_dict() in st.session_state.cart
+                            checked = st.checkbox(
+                                f"{row['track_name']} von {row['track_artist']}", 
+                                value=is_checked, 
+                                key=checkbox_key
+                            )
+                            if checked and not is_checked:
+                                # Add to basket
+                                st.session_state.cart.append(row.to_dict())
+                            elif not checked and is_checked:
+                                # Delete from basket
+                                st.session_state.cart.remove(row.to_dict())
+                    else:
+                        # Display message if no hits are found
+                        st.warning("No match found. Try another entry.")
 
-                    # Collect results but flatten out duplicates 
-                    user_songs_df_similar = spotify_songs_df_all.iloc[np.unique(indices.flatten())] #based on the indices the correct song can be retrieved from the spotify_songs_df
+                # Show basket (always visible)
+                if st.session_state.cart:
+                    st.write("Your basket:")
+                    for index, track in enumerate(st.session_state.cart):
+                        col1, col2 = st.columns([5, 1])
+                        with col1:
+                            st.markdown(f"<div class='song-list'><b>{track['track_name']}</b> - <i>{track['track_artist']}</i></div>", unsafe_allow_html=True)
+                        with col2:
+                            if st.button(f"❌", key=f"remove_cart_{index}", help="Löschen"):
+                                st.session_state.cart.pop(index)
+                                st.experimental_rerun()  # Reload page to reflect changes
 
-                    # Save into st.session_state for further processing
-                    st.session_state.user_songs_df_similar = user_songs_df_similar
+                # Initialize session_state
+                if "similar_songs_generated" not in st.session_state:
+                    st.session_state.similar_songs_generated = False
 
-                    # Add playlist metadata
-                    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
-                    user_songs_df_similar["playlist_name"] = f"Mix Up {timestamp}"
-                    user_songs_df_similar["playlist_genre"] = f"Mix Up {timestamp}"
-                    user_songs_df_similar["playlist_subgenre"] = f"Mix Up {timestamp}"
-                    user_songs_df_similar["playlist_id"] = timestamp
-
-                    # Show results
-                    st.subheader("Similar songs")
-                    st.dataframe(user_songs_df_similar, use_container_width=True, height=400) # the recommended songs are displayed in the dataframe
-
-                    # refresh state
-                    st.session_state.similar_songs_generated = True
+                if "save_playlist_clicked" not in st.session_state:
                     st.session_state.save_playlist_clicked = False
 
-            # Save button is shown if songs have been generated 
-            if st.session_state.similar_songs_generated and not st.session_state.save_playlist_clicked:
-                st.write("Do you like the songs? Save now!")
+                # Initialize empty dataframe
+                if "user_songs_df_similar" not in st.session_state:
+                    st.session_state.user_songs_df_similar = pd.DataFrame()  # Fallback for later access
                 
-                # Playlist name input
-                playlist_name = st.text_input("Enter a name for your playlist:", "My Playlist") #name the new created playlist before adding it to the database
-                
-                if st.button("Save Playlist"):
-                    # Assure that the datafram is not empty
-                    if not st.session_state.user_songs_df_similar.empty:
-                        try:
-                            # Add the playlist name to the DataFrame
-                            st.session_state.user_songs_df_similar["playlist_name"] = playlist_name 
-                            user_db_path = os.path.join(songs_dir, f"{st.session_state.user_id}.db")
-                            conn_user_db = sqlite3.connect(user_db_path)
-                            st.session_state.user_songs_df_similar.to_sql(
-                                'user_songs', conn_user_db, if_exists='append', index=False
-                            )
-                            conn_user_db.commit()
-                            conn_user_db.close()
+    #*********************************************************
+    # 8. Supervised Machine learning, nearest neighbor 
+    #*********************************************************
 
-                            st.success(f"The '{playlist_name}' has been saved successfully!")
-                            st.session_state.similar_songs_generated = False
-                        except Exception as e:
-                            st.error(f"Error when saving the playlist: {e}")
-                    else:
-                        st.error("No songs to save available!")
+                # Show button only if there are at least 5 songs in the basket
+                if len(st.session_state.cart) >= 5:
+                    
+                    # User can choose how many similar songs he want to add, since the user selects more than one song, the number selected on the slider
+                    # counts per song chosen
+                    defined_n_neighbors = st.slider("Number of similar songs to find:", min_value=10, max_value=300, value=150, step=10)
+                        
+                    if st.button("Find similar songs"):
+                        # Create DataFrame 'selected_tracks_df for the users chosen songs
+                        selected_tracks_df = pd.DataFrame(st.session_state.cart)
+                        
+                        # Use machine learning model to find similar songs
+                        from sklearn.neighbors import NearestNeighbors
+                        import numpy as np
 
-  
-        conn_songs_db.close() #close connection
+                        # Prepare data for Machine Learning by defining the learning parameters                 
+                        feature_columns = [
+                            "danceability", "energy", "key", "loudness", "mode",
+                            "speechiness", "acousticness", "instrumentalness", "liveness",
+                            "valence", "tempo", "duration_ms"
+                        ]
+
+                        # Fit model on all songs
+                        query_playlist_all = """
+                        SELECT * FROM spotify_songs
+                        """
+                        spotify_songs_df_all = pd.read_sql_query(query_playlist_all, conn_songs_db)
+                        knn = NearestNeighbors(n_neighbors= defined_n_neighbors, metric="euclidean") #euclidean is the distance metric, number of nearest neighbors is define with the slider
+                        knn.fit(spotify_songs_df_all[feature_columns]) #training it on all songs
+
+                        # Search for similar songs based on the selected tracks
+                        selected_features = selected_tracks_df[feature_columns].values
+                        distances, indices = knn.kneighbors(selected_features) #calculation of indices and distance
+
+                        # Collect results but flatten out duplicates 
+                        user_songs_df_similar = spotify_songs_df_all.iloc[np.unique(indices.flatten())] #based on the indices the correct song can be retrieved from the spotify_songs_df
+
+                        # Save into st.session_state for further processing
+                        st.session_state.user_songs_df_similar = user_songs_df_similar
+
+                        # Add playlist metadata
+                        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
+                        user_songs_df_similar["playlist_name"] = f"Mix Up {timestamp}"
+                        user_songs_df_similar["playlist_genre"] = f"Mix Up {timestamp}"
+                        user_songs_df_similar["playlist_subgenre"] = f"Mix Up {timestamp}"
+                        user_songs_df_similar["playlist_id"] = timestamp
+
+                        # Show results
+                        st.subheader("Similar songs")
+                        st.dataframe(user_songs_df_similar, use_container_width=True, height=400) # the recommended songs are displayed in the dataframe
+
+                        # refresh state
+                        st.session_state.similar_songs_generated = True
+                        st.session_state.save_playlist_clicked = False
+
+                # Save button is shown if songs have been generated 
+                if st.session_state.similar_songs_generated and not st.session_state.save_playlist_clicked:
+                    st.write("Do you like the songs? Save now!")
+                    
+                    # Playlist name input
+                    playlist_name = st.text_input("Enter a name for your playlist:", "My Playlist") #name the new created playlist before adding it to the database
+                    
+                    if st.button("Save Playlist"):
+                        # Assure that the datafram is not empty
+                        if not st.session_state.user_songs_df_similar.empty:
+                            try:
+                                # Add the playlist name to the DataFrame
+                                st.session_state.user_songs_df_similar["playlist_name"] = playlist_name 
+                                user_db_path = os.path.join(songs_dir, f"{st.session_state.user_id}.db")
+                                conn_user_db = sqlite3.connect(user_db_path)
+                                st.session_state.user_songs_df_similar.to_sql(
+                                    'user_songs', conn_user_db, if_exists='append', index=False
+                                )
+                                conn_user_db.commit()
+                                conn_user_db.close()
+
+                                st.success(f"The '{playlist_name}' has been saved successfully!")
+                                st.session_state.similar_songs_generated = False
+                            except Exception as e:
+                                st.error(f"Error when saving the playlist: {e}")
+                        else:
+                            st.error("No songs to save available!")
+
+    
+            conn_songs_db.close() #close connection
         
 #******************************************************
 # 9. Visualizations
