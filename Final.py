@@ -375,19 +375,7 @@ def main():
         st.header("Search for songs")
         with st.expander("Open to see more", expanded= True):
             st.write("Get inspired by searching songs by artist, name or genre!")
-            #Colour for selectbox:
-            st.markdown("""
-            <style>
-            div[data-baseweb="select"] > div {
-                background-color: lightblue; /* Hintergrundfarbe */
-                border-radius: 5px;         /* Abgerundete Ecken */
-                padding: 2px;              /* Innenabstand */
-                font-size: 16px;           /* Schriftgröße */
-            }
-            </style>
-            """, unsafe_allow_html=True)
-
-
+    
             # Add dynamik search-option
             search_column_1 = st.selectbox("Search for:", ["track_artist", "track_name", "playlist_genre"], key="search_column_1")
             search_query_1 = st.text_input(f"Please insert {search_column_1}:", key="search_query_1")
