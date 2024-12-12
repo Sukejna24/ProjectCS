@@ -138,13 +138,14 @@ def main():
     # Text on starting page is only shown as long as the user is not logged in. After Log in the textbox disappears.
     if not st.session_state.logged_in:    
         st.markdown("""
-        <div style="background-color: #D1FFD1; padding: 15px; border-radius: 10px; font-size: 17px;">
-            Are you looking for new songs that are customized to your music preferences? <br>
-            Then you've come to the right place.<br>
-            With us, you can easily select the songs you like and immediately receive a customized playlist just for you.<br>
-            Try it out!
+        <div style="background-color: #D1FFD1; padding: 15px; border-radius: 10px; text-align: center; font-size: 22px;">
+            Discover your perfect playlist! <br>
+            Select the songs you love and let us create a personalized playlist just for you.<br>
+            Dive into a new world of music tailored to your taste.<br>
+            <b style="font-size: 24px;">Try it out today!</b>
         </div>
         """, unsafe_allow_html=True)
+
     
     # To create a distance between the boxes
     st.write("")
