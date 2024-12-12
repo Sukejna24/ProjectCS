@@ -90,7 +90,7 @@ def main():
 # 1. Preparation and formatting
 #***************************************************************  
 
-    # Seitenoptionen für den Navigator
+    # pages for the navigator
     pages = ["Your Songs", "Search", "Filter by Audio Features", "Find New Songs"]
 
 
@@ -334,7 +334,7 @@ def main():
     # Show user database after successful login (only a small part)
     # This list is empty in the beggining
     if st.session_state.logged_in:
-        # Sidebar-Navigation
+        # Sidebar-Navigation und initialisation
         st.sidebar.title("Navigation")
         selected_page = st.sidebar.radio("Go to", pages)
         if selected_page == "Your Songs":
@@ -739,8 +739,8 @@ def main():
 #******************************************************
 # 9. Visualizations
 #******************************************************
-              
-        # function to get the top 10 artists
+
+           # function to get the top 10 artists
         def get_user_top_artists(user_id):
             try:
                 user_db_path = os.path.join(songs_dir, f"{user_id}.db")
@@ -823,7 +823,6 @@ def main():
             except Exception as e:
                 st.error(f"Fehler beim Abrufen von {feature}: {e}")
                 
-      
         # Sidebar: Choose the visualisation you want to open
         visualization_option = st.sidebar.selectbox(
             "Choose a visualization:",
@@ -841,6 +840,6 @@ def main():
                 plot_genre_distribution(st.session_state.user_id)
             elif visualization_option == "Audio Feature Distribution":
                 plot_audio_feature_distribution(st.session_state.user_id, "valence")
-
+                    
 if __name__ == "__main__":
     main()
