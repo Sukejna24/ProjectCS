@@ -114,11 +114,11 @@ def main():
             </div>
         """, unsafe_allow_html=True)
     
-    # Text boxes frontpage    
+    # Text boxes frontpage      
     with col1:
         st.markdown("""
-        <div style="background-color: #f0f0f0; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
-            <h2 style="color: #333; font-size: 24px; margin-bottom: 10px;">🔍 Discover</h2>
+        <div style="background-color: #f0f0f0; padding: 15px; border-radius: 15px; margin-bottom: 20px;">
+            <h2 style="color: #333; font-size: 24px; margin-bottom: 8px;">🔍 Discover</h2>
             <p style="font-size: 16px; color: #555;">
             Find music that matches your style.
         </p>
@@ -126,8 +126,14 @@ def main():
     """, unsafe_allow_html=True)
 
     with col3:
-        st.subheader("Analyze 📈")
-        st.write("Understand your audio preferences.")
+        st.markdown("""
+        <div style="background-color: #f0f0f0; padding: 15px; border-radius: 15px; margin-bottom: 25px;">
+            <h2 style="color: #333; font-size: 24px; margin-bottom: 8px;">Analyze 📈</h2>
+            <p style="font-size: 16px; color: #555;">
+            Understand your audio preferences.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
     
     # Text on starting page is only shown as long as the user is not logged in. After Log in the textbox disappears.
     if not st.session_state.logged_in:    
@@ -338,16 +344,21 @@ def main():
         if 'user_id' not in st.session_state:
             st.session_state.user_id = 'default_user'  # Replace with your default user logic
 
-        # Initial load
+        # Initial load and sort of displayed dataframe
         user_songs_df_overview = load_user_db()
+        # Sort the data (e.g., by playlist_id or timestamp column)
+        if "playlist_subgenre" in user_songs_df_overview.columns:
+            user_songs_df_overview = user_songs_df_overview.sort_values(by="playlist_subgenre", ascending=False)
 
         # Display the data and add a refresh button, the new songs appear in the list.
         if st.button("Refresh"):
             user_songs_df_overview = load_user_db()
+            if "playlist_subgenre" in user_songs_df_overview.columns:
+                user_songs_df_overview = user_songs_df_overview.sort_values(by="playlist_subgenre", ascending=False)
             st.success("Database refreshed!")
 
         # Displays user data
-        st.dataframe(user_songs_df_overview, use_container_width=True, height=200)
+        st.dataframe(user_songs_df_overview, use_container_width=True, height=400)
         st.info("Discover more songs that you could like!")
 
         # Saves songs to the users database
@@ -633,10 +644,15 @@ def main():
 
             # Show button only if there are at least 5 songs in the basket
             if len(st.session_state.cart) >= 5:
+                
+                # User can choose how many similar songs he want to add, since the user selects more than one song, the number selected on the slider
+                # counts per song chosen
+                defined_n_neighbors = st.slider("Number of similar songs to find:", min_value=10, max_value=300, value=150, step=10)
+                    
                 if st.button("Find similar songs"):
                     # Create DataFrame 'selected_tracks_df for the users chosen songs
                     selected_tracks_df = pd.DataFrame(st.session_state.cart)
-
+                    
                     # Use machine learning model to find similar songs
                     from sklearn.neighbors import NearestNeighbors
                     import numpy as np
@@ -653,14 +669,14 @@ def main():
                     SELECT * FROM spotify_songs
                     """
                     spotify_songs_df_all = pd.read_sql_query(query_playlist_all, conn_songs_db)
-                    knn = NearestNeighbors(n_neighbors=300, metric="euclidean") #euclidean is the distance metric, 300 nearest neighbors
+                    knn = NearestNeighbors(n_neighbors= defined_n_neighbors, metric="euclidean") #euclidean is the distance metric, number of nearest neighbors is define with the slider
                     knn.fit(spotify_songs_df_all[feature_columns]) #training it on all songs
 
                     # Search for similar songs based on the selected tracks
                     selected_features = selected_tracks_df[feature_columns].values
                     distances, indices = knn.kneighbors(selected_features) #calculation of indices and distance
 
-                    # Collect results
+                    # Collect results but flatten out duplicates 
                     user_songs_df_similar = spotify_songs_df_all.iloc[np.unique(indices.flatten())] #based on the indices the correct song can be retrieved from the spotify_songs_df
 
                     # Save into st.session_state for further processing
@@ -693,7 +709,7 @@ def main():
                     if not st.session_state.user_songs_df_similar.empty:
                         try:
                             # Add the playlist name to the DataFrame
-                            st.session_state.user_songs_df_similar["playlist_name", "My Playlist"] = playlist_name #My Playlist as default
+                            st.session_state.user_songs_df_similar["playlist_name"] = playlist_name 
                             user_db_path = os.path.join(songs_dir, f"{st.session_state.user_id}.db")
                             conn_user_db = sqlite3.connect(user_db_path)
                             st.session_state.user_songs_df_similar.to_sql(
